@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
 
 <dom-module id="x-browser">
   <style>
@@ -24,9 +25,16 @@
 
   <template>
     <h1>Alle Kurse</h1>
+    <paper-input
+      label="Suchbegriff"
+      value="{{query}}">
+    </paper-input>
     <template
+      id="list"
       is="dom-repeat"
-      items="{{courses}}">
+      items="{{courses}}"
+      filter="_filter"
+      observe="type title credits">
       <div class="row"
         on-tap="_handleTapItem">
         <div class="type">{{item.type}}</div>
@@ -34,6 +42,10 @@
         <div class="credits">{{item.credits}}</div>
       </div>
     </template>
+    <p
+      hidden$="[[!empty]]">
+      Keine Kurse gefunden
+    </p>
   </template>
 
   <script>
@@ -44,13 +56,54 @@
         courses: {
           type: Array,
           value: []
+        },
+
+        query: {
+          type: String,
+          value: null,
+          observer: "_handleFilterChanged"
+        },
+
+        result: {
+          type: Array,
+          computed: "_computeResult(courses.*, query)"
+        },
+
+        empty: {
+          type: Boolean,
+          computed: "_computeEmpty(result)"
         }
+      },
+
+      _handleFilterChanged: function () {
+        this.$.list.render();
       },
 
       _handleTapItem: function (event) {
         this.fire("edit-course", {
           course: event.model.item
         })
+      },
+
+      _computeResult: function () {
+        var self = this;
+        return this.courses.filter(function (course) {
+          return self._filter(course);
+        });
+      },
+
+      _computeEmpty: function () {
+        return this.result.length === 0;
+      },
+
+      _filter: function (course) {
+        if (this.query) {
+          var title = course.title.toLowerCase();
+          var query = this.query.toLowerCase();
+          var match = title.indexOf(query) >= 0;
+          if (!match) return false;
+        }
+        return true;
       }
     });
   </script>
