@@ -1,19 +1,124 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="x-browser.html">
+<link rel="import" href="x-inspector.html">
 
 <dom-module id="x-main">
   <style>
-    p {
-      color: red;
+    :host {
+      @apply(--layout-fit);
+      @apply(--layout-horizontal);
+      @apply(--layout-justified);
+    }
+    x-browser {
+      @apply(--layout-flex);
+    }
+    x-inspector {
+      width: 300px;
+    }
+    paper-fab {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
     }
   </style>
 
   <template>
-    <p>Hello World</p>
+    <array-selector
+      id="selector"
+      items="{{courses}}"
+      selected="{{course}}">
+    </array-selector>
+
+    <x-browser
+      class="main"
+      courses="{{courses}}">
+    </x-browser>
+    <x-inspector
+      class="drawer"
+      hidden$="{{_isEmpty(course)}}"
+      course="{{course}}">
+    </x-inspector>
+    <paper-fab
+      icon="add"
+      on-tap="_handleAddButtonTap">
+    </paper-fab>
   </template>
 
   <script>
     Polymer({
-      is: "x-main"
+      is: "x-main",
+
+      properties: {
+        courses: {
+          type: Array,
+          value: []
+        },
+        course: {
+          type: Object,
+          value: null
+        }
+      },
+
+      listeners: {
+        "add-course": "_handleAddCourse",
+        "edit-course": "_handleEditCourse",
+        "delete-course": "_handleDeleteCourse"
+      },
+
+      ready: function () {
+        this.set("courses", [{
+            type: "VU",
+            title: "Verteilte Systeme",
+            credits: 3.0
+          },
+          {
+            type: "VO",
+            title: "Statistik und Wahrscheinlichkeitstheorie",
+            credits: 3.0
+          },
+          {
+            type: "UE",
+            title: "Algebra und diskrete Mathematik",
+            credits: 3.0
+          }
+        ]);
+      },
+
+      _handleAddButtonTap: function (event) {
+        var course = {
+          type: "TEST",
+          title: "TEST",
+          credits: "0.0"
+        };
+        this.fire("add-course", {
+          course: course
+        });
+      },
+
+      _handleAddCourse: function (event) {
+        var course = event.detail.course;
+        this.push("courses", course);
+        this.$.selector.select(course);
+      },
+
+      _handleEditCourse: function (event) {
+        var course = event.detail.course;
+        this.$.selector.select(course);
+      },
+
+      _handleDeleteCourse: function (event) {
+        var index = this.courses.indexOf(event.detail.course);
+        if (index < 0) return;
+        this.splice("courses", index, 1);
+        this.$.selector.select(null);
+      },
+
+      _isEmpty: function (object) {
+        return !object;
+      }
     });
   </script>
 </dom-module>

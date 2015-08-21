@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="x-inspector">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+    }
+  </style>
+
+  <template>
+    <h1>Kurs bearbeiten</h1>
+    <paper-button
+      on-tap="_handleDelete">
+      Löschen
+    </paper-button>
+    <paper-input
+      label="Kurstyp"
+      value="{{course.type}}">
+    </paper-input>
+    <paper-input
+      label="Kurstitel"
+      value="{{course.title}}">
+    </paper-input>
+    <paper-input
+      label="ECTS"
+      value="{{course.credits}}">
+    </paper-input>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-inspector",
+
+      properties: {
+        course: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _handleDelete: function () {
+        this.fire("delete-course", {
+          course: this.course
+        });
+      }
+    });
+  </script>
+</dom-module>

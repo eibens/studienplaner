@@ -1,0 +1,57 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="x-browser">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+    }
+    .row {
+      @apply(--layout-horizontal);
+      @apply(--layout-justified);
+      height: 40px;
+    }
+    .type {
+      width: 40px;
+    }
+    .title {
+      @apply(--layout-flex);
+    }
+    .credits {
+      width: 80px;
+    }
+  </style>
+
+  <template>
+    <h1>Alle Kurse</h1>
+    <template
+      is="dom-repeat"
+      items="{{courses}}">
+      <div class="row"
+        on-tap="_handleTapItem">
+        <div class="type">{{item.type}}</div>
+        <div class="title">{{item.title}}</div>
+        <div class="credits">{{item.credits}}</div>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-browser",
+
+      properties: {
+        courses: {
+          type: Array,
+          value: []
+        }
+      },
+
+      _handleTapItem: function (event) {
+        this.fire("edit-course", {
+          course: event.model.item
+        })
+      }
+    });
+  </script>
+</dom-module>
