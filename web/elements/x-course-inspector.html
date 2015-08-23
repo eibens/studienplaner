@@ -47,13 +47,13 @@
 
       _handleDelete: function () {
         this.fire("delete-course", {
-          course: this.course
+          data: this.course
         });
       },
 
       _handleClose: function () {
         this.fire("select-course", {
-          course: null
+          data: null
         });
       }
     });

@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="data-service.html">
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
 
@@ -27,12 +26,16 @@
   </style>
 
   <template>
-    <data-service
-      id="service"
-      courses="{{courses}}"
-      course="{{course}}">
-    </data-service>
-
+    <array-selector
+      id="course"
+      items="{{courses}}"
+      selected="{{course}}">
+    </array-selector>
+    <array-selector
+      id="attendance"
+      items="{{attendances}}"
+      selected="{{attendance}}">
+    </array-selector>
     <x-browser
       class="main"
       courses="{{courses}}">
@@ -60,19 +63,29 @@
         course: {
           type: Object,
           value: null
+        },
+        attendances: {
+          type: Array,
+          value: []
+        },
+        attendance: {
+          type: Object,
+          value: null
         }
       },
 
       listeners: {
         "add-course": "_handleAddCourse",
         "select-course": "_handleSelectCourse",
-        "delete-course": "_handleDeleteCourse"
+        "delete-course": "_handleDeleteCourse",
+        "add-attendance": "_handleAddAttendance",
+        "select-attendance": "_handleSelectAttendance",
+        "delete-attendance": "_handleDeleteAttendance"
       },
 
       _handleAddButtonTap: function (event) {
-        var course =
         this.fire("add-course", {
-          course: {
+          data: {
             type: "TEST",
             title: "TEST",
             credits: "0.0"
@@ -81,19 +94,46 @@
       },
 
       _handleAddCourse: function (event) {
-        var course = event.detail.course;
-        this.$.service.addCourse(course);
-        this.$.service.selectCourse(course);
+        this._add("courses", event.detail.data);
       },
-
       _handleSelectCourse: function (event) {
-        var course = event.detail.course;
-        this.$.service.selectCourse(course);
+        this._select("courses", event.detail.data, this.$.course);
+      },
+      _handleDeleteCourse: function (event) {
+        this._remove("courses", event.detail.data, this.$.course);
       },
 
-      _handleDeleteCourse: function (event) {
-        var course = event.detail.course;
-        this.$.service.deleteCourse(course);
+      _handleAddAttendance: function (event) {
+        this._add("attendances", event.detail.data);
+      },
+      _handleSelectAttendance: function (event) {
+        this._select("attendances", event.detail.data, this.$.attendance);
+      },
+      _handleDeleteAttendance: function (event) {
+        this._remove("attendances", event.detail.data, this.$.attendance);
+      },
+
+      _add: function (path, item, selector) {
+        if (this.get(path).indexOf(item) >= 0) {
+          throw new Error("Item already added.");
+        }
+        this.push(path, item);
+      },
+      _select: function (path, item, selector) {
+        if (item != null && this.get(path).indexOf(item) < 0) {
+          throw new Error("Cannot select unknown item.");
+        }
+        selector.select(item);
+      },
+      _remove: function (path, item, selector) {
+        if (this.get(path).indexOf(item) < 0) {
+          throw new Error("Cannot delete unknown item.");
+        }
+        var index = this.get(path).indexOf(item);
+        this.splice(path, index, 1);
+        if (selector.selected == item) {
+          selector.select(null);
+        }
       },
 
       _isEmpty: function (object) {
