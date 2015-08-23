@@ -11,6 +11,10 @@
   </style>
 
   <template>
+    <button
+      on-tap="_handleClose">
+      X
+    </button>
     <h1>Kurs bearbeiten</h1>
     <paper-button
       on-tap="_handleDelete">
@@ -44,6 +48,12 @@
       _handleDelete: function () {
         this.fire("delete-course", {
           course: this.course
+        });
+      },
+
+      _handleClose: function () {
+        this.fire("select-course", {
+          course: null
         });
       }
     });
