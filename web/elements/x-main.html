@@ -84,13 +84,13 @@
       },
 
       _handleAddButtonTap: function (event) {
-        this.fire("add-course", {
-          data: {
-            type: "TEST",
-            title: "TEST",
-            credits: "0.0"
-          }
-        });
+        var course = {
+          type: "TEST",
+          title: "TEST",
+          credits: "0.0"
+        };
+        this.fire("add-course", { data: course });
+        this.fire("select-course", { data: course});
       },
 
       _handleAddCourse: function (event) {
