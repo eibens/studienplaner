@@ -73,13 +73,13 @@
       },
 
       _handleAdd: function () {
-        this.fire("add-attendance", {
-          data: {
-            course: this.course,
-            time: Semester.current(),
-            grade: null
-          }
-        });
+        var attendance = {
+          course: this.course,
+          time: Semester.current(),
+          grade: null
+        };
+        this.fire("add-attendance", { data: attendance });
+        this.fire("select-attendance", { data: attendance });
       },
 
       _handleSelect: function (event) {
