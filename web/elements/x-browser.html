@@ -36,7 +36,7 @@
       filter="_filter"
       observe="type title credits">
       <div class="row"
-        on-tap="_handleTapItem">
+        on-tap="_handleSelect">
         <div class="type">{{item.type}}</div>
         <div class="title">{{item.title}}</div>
         <div class="credits">{{item.credits}}</div>
@@ -79,8 +79,8 @@
         this.$.list.render();
       },
 
-      _handleTapItem: function (event) {
-        this.fire("edit-course", {
+      _handleSelect: function (event) {
+        this.fire("select-course", {
           course: event.model.item
         })
       },
