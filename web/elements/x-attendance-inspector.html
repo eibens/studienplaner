@@ -15,6 +15,10 @@
       X
     </button>
     <h1>Teilnahme bearbeiten</h1>
+    <button
+      on-tap="_handleDelete">
+      LÖSCHEN
+    </button>
     <x-semester-picker
       value="{{attendance.time}}">
     </x-semester-picker>
@@ -40,6 +44,9 @@
 
       _handleClose: function () {
         this.fire("select-attendance", { data: null });
+      },
+      _handleDelete: function () {
+        this.fire("delete-attendance", { data: this.attendance });
       }
     });
   </script>
