@@ -49,7 +49,7 @@
       },
 
       selectCourse: function (course) {
-        if (!this.containsCourse(course)) throw new Error("Cannot select unknown course.");
+        if (course != null && !this.containsCourse(course)) throw new Error("Cannot select unknown course.");
         this.$.course.select(course);
       },
 
