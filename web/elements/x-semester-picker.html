@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="data-model.html">
+
+<dom-module id="x-semester-picker">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      height: 40px;
+    }
+    button {
+      width: 40px;
+    }
+    label {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      @apply(--layout-flex);
+    }
+  </style>
+
+  <template>
+    <button
+      on-tap="previous">
+      &lt;
+    </button>
+    <label>{{_format(value)}}</label>
+    <button
+      on-tap="next">
+      &gt;
+    </button>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-semester-picker",
+
+      properties: {
+        value: {
+          type: Object,
+          value: Semester.current(),
+          notify: true
+        }
+      },
+
+      reset: function () {
+        this.value = Semester.current();
+      },
+
+      next: function () {
+        if (!this.value) {
+          this.reset();
+          return;
+        }
+        this.value = this.value.next;
+      },
+
+      previous: function () {
+        if (!this.value) {
+          this.reset();
+          return;
+        }
+        this.value = this.value.previous;
+      },
+
+      _format: function (value) {
+        if (!value) return "-";
+        return value.year + " " + (value.isWinter ? "Winter" : "Sommer");
+      }
+    });
+  </script>
+</dom-module>

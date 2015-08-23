@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
+<link rel="import" href="x-attendance-inspector.html">
 
 <dom-module id="x-main">
   <style>
@@ -15,8 +16,17 @@
     x-browser {
       @apply(--layout-flex);
     }
-    x-course-inspector {
+    .drawer {
+      position: relative;
       width: 300px;
+    }
+    x-course-inspector {
+      @apply(--layout-fit);
+      background: white;
+    }
+    x-attendance-inspector {
+      @apply(--layout-fit);
+      background: white;
     }
     paper-fab {
       position: absolute;
@@ -40,12 +50,18 @@
       class="main"
       courses="{{courses}}">
     </x-browser>
-    <x-course-inspector
+    <div
       class="drawer"
-      hidden$="{{_isEmpty(course)}}"
-      course="{{course}}"
-      attendances="{{attendances}}">
-    </x-course-inspector>
+      hidden$="{{_isEmpty(course)}}">
+      <x-course-inspector
+        course="{{course}}"
+        attendances="{{attendances}}">
+      </x-course-inspector>
+      <x-attendance-inspector
+        hidden$="{{_isEmpty(attendance)}}"
+        attendance="{{attendance}}">
+      </x-attendance-inspector>
+    </div>
     <paper-fab
       icon="add"
       on-tap="_handleAddButtonTap">

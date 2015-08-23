@@ -1,0 +1,46 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="x-semester-picker.html">
+
+<dom-module id="x-attendance-inspector">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+    }
+  </style>
+
+  <template>
+    <button
+      on-tap="_handleClose">
+      X
+    </button>
+    <h1>Teilnahme bearbeiten</h1>
+    <x-semester-picker
+      value="{{attendance.time}}">
+    </x-semester-picker>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-attendance-inspector",
+
+      properties: {
+        attendance: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _formatTime: function (time) {
+        return time.year + " " + (time.isWinter ? "Winter" : "Sommer");
+      },
+      _formatGrade: function (grade) {
+        return grade != null ? grade : '-';
+      },
+
+      _handleClose: function () {
+        this.fire("select-attendance", { data: null });
+      }
+    });
+  </script>
+</dom-module>

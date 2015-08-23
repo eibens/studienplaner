@@ -1,0 +1,43 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="data-model">
+  <script>
+
+    function Semester(year, isWinter) {
+      this._year = year;
+      this._isWinter = isWinter;
+    }
+    Semester.current = function () {
+      var today = new Date();
+      var year = today.getFullYear();
+      var month = today.getMonth();
+      var isWinter = [0, 7, 8, 9, 10, 11].indexOf(month) >= 0;
+      return new Semester(year, isWinter);
+    };
+    Semester.prototype = {
+      get year() {
+        return this._year;
+      },
+      get isWinter() {
+        return this._isWinter;
+      },
+      get isSummer() {
+        return !this.isWinter;
+      },
+      get next() {
+        var year = this.year;
+        if (this.isWinter) year++;
+        return new Semester(year, !this.isWinter);
+      },
+      get previous() {
+        var year = this.year;
+        if (this.isSummer) year--;
+        return new Semester(year, !this.isWinter);
+      }
+    };
+
+    Polymer({
+      is: "data-model"
+    });
+  </script>
+</dom-module>

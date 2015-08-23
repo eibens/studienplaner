@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="data-model.html">
 
 <dom-module id="x-course-attendances">
   <style>
@@ -29,7 +30,9 @@
       items="{{attendances}}"
       filter="_filter"
       observe="date">
-      <div class="row">
+      <div
+        class="row"
+        on-tap="_handleSelect">
         <div class="date">{{_formatTime(item.time)}}</div>
         <div class="grade">{{_formatGrade(item.grade)}}</div>
       </div>
@@ -73,13 +76,14 @@
         this.fire("add-attendance", {
           data: {
             course: this.course,
-            time: {
-              year: 2015,
-              isWinter: false
-            },
+            time: Semester.current(),
             grade: null
           }
         });
+      },
+
+      _handleSelect: function (event) {
+        this.fire("select-attendance", { data: event.model.item });
       }
     });
   </script>
