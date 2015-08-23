@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="x-browser.html">
-<link rel="import" href="x-inspector.html">
+<link rel="import" href="x-course-inspector.html">
 
 <dom-module id="x-main">
   <style>
@@ -15,7 +15,7 @@
     x-browser {
       @apply(--layout-flex);
     }
-    x-inspector {
+    x-course-inspector {
       width: 300px;
     }
     paper-fab {
@@ -36,11 +36,11 @@
       class="main"
       courses="{{courses}}">
     </x-browser>
-    <x-inspector
+    <x-course-inspector
       class="drawer"
       hidden$="{{_isEmpty(course)}}"
       course="{{course}}">
-    </x-inspector>
+    </x-course-inspector>
     <paper-fab
       icon="add"
       on-tap="_handleAddButtonTap">
