@@ -100,7 +100,17 @@
         this._select("courses", event.detail.data, this.$.course);
       },
       _handleDeleteCourse: function (event) {
+        var course = event.detail.data;
         this._remove("courses", event.detail.data, this.$.course);
+
+        // Delete associated attendances as well.
+        var self = this;
+        var attendances = this.attendances.filter(function (attendance) {
+          return course == attendance.course;
+        });
+        attendances.forEach(function (attendance) {
+          self.fire("delete-attendance", { data: attendance});
+        });
       },
 
       _handleAddAttendance: function (event) {
