@@ -1,0 +1,86 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="x-course-attendances">
+  <style>
+    .row {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      height: 20px;
+    }
+    .date {
+      @apply(--layout-flex);
+    }
+    .grade {
+      @apply(--layout-flex);
+      text-align: right;
+    }
+  </style>
+
+  <template>
+    <h1>Teilnahmen</h1>
+    <button
+      on-tap="_handleAdd">
+      +
+    </button>
+    <template
+      id="list"
+      is="dom-repeat"
+      items="{{attendances}}"
+      filter="_filter"
+      observe="date">
+      <div class="row">
+        <div class="date">{{_formatTime(item.time)}}</div>
+        <div class="grade">{{_formatGrade(item.grade)}}</div>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-course-attendances",
+
+      properties: {
+        attendances: {
+          type: Array,
+          value: []
+        },
+        course: {
+          type: Object,
+          value: null
+        }
+      },
+
+      observers: [
+        "_render(course)"
+      ],
+
+      _render: function () {
+        this.$.list.render();
+      },
+      _filter: function (item) {
+        return item.course === this.course;
+      },
+
+      _formatTime: function (time) {
+        return time.year + " " + (time.isWinter ? "Winter" : "Sommer");
+      },
+      _formatGrade: function (grade) {
+        return grade != null ? grade : '-';
+      },
+
+      _handleAdd: function () {
+        this.fire("add-attendance", {
+          data: {
+            course: this.course,
+            time: {
+              year: 2015,
+              isWinter: false
+            },
+            grade: null
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>

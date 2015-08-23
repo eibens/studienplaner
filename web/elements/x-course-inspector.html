@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="x-course-attendances.html">
 
 <dom-module id="x-course-inspector">
   <style>
@@ -32,6 +33,10 @@
       label="ECTS"
       value="{{course.credits}}">
     </paper-input>
+    <x-course-attendances
+      attendances="{{attendances}}"
+      course="{{course}}">
+    </x-course-attendances>
   </template>
 
   <script>
@@ -42,6 +47,10 @@
         course: {
           type: Object,
           value: null
+        },
+        attendances: {
+          type: Array,
+          value: []
         }
       },
 
