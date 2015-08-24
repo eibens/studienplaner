@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="data-storage.html">
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
@@ -36,26 +37,31 @@
   </style>
 
   <template>
+    <data-storage
+      profile="[[profile]]">
+    </data-storage>
+
     <array-selector
       id="course"
-      items="{{courses}}"
+      items="{{profile.courses}}"
       selected="{{course}}">
     </array-selector>
     <array-selector
       id="attendance"
-      items="{{attendances}}"
+      items="{{profile.attendances}}"
       selected="{{attendance}}">
     </array-selector>
+
     <x-browser
       class="main"
-      courses="{{courses}}">
+      courses="{{profile.courses}}">
     </x-browser>
     <div
       class="drawer"
       hidden$="{{_isEmpty(course)}}">
       <x-course-inspector
         course="{{course}}"
-        attendances="{{attendances}}">
+        attendances="{{profile.attendances}}">
       </x-course-inspector>
       <x-attendance-inspector
         hidden$="{{_isEmpty(attendance)}}"
@@ -73,17 +79,17 @@
       is: "x-main",
 
       properties: {
-        courses: {
-          type: Array,
-          value: []
+        profile: {
+          type: Object,
+          value: {
+            name: null,
+            courses: [],
+            attendances: []
+          }
         },
         course: {
           type: Object,
           value: null
-        },
-        attendances: {
-          type: Array,
-          value: []
         },
         attendance: {
           type: Object,
@@ -111,18 +117,18 @@
       },
 
       _handleAddCourse: function (event) {
-        this._add("courses", event.detail.data);
+        this._add("profile.courses", event.detail.data);
       },
       _handleSelectCourse: function (event) {
-        this._select("courses", event.detail.data, this.$.course);
+        this._select("profile.courses", event.detail.data, this.$.course);
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
-        this._remove("courses", event.detail.data, this.$.course);
+        this._remove("profile.courses", event.detail.data, this.$.course);
 
         // Delete associated attendances as well.
         var self = this;
-        var attendances = this.attendances.filter(function (attendance) {
+        var attendances = this.profile.attendances.filter(function (attendance) {
           return course == attendance.course;
         });
         attendances.forEach(function (attendance) {
@@ -131,13 +137,13 @@
       },
 
       _handleAddAttendance: function (event) {
-        this._add("attendances", event.detail.data);
+        this._add("profile.attendances", event.detail.data);
       },
       _handleSelectAttendance: function (event) {
-        this._select("attendances", event.detail.data, this.$.attendance);
+        this._select("profile.attendances", event.detail.data, this.$.attendance);
       },
       _handleDeleteAttendance: function (event) {
-        this._remove("attendances", event.detail.data, this.$.attendance);
+        this._remove("profile.attendances", event.detail.data, this.$.attendance);
       },
 
       _add: function (path, item, selector) {
