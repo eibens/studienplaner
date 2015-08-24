@@ -8,7 +8,16 @@
       properties: {
         profile: {
           type: Object,
-          value: null
+          value: null,
+          notify: true
+        },
+        interval: {
+          type: Number,
+          value: 5000
+        },
+        _dirty: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -16,8 +25,56 @@
         "_handleChange(profile.*)"
       ],
 
+      created: function () {
+        this._STORAGE_KEY = "lychee-profile";
+      },
+
+      ready: function () {
+        // Load profile on start-up.
+        this.load();
+      },
+
+      save: function () {
+        if (!this._dirty) return;
+        // Unset dirty flag before saving, to prevent losing changes while saving.
+        this._dirty = false;
+        console.log("saving profile");
+        console.log(this.profile);
+        var data = this._serialize(this.profile);
+        window.localStorage.setItem(this._STORAGE_KEY, data);
+      },
+
+      load: function () {
+        console.log("loading profile");
+        var data = window.localStorage.getItem(this._STORAGE_KEY);
+        this.profile = this._deserialize(data);
+        console.log("loaded profile");
+        console.log(this.profile);
+      },
+
       _handleChange: function (event) {
-        console.log(event.path);
+        if (this._dirty) return;
+        console.log("profile is dirty");
+        this._dirty = true;
+        var self = this;
+        //noinspection JSCheckFunctionSignatures
+        setTimeout(function () {
+          self.save();
+        }, this.interval);
+      },
+
+      _serialize: function (profile) {
+        // TODO: serialize all data
+        return profile.name;
+      },
+
+      _deserialize: function (data) {
+        // TODO: deserialize all data
+        return {
+          name: data,
+          courses: [],
+          attendances: []
+        }
       }
     });
   </script>

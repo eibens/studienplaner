@@ -41,7 +41,7 @@
 
   <template>
     <data-storage
-      profile="[[profile]]">
+      profile="{{profile}}">
     </data-storage>
 
     <array-selector
@@ -89,12 +89,7 @@
 
       properties: {
         profile: {
-          type: Object,
-          value: {
-            name: null,
-            courses: [],
-            attendances: []
-          }
+          type: Object
         },
         course: {
           type: Object,
