@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="x-semester-picker.html">
+<link rel="import" href="x-grade-picker.html">
 
 <dom-module id="x-attendance-inspector">
   <style>
@@ -22,6 +23,9 @@
     <x-semester-picker
       value="{{attendance.time}}">
     </x-semester-picker>
+    <x-grade-picker
+      value="{{attendance.grade}}">
+    </x-grade-picker>
   </template>
 
   <script>

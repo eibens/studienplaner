@@ -69,7 +69,7 @@
         return time.year + " " + (time.isWinter ? "Winter" : "Sommer");
       },
       _formatGrade: function (grade) {
-        return grade != null ? grade : '-';
+        return grade != null ? grade.value : '-';
       },
 
       _handleAdd: function () {

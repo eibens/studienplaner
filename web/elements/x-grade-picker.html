@@ -1,0 +1,74 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="data-model/data-model.html">
+
+<dom-module id="x-grade-picker">
+  <style>
+    iron-selector {
+      @apply(--layout-horizontal);
+    }
+    iron-selector > * {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      width: 40px;
+      height: 40px;
+      background: #eee;
+      cursor: default;
+    }
+    iron-selector > .iron-selected {
+      background: #ccc;
+    }
+  </style>
+
+  <template>
+    <iron-selector
+      id="selector"
+      selected="{{_selected}}">
+      <div>X</div>
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+    </iron-selector>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-grade-picker",
+
+      properties: {
+        value: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: "_handleValueChanged"
+        },
+
+        _selected: {
+          type: String,
+          value: 0,
+          observer: "_handleSelectedChanged"
+        }
+      },
+
+      _handleValueChanged: function (value) {
+        if (value == null) {
+          this._selected = 0;
+        } else {
+          this._selected = value.value;
+        }
+      },
+
+      _handleSelectedChanged: function (selected) {
+        if (selected == 0) {
+          this.value = null;
+        } else {
+          this.value = new Grade(selected);
+        }
+      }
+    });
+  </script>
+</dom-module>
