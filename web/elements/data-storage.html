@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="data-model/data-model.html">
 
 <dom-module id="data-storage">
   <template>
@@ -103,11 +104,7 @@
 
       _deserialize: function (data) {
         // TODO: deserialize all data
-        var profile = {
-          name: null,
-          courses: [],
-          attendances: []
-        };
+        var profile = new Profile();
         if (data == null) return profile;
         profile.name = data.name;
         return profile;
