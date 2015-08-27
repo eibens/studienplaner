@@ -3,6 +3,8 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">v
+<link rel="import" href="data-model/data-model.html">
 <link rel="import" href="data-storage.html">
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
@@ -61,6 +63,10 @@
     </array-selector>
 
     <header>
+      <paper-icon-button
+        icon="delete"
+        on-tap="_clearProfile">
+      </paper-icon-button>
       <paper-input
         label="Name"
         value="{{profile.name}}">
@@ -121,6 +127,12 @@
         "add-attendance": "_handleAddAttendance",
         "select-attendance": "_handleSelectAttendance",
         "delete-attendance": "_handleDeleteAttendance"
+      },
+
+      _clearProfile: function () {
+        var result = window.confirm("Willst du deine Daten wirklich löschen?");
+        if (!result) return;
+        this.profile = new Profile();
       },
 
       _handleAddButtonTap: function (event) {
