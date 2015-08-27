@@ -13,6 +13,10 @@
     :host {
       @apply(--layout-fit);
     }
+    header {
+      @apply(--layout-horizontal);
+      background: white;
+    }
     main {
       @apply(--layout-horizontal);
       @apply(--layout-justified);
@@ -41,7 +45,8 @@
 
   <template>
     <data-storage
-      profile="{{profile}}">
+      profile="{{profile}}"
+      dirty="{{_storageDirty}}">
     </data-storage>
 
     <array-selector
@@ -55,10 +60,14 @@
       selected="{{attendance}}">
     </array-selector>
 
-    <paper-input
-      label="Name"
-      value="{{profile.name}}">
-    </paper-input>
+    <header>
+      <paper-input
+        label="Name"
+        value="{{profile.name}}">
+      </paper-input>
+      <p>{{_computeSaveState(_storageDirty)}}</p>
+    </header>
+
     <main>
       <x-browser
         class="main"
@@ -98,6 +107,10 @@
         attendance: {
           type: Object,
           value: null
+        },
+        _storageDirty: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -175,6 +188,10 @@
 
       _isEmpty: function (object) {
         return !object;
+      },
+
+      _computeSaveState: function (dirty) {
+        return dirty ? "Wird gespeichert..." : "Änderungen gespeichert"
       }
     });
   </script>

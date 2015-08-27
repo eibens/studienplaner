@@ -1,61 +1,89 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 
 <dom-module id="data-storage">
+  <template>
+    <iron-localstorage
+      name="lychee-profile"
+      value="{{_storedData}}"
+      error-message="_error"
+      on-iron-localstorage-load="_handleStorageLoad"
+      on-iron-localstorage-load-empty="_handleStorageLoadEmpty"
+      on-property-error-message-changed="_handleStorageError">
+    </iron-localstorage>
+
+  </template>
   <script>
     Polymer({
       is: "data-storage",
 
       properties: {
+
         profile: {
           type: Object,
-          value: null,
           notify: true
         },
+
         interval: {
           type: Number,
           value: 5000
         },
-        _dirty: {
+
+        dirty: {
           type: Boolean,
-          value: false
+          notify: true,
+          value: false,
+          readOnly: true
+        },
+
+        _storedData: {
+          type: String
         }
       },
 
       observers: [
-        "_handleChange(profile.*)"
+        "_handleProfileChanged(profile.*)"
       ],
 
-      created: function () {
-        this._STORAGE_KEY = "lychee-profile";
+      /**
+       * Replaces the stored profile with an empty profile.
+       *
+       * **WARNING:** The current data is lost.
+       */
+      wipe: function () {
+        this._storedData = null;
       },
 
-      ready: function () {
-        // Load profile on start-up.
-        this.load();
-      },
-
+      /**
+       * Manually save the current state.
+       *
+       * Has no effect if no changes occurred since the last save.
+       */
       save: function () {
-        if (!this._dirty) return;
+        if (!this.dirty) return;
         // Unset dirty flag before saving, to prevent losing changes while saving.
-        this._dirty = false;
-        console.log("saving profile");
-        console.log(this.profile);
-        var data = this._serialize(this.profile);
-        window.localStorage.setItem(this._STORAGE_KEY, data);
+        this._setDirty(false);
+        this._storedData = this._serialize(this.profile);
       },
 
-      load: function () {
-        console.log("loading profile");
-        var data = window.localStorage.getItem(this._STORAGE_KEY);
-        this.profile = this._deserialize(data);
-        console.log("loaded profile");
-        console.log(this.profile);
+      _handleStorageLoad: function (event) {
+        this.profile = this._deserialize(this._storedData);
       },
 
-      _handleChange: function (event) {
-        if (this._dirty) return;
-        console.log("profile is dirty");
-        this._dirty = true;
+      _handleStorageLoadEmpty: function (event) {
+        this.wipe();
+      },
+
+      _handleStorageError: function (message) {
+        console.log("<data-storage> ERROR: " + message);
+      },
+
+      _handleProfileChanged: function () {
+        // Don't set timeout for another save operation, since the last one
+        // as not completed yet.
+        if (this.dirty) return;
+        this._setDirty(true);
+
         var self = this;
         //noinspection JSCheckFunctionSignatures
         setTimeout(function () {
@@ -65,16 +93,24 @@
 
       _serialize: function (profile) {
         // TODO: serialize all data
-        return profile.name;
+        if (!profile) return null;
+        return {
+          name: profile.name,
+          courses: [],
+          attendances: []
+        };
       },
 
       _deserialize: function (data) {
         // TODO: deserialize all data
-        return {
-          name: data,
+        var profile = {
+          name: null,
           courses: [],
           attendances: []
-        }
+        };
+        if (data == null) return profile;
+        profile.name = data.name;
+        return profile;
       }
     });
   </script>
