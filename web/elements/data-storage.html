@@ -51,8 +51,8 @@
        *
        * **WARNING:** The current data is lost.
        */
-      wipe: function () {
-        this._storedData = null;
+      clear: function () {
+        this.profile = new Profile();
       },
 
       /**
@@ -72,7 +72,7 @@
       },
 
       _handleStorageLoadEmpty: function (event) {
-        this.wipe();
+        this.clear();
       },
 
       _handleStorageError: function (message) {
