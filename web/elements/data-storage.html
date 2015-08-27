@@ -47,15 +47,6 @@
       ],
 
       /**
-       * Replaces the stored profile with an empty profile.
-       *
-       * **WARNING:** The current data is lost.
-       */
-      clear: function () {
-        this.profile = new Profile();
-      },
-
-      /**
        * Manually save the current state.
        *
        * Has no effect if no changes occurred since the last save.
@@ -72,7 +63,7 @@
       },
 
       _handleStorageLoadEmpty: function (event) {
-        this.clear();
+        this.profile = new Profile();
       },
 
       _handleStorageError: function (message) {
