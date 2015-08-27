@@ -46,12 +46,7 @@
         "_handleProfileChanged(profile.*)"
       ],
 
-      /**
-       * Manually save the current state.
-       *
-       * Has no effect if no changes occurred since the last save.
-       */
-      save: function () {
+      _save: function () {
         if (!this.dirty) return;
         // Unset dirty flag before saving, to prevent losing changes while saving.
         this._setDirty(false);
@@ -79,7 +74,7 @@
         var self = this;
         //noinspection JSCheckFunctionSignatures
         setTimeout(function () {
-          self.save();
+          self._save();
         }, this.interval);
       },
 
