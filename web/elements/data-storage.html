@@ -53,7 +53,9 @@
         this._storedData = this._serialize(this.profile);
       },
 
-      _handleStorageLoad: function (event) {
+      _handleStorageLoad: function () {
+        // Do not save this change, since we already took the data from storage.
+        this._skipSave = true;
         this.profile = this._deserialize(this._storedData);
       },
 
@@ -65,9 +67,24 @@
         console.log("<data-storage> ERROR: " + message);
       },
 
-      _handleProfileChanged: function () {
+      _handleProfileChanged: function (event) {
+        // Do not save the current change.
+        if (this._skipSave) {
+          this._skipSave = false;
+          return;
+        }
+
+        // The saving delay is only necessary for changes where we expect that
+        // there will be another change very soon (for example typing a value).
+        // Replacing the whole profile is an operation that is not performed
+        // frequently and where an instant response is more intuitive.
+        if (event.path == "profile") {
+          this._save();
+          return;
+        }
+
         // Don't set timeout for another save operation, since the last one
-        // as not completed yet.
+        // has not completed yet.
         if (this.dirty) return;
         this._setDirty(true);
 
