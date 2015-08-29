@@ -6,7 +6,8 @@
   <template>
     <iron-localstorage
       name="lychee-profile"
-      value="{{_storedData}}"
+      value="{{rawData}}"
+      use-raw="true"
       error-message="_error"
       on-iron-localstorage-load="_handleStorageLoad"
       on-iron-localstorage-load-empty="_handleStorageLoadEmpty"
@@ -39,12 +40,7 @@
 
         rawData: {
           type: String,
-          computed: "_computeRawData(_storedData)",
           notify: true
-        },
-
-        _storedData: {
-          type: String
         }
       },
 
@@ -56,13 +52,13 @@
         if (!this.dirty) return;
         // Unset dirty flag before saving, to prevent losing changes while saving.
         this._setDirty(false);
-        this._storedData = this._serialize(this.profile);
+        this.rawData = this._serialize(this.profile);
       },
 
       _handleStorageLoad: function () {
         // Do not save this change, since we already took the data from storage.
         this._skipSave = true;
-        this.profile = this._deserialize(this._storedData);
+        this.profile = this._deserialize(this.rawData);
       },
 
       _handleStorageLoadEmpty: function (event) {
@@ -101,22 +97,19 @@
         }, this.interval);
       },
 
-      _computeRawData: function (storedData) {
-        return JSON.stringify(storedData);
-      },
-
       _serialize: function (profile) {
         // TODO: serialize all data
         if (!profile) return null;
-        return {
+        return JSON.stringify({
           name: profile.name,
           courses: [],
           attendances: []
-        };
+        });
       },
 
-      _deserialize: function (data) {
+      _deserialize: function (json) {
         // TODO: deserialize all data
+        var data = JSON.parse(json);
         var profile = new Profile();
         if (data == null) return profile;
         profile.name = data.name;
