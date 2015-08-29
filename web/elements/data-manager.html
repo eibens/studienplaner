@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="data-downloader.html">
+<link rel="import" href="data-model/data-model.html">
+<link rel="import" href="data-storage.html">
+
+<dom-module id="data-manager">
+  <style>
+
+  </style>
+
+  <template>
+    <data-storage
+      profile="{{profile}}"
+      dirty="{{dirty}}"
+      raw-data="{{_rawData}}">
+    </data-storage>
+    <data-downloader
+      id="downloader"
+      file="{{_computeFile}}"
+      data="{{_rawData}}">
+    </data-downloader>
+  </template>
+
+  <script>
+    Polymer({
+      is: "data-manager",
+
+      properties: {
+        profile: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+        dirty: {
+          type: Boolean
+        },
+        _rawData: {
+          type: String
+        }
+      },
+
+      clear: function () {
+        this.profile = new Profile();
+      },
+
+      export: function () {
+        this.$.downloader.download();
+      }
+    });
+  </script>
+</dom-module>

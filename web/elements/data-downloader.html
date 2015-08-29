@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="data-downloader">
+  <template>
+    <a
+      id="link"
+      href$="[[_uri]]"
+      download$="[[file]]"
+      hidden>
+    </a>
+  </template>
+
+  <script>
+    Polymer({
+      is: "data-downloader",
+
+      properties: {
+        file: {
+          type: String,
+          value: "download.txt"
+        },
+        data: {
+          type: String,
+          value: null
+        },
+        contentType: {
+          type: String,
+          value: "text/plain"
+        },
+        _uri: {
+          type: String,
+          computed: "_computeUri(contentType, data)"
+        }
+      },
+
+      download: function () {
+        this.$.link.click();
+      },
+
+      _computeUri: function (contentType, data) {
+        return "data:" + contentType + "," + encodeURIComponent(data);
+      }
+    });
+  </script>
+</dom-module>

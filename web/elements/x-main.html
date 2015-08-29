@@ -5,7 +5,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">v
 <link rel="import" href="data-model/data-model.html">
-<link rel="import" href="data-storage.html">
+<link rel="import" href="data-manager.html">
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
@@ -46,10 +46,11 @@
   </style>
 
   <template>
-    <data-storage
+    <data-manager
+      id="data"
       profile="{{profile}}"
       dirty="{{_storageDirty}}">
-    </data-storage>
+    </data-manager>
 
     <array-selector
       id="course"
@@ -66,6 +67,10 @@
       <paper-icon-button
         icon="delete"
         on-tap="_clearProfile">
+      </paper-icon-button>
+      <paper-icon-button
+        icon="file-download"
+        on-tap="_exportProfile">
       </paper-icon-button>
       <paper-input
         label="Name"
@@ -131,7 +136,11 @@
       _clearProfile: function () {
         var result = window.confirm("Willst du deine Daten wirklich löschen?");
         if (!result) return;
-        this.profile = new Profile();
+        this.$.data.clear();
+      },
+
+      _exportProfile: function () {
+        this.$.data.export();
       },
 
       _handleAddButtonTap: function (event) {

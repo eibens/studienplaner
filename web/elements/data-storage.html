@@ -37,6 +37,12 @@
           readOnly: true
         },
 
+        rawData: {
+          type: String,
+          computed: "_computeRawData(_storedData)",
+          notify: true
+        },
+
         _storedData: {
           type: String
         }
@@ -93,6 +99,10 @@
         setTimeout(function () {
           self._save();
         }, this.interval);
+      },
+
+      _computeRawData: function (storedData) {
+        return JSON.stringify(storedData);
       },
 
       _serialize: function (profile) {
