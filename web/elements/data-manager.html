@@ -17,7 +17,6 @@
     </data-storage>
     <data-downloader
       id="downloader"
-      file="{{_computeFile}}"
       data="[[_rawData]]">
     </data-downloader>
     <data-uploader
@@ -50,11 +49,38 @@
       },
 
       export: function () {
+        this.$.downloader.file = this._buildFile();
         this.$.downloader.download();
       },
 
       import: function () {
         this.$.uploader.upload();
+      },
+
+      _buildFile: function () {
+        var now = new Date();
+        return this._normalize(this._getName()) + "-" +
+          now.getFullYear() +
+          this._leadZero(now.getMonth()) +
+          this._leadZero(now.getDate()) + "-" +
+          this._leadZero(now.getHours()) +
+          this._leadZero(now.getMinutes()) +
+          this._leadZero(now.getSeconds()) +
+          ".lychee.json";
+      },
+
+      _getName: function () {
+        return !this.profile.name ? "Unbenannt" : this.profile.name;
+      },
+
+      _normalize: function (value) {
+        return value
+          .toLowerCase()
+          .replace(new RegExp("[^a-z0-9]+"), "-");
+      },
+
+      _leadZero: function (number) {
+        return ("0" + number).slice(-2);
       }
     });
   </script>
