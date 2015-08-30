@@ -49,7 +49,7 @@
         "_load(rawData)"
       ],
 
-      _save: function () {
+      save: function () {
         if (!this.dirty) return;
         // Unset dirty flag before saving, to prevent losing changes while saving.
         this._setDirty(false);
@@ -82,7 +82,7 @@
         // Replacing the whole profile is an operation that is not performed
         // frequently and where an instant response is more intuitive.
         if (event.path == "profile") {
-          this._save();
+          this.save();
           return;
         }
 
@@ -94,7 +94,7 @@
         var self = this;
         //noinspection JSCheckFunctionSignatures
         setTimeout(function () {
-          self._save();
+          self.save();
         }, this.interval);
       },
 

@@ -11,6 +11,7 @@
 
   <template>
     <data-storage
+      id="storage"
       profile="{{profile}}"
       dirty="{{dirty}}"
       raw-data="{{_rawData}}">
@@ -54,6 +55,7 @@
       },
 
       export: function () {
+        this.$.storage.save();
         this.$.downloader.file = this._buildFile();
         this.$.downloader.download();
       },
