@@ -72,6 +72,10 @@
         icon="file-download"
         on-tap="_exportProfile">
       </paper-icon-button>
+      <paper-icon-button
+        icon="file-upload"
+        on-tap="_importProfile">
+      </paper-icon-button>
       <paper-input
         label="Name"
         value="{{profile.name}}">
@@ -141,6 +145,9 @@
 
       _exportProfile: function () {
         this.$.data.export();
+      },
+      _importProfile: function () {
+        this.$.data.import();
       },
 
       _handleAddButtonTap: function (event) {

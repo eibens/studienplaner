@@ -9,7 +9,7 @@
       value="{{rawData}}"
       use-raw="true"
       error-message="_error"
-      on-iron-localstorage-load="_handleStorageLoad"
+      on-iron-localstorage-load="_load"
       on-iron-localstorage-load-empty="_handleStorageLoadEmpty"
       on-property-error-message-changed="_handleStorageError">
     </iron-localstorage>
@@ -45,7 +45,8 @@
       },
 
       observers: [
-        "_handleProfileChanged(profile.*)"
+        "_handleProfileChanged(profile.*)",
+        "_load(rawData)"
       ],
 
       _save: function () {
@@ -55,7 +56,7 @@
         this.rawData = this._serialize(this.profile);
       },
 
-      _handleStorageLoad: function () {
+      _load: function () {
         // Do not save this change, since we already took the data from storage.
         this._skipSave = true;
         this.profile = this._deserialize(this.rawData);

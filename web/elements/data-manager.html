@@ -2,6 +2,7 @@
 <link rel="import" href="data-downloader.html">
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="data-storage.html">
+<link rel="import" href="data-uploader.html">
 
 <dom-module id="data-manager">
   <style>
@@ -17,8 +18,12 @@
     <data-downloader
       id="downloader"
       file="{{_computeFile}}"
-      data="{{_rawData}}">
+      data="[[_rawData]]">
     </data-downloader>
+    <data-uploader
+      id="uploader"
+      data="{{_rawData}}">
+    </data-uploader>
   </template>
 
   <script>
@@ -46,6 +51,10 @@
 
       export: function () {
         this.$.downloader.download();
+      },
+
+      import: function () {
+        this.$.uploader.upload();
       }
     });
   </script>
