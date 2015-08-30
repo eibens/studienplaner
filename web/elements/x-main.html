@@ -9,6 +9,7 @@
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
+<link rel="import" href="x-save-indicator.html">
 
 <dom-module id="x-main">
   <style>
@@ -83,8 +84,9 @@
         label="Name"
         value="{{profile.name}}">
       </paper-input>
-      <p hidden$="{{_storageDirty}}">Änderungen gespeichert</p>
-      <p hidden$="{{!_storageDirty}}">Wird gespeichert...</p>
+      <x-save-indicator
+        dirty="{{_storageDirty}}">
+      </x-save-indicator>
     </header>
 
     <main>

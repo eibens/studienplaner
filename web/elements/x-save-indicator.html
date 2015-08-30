@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+
+<dom-module id="x-save-indicator">
+  <style>
+    :host {
+      position: relative;
+    }
+    .layer {
+      @apply(--layout-fit);
+      opacity: 0;
+      transition: opacity 0.5s 0s;
+    }
+    .layer[active] {
+      opacity: 0.5;
+      transition: opacity 0.5s 0.5s;
+    }
+    @keyframes progress {
+      0% {
+        opacity: 1.0;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 1.0;
+      }
+    }
+    .spinner iron-icon {
+      transform-origin: 50% 50%;
+      animation: progress 1s;
+      animation-iteration-count: infinite;
+    }
+  </style>
+
+  <template>
+    <div
+      title$="[[_computeTitle(dirty)]]">
+      <div
+        class="layer"
+        active$="[[!dirty]]">
+        <iron-icon
+          icon="check">
+        </iron-icon>
+      </div>
+      <div
+        class="layer spinner"
+        active$="[[dirty]]">
+        <iron-icon
+          icon="save">
+        </iron-icon>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-save-indicator",
+
+      properties: {
+        dirty: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      _computeTitle: function (dirty) {
+        return !dirty
+          ? "Daten gespeichert"
+          : "Daten werden gespeichert...";
+      }
+    });
+  </script>
+</dom-module>
