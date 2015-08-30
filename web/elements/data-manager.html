@@ -39,6 +39,11 @@
           type: Boolean,
           notify: true
         },
+        empty: {
+          type: Boolean,
+          notify: true,
+          computed: "_computeEmpty(profile.*)"
+        },
         _rawData: {
           type: String
         }
@@ -55,6 +60,10 @@
 
       import: function () {
         this.$.uploader.upload();
+      },
+
+      _computeEmpty: function () {
+        return !this.profile || this.profile.isEmpty;
       },
 
       _buildFile: function () {

@@ -32,5 +32,14 @@ Profile.prototype = {
    */
   get attendances() {
     return this._attendances
+  },
+
+  /**
+   * @returns {Boolean}
+   */
+  get isEmpty() {
+    return !(this.name ||
+        this.courses.length > 0 ||
+        this.attendances.length > 0);
   }
 };
