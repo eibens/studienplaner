@@ -83,7 +83,8 @@
         label="Name"
         value="{{profile.name}}">
       </paper-input>
-      <p>{{_computeSaveState(_storageDirty)}}</p>
+      <p hidden$="{{_storageDirty}}">Änderungen gespeichert</p>
+      <p hidden$="{{!_storageDirty}}">Wird gespeichert...</p>
     </header>
 
     <main>
@@ -221,10 +222,6 @@
 
       _isEmpty: function (object) {
         return !object;
-      },
-
-      _computeSaveState: function (dirty) {
-        return dirty ? "Wird gespeichert..." : "Änderungen gespeichert"
       }
     });
   </script>
