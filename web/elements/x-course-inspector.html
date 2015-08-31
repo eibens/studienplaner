@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="x-course-attendances.html">
+<link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-placeholder.html">
 
 <dom-module id="x-course-inspector">
@@ -35,21 +36,9 @@
     header .delete {
       right: 8px;
     }
-    header .avatar * {
-      @apply(--layout);
-      @apply(--layout-center-center);
+    header x-course-avatar {
       width: 80px;
       height: 80px;
-      border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.1);
-      font-size: 32px;
-      font-weight: 100;
-      box-sizing: border-box;
-      border: 3px solid transparent;
-    }
-    header .avatar [placeholder] {
-      border-color: rgba(255, 255, 255, 0.1);
-      background: none;
     }
     header .title {
       font-size: 16px;
@@ -80,12 +69,9 @@
         icon="delete"
         on-tap="_handleDelete">
       </paper-icon-button>
-      <x-placeholder
-        class="avatar"
-        value="[[course.type]]">
-        <div placeholder></div>
-        <div>[[course.type]]</div>
-      </x-placeholder>
+      <x-course-avatar
+        label="[[course.type]]">
+      </x-course-avatar>
       <x-placeholder
         class="title"
         value="[[course.title]]">
