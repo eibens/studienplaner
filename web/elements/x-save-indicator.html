@@ -3,20 +3,28 @@
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 
 <dom-module id="x-save-indicator">
   <style>
     :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
       position: relative;
     }
+    :host > * {
+      @apply(--layout-fit);
+    }
     .layer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
       @apply(--layout-fit);
       opacity: 0;
       transition: opacity 0.5s 0s;
     }
     .layer[active] {
-      opacity: 0.5;
-      transition: opacity 0.5s 0.5s;
+      opacity: 1;
+      transition: opacity 0.5s;
     }
     @keyframes progress {
       0% {
@@ -38,17 +46,17 @@
 
   <template>
     <div
-      title$="[[_computeTitle(dirty)]]">
+      title$="[[_computeTitle(active)]]">
       <div
         class="layer"
-        active$="[[!dirty]]">
+        active$="[[!active]]">
         <iron-icon
           icon="check">
         </iron-icon>
       </div>
       <div
         class="layer spinner"
-        active$="[[dirty]]">
+        active$="[[active]]">
         <iron-icon
           icon="save">
         </iron-icon>
@@ -61,15 +69,15 @@
       is: "x-save-indicator",
 
       properties: {
-        dirty: {
+        active: {
           type: Boolean,
           value: false,
           reflectToAttribute: true
         }
       },
 
-      _computeTitle: function (dirty) {
-        return !dirty
+      _computeTitle: function (active) {
+        return !active
           ? "Daten gespeichert"
           : "Daten werden gespeichert...";
       }

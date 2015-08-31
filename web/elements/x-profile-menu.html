@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+
+<dom-module id="x-profile-menu">
+  <style>
+    paper-menu {
+      --paper-menu-focused-item-after: {
+        background: transparent;
+      };
+      --paper-menu-selected-item: {
+        font-weight: normal;
+      };
+    }
+    paper-icon-item {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+    paper-menu [disabled] {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+
+  <template>
+    <paper-menu>
+      <paper-icon-item
+        on-tap="_handleImport">
+        <paper-ripple></paper-ripple>
+        <iron-icon icon="folder" item-icon></iron-icon>
+        Datei öffnen
+      </paper-icon-item>
+
+      <paper-icon-item
+        on-tap="_handleExport"
+        disabled$="[[cleared]]">
+        <paper-ripple></paper-ripple>
+        <iron-icon icon="file-download" item-icon></iron-icon>
+        Daten herunterladen
+      </paper-icon-item>
+
+      <paper-icon-item
+        on-tap="_handleClear"
+        disabled$="[[cleared]]">
+        <paper-ripple></paper-ripple>
+        <iron-icon icon="clear" item-icon></iron-icon>
+        Profil löschen
+      </paper-icon-item>
+    </paper-menu>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-profile-menu",
+
+      _handleImport: function () {
+        this.fire("import-profile");
+      },
+      _handleExport: function () {
+        this.fire("export-profile");
+      },
+      _handleClear: function () {
+        this.fire("delete-profile");
+      }
+    });
+  </script>
+</dom-module>

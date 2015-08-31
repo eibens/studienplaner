@@ -9,16 +9,12 @@
 <link rel="import" href="x-browser.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
-<link rel="import" href="x-save-indicator.html">
+<link rel="import" href="x-toolbar.html">
 
 <dom-module id="x-main">
   <style>
     :host {
       @apply(--layout-fit);
-    }
-    header {
-      @apply(--layout-horizontal);
-      background: white;
     }
     main {
       @apply(--layout-horizontal);
@@ -65,29 +61,11 @@
       selected="{{attendance}}">
     </array-selector>
 
-    <header>
-      <paper-icon-button
-        icon="delete"
-        on-tap="_clearProfile"
-        disabled="{{_profileEmpty}}">
-      </paper-icon-button>
-      <paper-icon-button
-        icon="file-download"
-        on-tap="_exportProfile"
-        disabled="{{_profileEmpty}}">
-      </paper-icon-button>
-      <paper-icon-button
-        icon="file-upload"
-        on-tap="_importProfile">
-      </paper-icon-button>
-      <paper-input
-        label="Name"
-        value="{{profile.name}}">
-      </paper-input>
-      <x-save-indicator
-        dirty="{{_storageDirty}}">
-      </x-save-indicator>
-    </header>
+    <x-toolbar
+      name="{{profile.name}}"
+      saving="[[_storageDirty]]"
+      cleared="[[_profileEmpty]]">
+    </x-toolbar>
 
     <main>
       <x-browser
@@ -138,25 +116,15 @@
       },
 
       listeners: {
+        "import-profile": "_handleImportProfile",
+        "export-profile": "_handleExportProfile",
+        "delete-profile": "_handleDeleteProfile",
         "add-course": "_handleAddCourse",
         "select-course": "_handleSelectCourse",
         "delete-course": "_handleDeleteCourse",
         "add-attendance": "_handleAddAttendance",
         "select-attendance": "_handleSelectAttendance",
         "delete-attendance": "_handleDeleteAttendance"
-      },
-
-      _clearProfile: function () {
-        var result = window.confirm("Willst du deine Daten wirklich löschen?");
-        if (!result) return;
-        this.$.data.clear();
-      },
-
-      _exportProfile: function () {
-        this.$.data.export();
-      },
-      _importProfile: function () {
-        this.$.data.import();
       },
 
       _handleAddButtonTap: function (event) {
@@ -167,6 +135,18 @@
         };
         this.fire("add-course", { data: course });
         this.fire("select-course", { data: course});
+      },
+
+      _handleExportProfile: function () {
+        this.$.data.export();
+      },
+      _handleImportProfile: function () {
+        this.$.data.import();
+      },
+      _handleDeleteProfile: function () {
+        var result = window.confirm("Willst du deine Daten wirklich löschen?");
+        if (!result) return;
+        this.$.data.clear();
       },
 
       _handleAddCourse: function (event) {
