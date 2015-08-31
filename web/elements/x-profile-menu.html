@@ -29,7 +29,8 @@
   <template>
     <paper-menu>
       <paper-icon-item
-        on-tap="_handleImport">
+        on-tap="_handleImport"
+        disabled$="[[importDisabled]]">
         <paper-ripple></paper-ripple>
         <iron-icon icon="folder" item-icon></iron-icon>
         Datei öffnen
@@ -37,7 +38,7 @@
 
       <paper-icon-item
         on-tap="_handleExport"
-        disabled$="[[cleared]]">
+        disabled$="[[exportDisabled]]">
         <paper-ripple></paper-ripple>
         <iron-icon icon="file-download" item-icon></iron-icon>
         Daten herunterladen
@@ -45,7 +46,7 @@
 
       <paper-icon-item
         on-tap="_handleClear"
-        disabled$="[[cleared]]">
+        disabled$="[[clearDisabled]]">
         <paper-ripple></paper-ripple>
         <iron-icon icon="clear" item-icon></iron-icon>
         Profil löschen
@@ -57,13 +58,31 @@
     Polymer({
       is: "x-profile-menu",
 
+      properties: {
+        importDisabled: {
+          type: Boolean,
+          value: false
+        },
+        exportDisabled: {
+          type: Boolean,
+          value: false
+        },
+        clearDisabled: {
+          type: Boolean,
+          value: false
+        }
+      },
+
       _handleImport: function () {
+        if (this.importDisabled) return;
         this.fire("import-profile");
       },
       _handleExport: function () {
+        if (this.exportDisabled) return;
         this.fire("export-profile");
       },
       _handleClear: function () {
+        if (this.clearDisabled) return;
         this.fire("delete-profile");
       }
     });
