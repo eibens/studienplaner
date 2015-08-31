@@ -1,0 +1,74 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="x-placeholder.html">
+
+<dom-module id="x-grade-icon">
+  <style>
+    :host {
+      position: relative;
+      color: white;
+      font-weight: 100;
+      font-size: 12px;
+      width: 24px;
+      height: 24px;
+    }
+    .bg {
+      border-radius: 3px;
+      box-sizing: border-box;
+      @apply(--layout-fit);
+      @apply(--layout);
+      @apply(--layout-center-center);
+    }
+    .bg[placeholder] {
+      border: 3px solid rgba(0, 0, 0, 0.15);
+    }
+  </style>
+
+  <template>
+    <x-placeholder value="[[grade]]">
+      <div
+        class="bg"
+        style$="{{_computeBackgroundStyle(grade)}}">
+        <span>{{grade.value}}</span>
+      </div>
+      <div
+        class="bg"
+        placeholder>
+      </div>
+    </x-placeholder>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-grade-icon",
+
+      properties: {
+        grade: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _computeBackgroundStyle: function (grade) {
+        return "background-color: " + this._getColor(grade);
+      },
+
+      _getColor: function (grade) {
+        var colors = this._getColors();
+        if (!grade) return colors[0];
+        return colors[grade.value];
+      },
+
+      _getColors: function () {
+        return [
+          'rgba(0, 0, 0, 0.15)', // null
+          'rgb(118, 168, 63)', // 1
+          'rgb(169, 197, 58)', // 2
+          'rgb(213, 208, 43)', // 3
+          'rgb(225, 186, 30)', // 4
+          'rgb(242, 150, 75)'  // 5
+        ];
+      }
+    });
+  </script>
+</dom-module>
