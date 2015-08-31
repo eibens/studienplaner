@@ -19,6 +19,17 @@ Semester.current = function () {
   return new Semester(year, isWinter);
 };
 
+/**
+ * @param {Semester} a
+ * @param {Semester} b
+ * @returns {number}
+ */
+Semester.compare = function (a, b) {
+  var indexA = a.year + (a.isWinter ? 0.5 : 0.0);
+  var indexB = b.year + (b.isWinter ? 0.5 : 0.0);
+  return indexA - indexB;
+};
+
 Semester.prototype = {
 
   /**

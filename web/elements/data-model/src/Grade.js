@@ -8,6 +8,18 @@ function Grade(value) {
   this._value = value;
 }
 
+/**
+ *
+ * @param {Grade} a
+ * @param {Grade} b
+ * @returns {number}
+ */
+Grade.compare = function (a, b) {
+  if (a == null) return Number.MIN_VALUE;
+  if (b == null) return Number.MAX_VALUE;
+  return a.value - b.value;
+};
+
 Grade.prototype = {
 
   /**

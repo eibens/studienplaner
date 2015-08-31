@@ -45,7 +45,8 @@
       is="dom-repeat"
       items="{{attendances}}"
       filter="_filter"
-      observe="date">
+      sort="_sort"
+      observe="time grade">
       <div
         class="row"
         on-tap="_handleSelect">
@@ -82,6 +83,14 @@
       },
       _filter: function (item) {
         return item.course === this.course;
+      },
+      _sort: function (a, b) {
+        var timeDiff = -Semester.compare(a.time, b.time);
+        if (timeDiff != 0) {
+          console.log(timeDiff);
+          return timeDiff;
+        }
+        return Grade.compare(a.grade, b.grade);
       },
 
       _formatTime: function (time) {
