@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="x-placeholder">
+  <template>
+    <div
+      class="placeholder"
+      hidden$="[[!_empty]]">
+      <content
+        select="[placeholder]">
+      </content>
+    </div>
+    <div
+      class="content"
+      hidden$="[[_empty]]">
+      <content
+        select=":not([placeholder])">
+      </content>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-placeholder",
+
+      properties: {
+        value: {
+          type: Object,
+          value: null
+        },
+
+        _empty: {
+          type: Boolean,
+          computed: "_computeEmpty(value)"
+        }
+      },
+
+      _computeEmpty: function (value) {
+        return !value;
+      }
+    });
+  </script>
+</dom-module>

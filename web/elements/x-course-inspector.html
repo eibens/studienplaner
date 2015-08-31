@@ -1,42 +1,125 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="x-course-attendances.html">
+<link rel="import" href="x-placeholder.html">
 
 <dom-module id="x-course-inspector">
   <style>
     :host {
       @apply(--layout-vertical);
+      background: white;
+    }
+    header {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      position: relative;
+      float: left;
+      width: 100%;
+      height: 224px;
+      background: #272822;
+      color: white;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    header paper-icon-button {
+      --paper-icon-button-ink-color: white;
+      top: 8px;
+      position: absolute;
+    }
+    header .close {
+      left: 8px;
+    }
+    header .delete {
+      right: 8px;
+    }
+    header .avatar * {
+      @apply(--layout);
+      @apply(--layout-center-center);
+      width: 80px;
+      height: 80px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 32px;
+      font-weight: 100;
+      box-sizing: border-box;
+      border: 3px solid transparent;
+    }
+    header .avatar [placeholder] {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: none;
+    }
+    header .title {
+      font-size: 16px;
+      font-weight: 100;
+      text-align: center;
+      margin-top: 16px;
+    }
+    header .title [placeholder] {
+      opacity: 0.5;
+      font-style: italic;
+    }
+    main {
+      @apply(--layout-flex);
+      box-sizing: border-box;
+      padding: 8px 16px;
     }
   </style>
 
   <template>
-    <button
-      on-tap="_handleClose">
-      X
-    </button>
-    <h1>Kurs bearbeiten</h1>
-    <paper-button
-      on-tap="_handleDelete">
-      Löschen
-    </paper-button>
-    <paper-input
-      label="Kurstyp"
-      value="{{course.type}}">
-    </paper-input>
-    <paper-input
-      label="Kurstitel"
-      value="{{course.title}}">
-    </paper-input>
-    <paper-input
-      label="ECTS"
-      value="{{course.credits}}">
-    </paper-input>
-    <x-course-attendances
-      attendances="{{attendances}}"
-      course="{{course}}">
-    </x-course-attendances>
+    <header>
+      <paper-icon-button
+        class="close"
+        icon="close"
+        on-tap="_handleClose">
+      </paper-icon-button>
+      <paper-icon-button
+        class="delete"
+        icon="delete"
+        on-tap="_handleDelete">
+      </paper-icon-button>
+      <x-placeholder
+        class="avatar"
+        value="[[course.type]]">
+        <div placeholder></div>
+        <div>[[course.type]]</div>
+      </x-placeholder>
+      <x-placeholder
+        class="title"
+        value="[[course.title]]">
+        <div placeholder>Unbenannt</div>
+        <div>[[course.title]]</div>
+      </x-placeholder>
+    </header>
+
+    <main>
+      <paper-input
+        label="Kurstyp"
+        value="{{course.type}}"
+        maxlength="2"
+        char-counter>
+      </paper-input>
+      <paper-textarea
+        label="Kurstitel"
+        value="{{course.title}}"
+        maxlength="80"
+        char-counter>
+      </paper-textarea>
+      <paper-input
+        label="ECTS"
+        value="{{course.credits}}"
+        type="number"
+        min="0.0"
+        max="30.0"
+        step="0.1">
+      </paper-input>
+      <x-course-attendances
+        attendances="{{attendances}}"
+        course="{{course}}">
+      </x-course-attendances>
+    </main>
   </template>
 
   <script>

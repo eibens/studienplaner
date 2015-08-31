@@ -3,7 +3,8 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">v
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="data-manager.html">
 <link rel="import" href="x-browser.html">
@@ -18,25 +19,24 @@
     }
     :host {
       @apply(--layout-fit);
+      @apply(--layout-vertical);
     }
     main {
       @apply(--layout-horizontal);
-      @apply(--layout-justified);
+      height: 100%;
     }
-    x-browser {
+    main > x-browser {
       @apply(--layout-flex);
     }
-    .drawer {
+    main > aside {
       position: relative;
       width: 300px;
     }
     x-course-inspector {
       @apply(--layout-fit);
-      background: white;
     }
     x-attendance-inspector {
       @apply(--layout-fit);
-      background: white;
     }
     paper-fab {
       position: absolute;
@@ -52,7 +52,6 @@
       dirty="{{_storageDirty}}"
       empty="{{_profileEmpty}}">
     </data-manager>
-
     <array-selector
       id="course"
       items="{{profile.courses}}"
@@ -75,8 +74,7 @@
         class="main"
         courses="{{profile.courses}}">
       </x-browser>
-      <div
-        class="drawer"
+      <aside
         hidden$="{{_isEmpty(course)}}">
         <x-course-inspector
           course="{{course}}"
@@ -86,8 +84,9 @@
           hidden$="{{_isEmpty(attendance)}}"
           attendance="{{attendance}}">
         </x-attendance-inspector>
-      </div>
+      </aside>
     </main>
+
     <paper-fab
       icon="add"
       on-tap="_handleAddButtonTap">
@@ -132,9 +131,9 @@
 
       _handleAddButtonTap: function (event) {
         var course = {
-          type: "TEST",
-          title: "TEST",
-          credits: "0.0"
+          type: null,
+          title: null,
+          credits: null
         };
         this.fire("add-course", { data: course });
         this.fire("select-course", { data: course});
