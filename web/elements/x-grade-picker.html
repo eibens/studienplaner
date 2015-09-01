@@ -8,6 +8,10 @@
 
 <dom-module id="x-grade-picker">
   <style>
+    :host {
+      @apply(--layout);
+      @apply(--layout-center-center);
+    }
     iron-selector {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
@@ -34,7 +38,7 @@
         items="[[_grades]]">
         <x-grade-icon
           grade="[[item]]"
-          size="4"
+          size="5"
           interactive="true">
         </x-grade-icon>
       </template>
