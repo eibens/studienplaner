@@ -41,5 +41,32 @@ Profile.prototype = {
     return !(this.name ||
         this.courses.length > 0 ||
         this.attendances.length > 0);
+  },
+
+  /**
+   * Generates a unique ID for a course.
+   *
+   * @returns {number}
+   */
+  generateCourseId: function () {
+    return this._getLastId(this.courses) + 1;
+  },
+
+  /**
+   * Generates a unique ID for an attendance.
+   *
+   * @returns {number}
+   */
+  generateAttendanceId: function () {
+    return this._getLastId(this.attendances) + 1;
+  },
+
+  _getLastId: function (array) {
+    var max = 0;
+    array.forEach(function (item) {
+      if (!item.id) return;
+      max = Math.max(max, item.id);
+    });
+    return max;
   }
 };

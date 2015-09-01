@@ -152,7 +152,10 @@
       },
 
       _handleAddCourse: function (event) {
-        this._add("profile.courses", event.detail.data);
+        var item = event.detail.data;
+        item.id = this.profile.generateCourseId();
+        console.log("course id: " + item.id);
+        this._add("profile.courses", item);
       },
       _handleSelectCourse: function (event) {
         this._select("profile.courses", event.detail.data, this.$.course);
@@ -173,7 +176,10 @@
       },
 
       _handleAddAttendance: function (event) {
-        this._add("profile.attendances", event.detail.data);
+        var item = event.detail.data;
+        item.id = this.profile.generateAttendanceId();
+        console.log("attendance id: " + item.id);
+        this._add("profile.attendances", item);
       },
       _handleSelectAttendance: function (event) {
         this._select("profile.attendances", event.detail.data, this.$.attendance);
