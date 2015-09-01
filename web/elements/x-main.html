@@ -154,7 +154,6 @@
       _handleAddCourse: function (event) {
         var item = event.detail.data;
         item.id = this.profile.generateCourseId();
-        console.log("course id: " + item.id);
         this._add("profile.courses", item);
       },
       _handleSelectCourse: function (event) {
@@ -178,7 +177,6 @@
       _handleAddAttendance: function (event) {
         var item = event.detail.data;
         item.id = this.profile.generateAttendanceId();
-        console.log("attendance id: " + item.id);
         this._add("profile.attendances", item);
       },
       _handleSelectAttendance: function (event) {
