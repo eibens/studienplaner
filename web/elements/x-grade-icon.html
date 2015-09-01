@@ -13,18 +13,6 @@
     :host([empty]) {
       border: 3px solid rgba(0, 0, 0, 0.15);
     }
-    :host([size="3"]), :host {
-      width: 24px;
-      height: 24px;
-      font-size: 12px;
-      border-radius: 3px;
-    }
-    :host([size="10"]) {
-      width: 80px;
-      height: 80px;
-      font-size: 40px;
-      border-radius: 10px;
-    }
   </style>
 
   <template>
@@ -44,7 +32,7 @@
         size: {
           type: Number,
           value: 3,
-          reflectToAttribute: true
+          observer: "_handleSizeChanged"
         },
         empty: {
           type: Boolean,
@@ -61,7 +49,6 @@
       _computeEmpty: function (grade) {
         return !grade;
       },
-
       _computeLabel: function (grade) {
         if (!grade) return null;
         return grade.value;
@@ -69,6 +56,12 @@
 
       _handleGradeChanged: function (grade) {
         this.style.background = this._getColor(grade);
+      },
+      _handleSizeChanged: function (size) {
+        this.style.borderRadius = size + "px";
+        this.style.width = size * 8 + "px";
+        this.style.height = size * 8 + "px";
+        this.style.fontSize = size * 4 + "px";
       },
 
       _getColor: function (grade) {
