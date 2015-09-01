@@ -19,16 +19,16 @@
     }
     :host {
       @apply(--layout-fit);
-      @apply(--layout-vertical);
+      @apply(--layout-horizontal);
     }
     main {
-      @apply(--layout-horizontal);
-      height: 100%;
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
     }
     main > x-browser {
       @apply(--layout-flex);
     }
-    main > aside {
+    aside {
       position: relative;
       width: 320px;
     }
@@ -63,29 +63,29 @@
       selected="{{attendance}}">
     </array-selector>
 
-    <x-toolbar
-      name="{{profile.name}}"
-      saving="[[_storageDirty]]"
-      cleared="[[_profileEmpty]]">
-    </x-toolbar>
-
     <main>
+      <x-toolbar
+        name="{{profile.name}}"
+        saving="[[_storageDirty]]"
+        cleared="[[_profileEmpty]]">
+      </x-toolbar>
       <x-browser
         class="main"
         courses="{{profile.courses}}">
       </x-browser>
-      <aside
-        hidden$="{{_isEmpty(course)}}">
-        <x-course-inspector
-          course="{{course}}"
-          attendances="{{profile.attendances}}">
-        </x-course-inspector>
-        <x-attendance-inspector
-          hidden$="{{_isEmpty(attendance)}}"
-          attendance="{{attendance}}">
-        </x-attendance-inspector>
-      </aside>
     </main>
+
+    <aside
+      hidden$="{{_isEmpty(course)}}">
+      <x-course-inspector
+        course="{{course}}"
+        attendances="{{profile.attendances}}">
+      </x-course-inspector>
+      <x-attendance-inspector
+        hidden$="{{_isEmpty(attendance)}}"
+        attendance="{{attendance}}">
+      </x-attendance-inspector>
+    </aside>
 
     <paper-fab
       icon="add"
