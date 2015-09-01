@@ -24,10 +24,6 @@
     header .delete {
       right: 8px;
     }
-    header x-course-avatar {
-      width: 80px;
-      height: 80px;
-    }
     header .title {
       font-size: 16px;
       font-weight: 100;
@@ -54,7 +50,8 @@
           on-tap="_handleDelete">
         </paper-icon-button>
         <x-course-avatar
-          label="[[course.type]]">
+          label="[[course.type]]"
+          size="10">
         </x-course-avatar>
         <x-placeholder
           class="title"

@@ -8,7 +8,6 @@
       @apply(--layout-center-center);
       border-radius: 9999px;
       background: rgba(255, 255, 255, 0.1);
-      font-size: 32px;
       font-weight: 100;
       box-sizing: border-box;
       border: 3px solid transparent;
@@ -16,6 +15,26 @@
     :host([empty]) {
       border-color: rgba(255, 255, 255, 0.1);
       background: none;
+    }
+    :host([size="4"]) {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+    :host([size="5"]), :host {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+    :host([size="6"]) {
+      width: 48px;
+      height: 48px;
+      font-size: 20px;
+    }
+    :host([size="10"]) {
+      width: 80px;
+      height: 80px;
+      font-size: 32px;
     }
   </style>
 
@@ -32,6 +51,11 @@
           type: String,
           value: null,
           observer: "_handleLabelChanged"
+        },
+        size: {
+          type: Number,
+          value: 5,
+          reflectToAttribute: true
         },
         empty: {
           type: Boolean,
