@@ -14,7 +14,7 @@
       width: 100%;
     }
     paper-button {
-      margin: 16px 0;
+      margin: 8px 0;
       color: var(--default-primary-color);
     }
     .row {
@@ -36,10 +36,6 @@
   </style>
 
   <template>
-    <paper-button
-      on-tap="_handleAdd">
-      + Note hinzuf&uuml;gen
-    </paper-button>
     <template
       id="list"
       is="dom-repeat"
@@ -58,6 +54,10 @@
         </x-grade-icon>
       </div>
     </template>
+    <paper-button
+      on-tap="_handleAdd">
+      + Note hinzuf&uuml;gen
+    </paper-button>
   </template>
 
   <script>

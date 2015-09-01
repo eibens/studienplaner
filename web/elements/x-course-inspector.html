@@ -34,6 +34,9 @@
       opacity: 0.5;
       font-style: italic;
     }
+    x-course-attendances {
+      margin-top: 8px;
+    }
   </style>
 
   <template>
@@ -62,6 +65,10 @@
       </header>
 
       <main>
+        <x-course-attendances
+          attendances="{{attendances}}"
+          course="{{course}}">
+        </x-course-attendances>
         <paper-input
           label="Kurstyp"
           value="{{course.type}}"
@@ -82,10 +89,6 @@
           max="30.0"
           step="0.1">
         </paper-input>
-        <x-course-attendances
-          attendances="{{attendances}}"
-          course="{{course}}">
-        </x-course-attendances>
       </main>
     </x-inspector>
 
