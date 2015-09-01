@@ -30,7 +30,8 @@
       properties: {
         label: {
           type: String,
-          value: null
+          value: null,
+          observer: "_handleLabelChanged"
         },
         empty: {
           type: Boolean,
@@ -42,6 +43,56 @@
 
       _computeEmpty: function (label) {
         return !label;
+      },
+
+      _handleLabelChanged: function (label) {
+        var color = this._getColor(label);
+        this.style.background = color;
+      },
+
+      _getColor: function (string) {
+        if (!string) {
+          return "transparent";
+        }
+        var colors = this._getColors();
+        var index = this._calculateHash(string);
+        index = index % colors.length;
+        return colors[index];
+      },
+
+      _calculateHash: function (str) {
+        var hash = 0, i, chr, len;
+        if (str.length == 0) return hash;
+        for (i = 0, len = str.length; i < len; i++) {
+          chr   = str.charCodeAt(i);
+          hash  = ((hash << 5) - hash) + chr;
+          hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+      },
+
+      _getColors: function () {
+        return [
+          "#F44336", // Red
+          "#E91E63", // Pink
+          "#9C27B0", // Purple
+          "#673AB7", // Deep Purple
+          "#3F51B5", // Indigo
+          "#2196F3", // Blue
+          "#03A9F4", // Light Blue
+          "#00BCD4", // Cyan
+          "#009688", // Teal
+          "#4CAF50", // Green
+          "#8BC34A", // Light Green
+          "#CDDC39", // Lime
+          "#FFEB3B", // Yellow
+          "#FFC107", // Amber
+          "#FF9800", // Orange
+          "#FF5722", // Deep Orange
+          "#795548", // Brown
+          "#9E9E9E", // Grey
+          "#607D8B"  // Blue Grey
+        ];
       }
     });
   </script>
