@@ -1,0 +1,40 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="x-inspector">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      background: white;
+    }
+    :host ::content header {
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      position: relative;
+      height: 224px;
+      background: #272822;
+      color: white;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    :host ::content main {
+      @apply(--layout-flex);
+      box-sizing: border-box;
+      padding: 8px 16px;
+    }
+  </style>
+
+  <template>
+    <content
+      select="header">
+    </content>
+    <content
+      select="main">
+    </content>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-inspector"
+    });
+  </script>
+</dom-module>

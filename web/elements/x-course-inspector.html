@@ -5,25 +5,13 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="x-course-attendances.html">
 <link rel="import" href="x-course-avatar.html">
+<link rel="import" href="x-inspector.html">
 <link rel="import" href="x-placeholder.html">
 
 <dom-module id="x-course-inspector">
   <style>
-    :host {
-      @apply(--layout-vertical);
-      background: white;
-    }
-    header {
-      @apply(--layout-vertical);
-      @apply(--layout-center-center);
-      position: relative;
-      float: left;
-      width: 100%;
-      height: 224px;
-      background: #272822;
-      color: white;
-      padding: 16px;
-      box-sizing: border-box;
+    x-inspector {
+      @apply(--layout-fit);
     }
     header paper-icon-button {
       --paper-icon-button-ink-color: white;
@@ -50,62 +38,60 @@
       opacity: 0.5;
       font-style: italic;
     }
-    main {
-      @apply(--layout-flex);
-      box-sizing: border-box;
-      padding: 8px 16px;
-    }
   </style>
 
   <template>
-    <header>
-      <paper-icon-button
-        class="close"
-        icon="close"
-        on-tap="_handleClose">
-      </paper-icon-button>
-      <paper-icon-button
-        class="delete"
-        icon="delete"
-        on-tap="_handleDelete">
-      </paper-icon-button>
-      <x-course-avatar
-        label="[[course.type]]">
-      </x-course-avatar>
-      <x-placeholder
-        class="title"
-        value="[[course.title]]">
-        <div placeholder>Unbenannt</div>
-        <div>[[course.title]]</div>
-      </x-placeholder>
-    </header>
+    <x-inspector>
+      <header>
+        <paper-icon-button
+          class="close"
+          icon="close"
+          on-tap="_handleClose">
+        </paper-icon-button>
+        <paper-icon-button
+          class="delete"
+          icon="delete"
+          on-tap="_handleDelete">
+        </paper-icon-button>
+        <x-course-avatar
+          label="[[course.type]]">
+        </x-course-avatar>
+        <x-placeholder
+          class="title"
+          value="[[course.title]]">
+          <div placeholder>Unbenannt</div>
+          <div>[[course.title]]</div>
+        </x-placeholder>
+      </header>
 
-    <main>
-      <paper-input
-        label="Kurstyp"
-        value="{{course.type}}"
-        maxlength="2"
-        char-counter>
-      </paper-input>
-      <paper-textarea
-        label="Kurstitel"
-        value="{{course.title}}"
-        maxlength="80"
-        char-counter>
-      </paper-textarea>
-      <paper-input
-        label="ECTS"
-        value="{{course.credits}}"
-        type="number"
-        min="0.0"
-        max="30.0"
-        step="0.1">
-      </paper-input>
-      <x-course-attendances
-        attendances="{{attendances}}"
-        course="{{course}}">
-      </x-course-attendances>
-    </main>
+      <main>
+        <paper-input
+          label="Kurstyp"
+          value="{{course.type}}"
+          maxlength="2"
+          char-counter>
+        </paper-input>
+        <paper-textarea
+          label="Kurstitel"
+          value="{{course.title}}"
+          maxlength="80"
+          char-counter>
+        </paper-textarea>
+        <paper-input
+          label="ECTS"
+          value="{{course.credits}}"
+          type="number"
+          min="0.0"
+          max="30.0"
+          step="0.1">
+        </paper-input>
+        <x-course-attendances
+          attendances="{{attendances}}"
+          course="{{course}}">
+        </x-course-attendances>
+      </main>
+    </x-inspector>
+
   </template>
 
   <script>
