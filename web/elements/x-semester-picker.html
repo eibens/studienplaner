@@ -1,33 +1,35 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="data-model/data-model.html">
 
 <dom-module id="x-semester-picker">
   <style>
     :host {
       @apply(--layout-horizontal);
-      height: 40px;
-    }
-    button {
-      width: 40px;
+      @apply(--layout-center-center);
     }
     label {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
       @apply(--layout-flex);
+      font-weight: 100;
+      font-size: 18px;
     }
   </style>
 
   <template>
-    <button
+    <paper-icon-button
+      icon="chevron-left"
       on-tap="previous">
       &lt;
-    </button>
+    </paper-icon-button>
     <label>{{_format(value)}}</label>
-    <button
+    <paper-icon-button
+      icon="chevron-right"
       on-tap="next">
       &gt;
-    </button>
+    </paper-icon-button>
   </template>
 
   <script>
