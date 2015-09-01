@@ -2,23 +2,26 @@
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
 <link rel="import" href="data-model/data-model.html">
+<link rel="import" href="x-grade-icon.html">
 
 <dom-module id="x-grade-picker">
   <style>
     iron-selector {
       @apply(--layout-horizontal);
-    }
-    iron-selector > * {
-      @apply(--layout-horizontal);
       @apply(--layout-center-center);
-      width: 40px;
-      height: 40px;
-      background: #eee;
-      cursor: default;
     }
-    iron-selector > .iron-selected {
-      background: #ccc;
+    x-grade-icon {
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      margin-right: 4px;
+    }
+    x-grade-icon:last-of-type {
+      margin-right: 0;
+    }
+    x-grade-icon.iron-selected {
+      opacity: 1;
     }
   </style>
 
@@ -26,12 +29,15 @@
     <iron-selector
       id="selector"
       selected="{{_selected}}">
-      <div>X</div>
-      <div>1</div>
-      <div>2</div>
-      <div>3</div>
-      <div>4</div>
-      <div>5</div>
+      <template
+        is="dom-repeat"
+        items="[[_grades]]">
+        <x-grade-icon
+          grade="[[item]]"
+          size="4"
+          interactive="true">
+        </x-grade-icon>
+      </template>
     </iron-selector>
   </template>
 
@@ -45,6 +51,18 @@
           value: null,
           notify: true,
           observer: "_handleValueChanged"
+        },
+
+        _grades: {
+          type: Array,
+          value: [
+            null,
+            new Grade(1),
+            new Grade(2),
+            new Grade(3),
+            new Grade(4),
+            new Grade(5)
+          ]
         },
 
         _selected: {
