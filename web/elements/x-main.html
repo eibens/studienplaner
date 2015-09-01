@@ -156,6 +156,7 @@
       },
       _handleSelectCourse: function (event) {
         this._select("profile.courses", event.detail.data, this.$.course);
+        this.fire("select-attendance", { data: null });
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
