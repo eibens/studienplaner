@@ -88,7 +88,6 @@
       _sort: function (a, b) {
         var timeDiff = -Semester.compare(a.time, b.time);
         if (timeDiff != 0) {
-          console.log(timeDiff);
           return timeDiff;
         }
         return Grade.compare(a.grade, b.grade);
