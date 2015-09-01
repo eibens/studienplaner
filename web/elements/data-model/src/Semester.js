@@ -20,6 +20,21 @@ Semester.current = function () {
 };
 
 /**
+ * Named constructor for parsing a semester ID.
+ *
+ * @param id
+ */
+Semester.fromId = function (id) {
+  if (typeof id !== "string") throw new Error("ID must be a string.");
+  var pattern = new RegExp("^([0-9]+)(w|s)$");
+  var matches = pattern.exec(id);
+  if (matches === null) throw new Error("Invalid format.");
+  var year = parseInt(matches[1]);
+  var isWinter = matches[2] === "w";
+  return new Semester(year, isWinter);
+};
+
+/**
  * @param {Semester} a
  * @param {Semester} b
  * @returns {number}
@@ -69,5 +84,12 @@ Semester.prototype = {
     var year = this.year;
     if (this.isSummer) year--;
     return new Semester(year, !this.isWinter);
+  },
+
+  /**
+   * @returns {string}
+   */
+  get id() {
+    return this.year + (this.isWinter ? "w" : "s");
   }
 };
