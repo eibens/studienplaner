@@ -1,41 +1,34 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="x-placeholder.html">
 
 <dom-module id="x-grade-icon">
   <style>
     :host {
-      position: relative;
-      color: white;
-      font-weight: 100;
-      font-size: 12px;
-      width: 24px;
-      height: 24px;
-    }
-    .bg {
-      border-radius: 3px;
-      box-sizing: border-box;
-      @apply(--layout-fit);
       @apply(--layout);
       @apply(--layout-center-center);
+      color: white;
+      font-weight: 100;
+      box-sizing: border-box;
     }
-    .bg[placeholder] {
+    :host([empty]) {
       border: 3px solid rgba(0, 0, 0, 0.15);
+    }
+    :host([size="3"]), :host {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      border-radius: 3px;
+    }
+    :host([size="10"]) {
+      width: 80px;
+      height: 80px;
+      font-size: 40px;
+      border-radius: 10px;
     }
   </style>
 
   <template>
-    <x-placeholder value="[[grade]]">
-      <div
-        class="bg"
-        style$="{{_computeBackgroundStyle(grade)}}">
-        <span>{{grade.value}}</span>
-      </div>
-      <div
-        class="bg"
-        placeholder>
-      </div>
-    </x-placeholder>
+    <span>{{grade.value}}</span>
   </template>
 
   <script>
@@ -45,23 +38,50 @@
       properties: {
         grade: {
           type: Object,
-          value: null
+          value: null,
+          observer: "_handleGradeChanged"
+        },
+        size: {
+          type: Number,
+          value: 3,
+          reflectToAttribute: true
+        },
+        empty: {
+          type: Boolean,
+          notify: true,
+          computed: "_computeEmpty(grade)",
+          reflectToAttribute: true
+        },
+        _label: {
+          type: String,
+          computed: "_computeLabel(grade)"
         }
       },
 
-      _computeBackgroundStyle: function (grade) {
-        return "background-color: " + this._getColor(grade);
+      _computeEmpty: function (grade) {
+        return !grade;
+      },
+
+      _computeLabel: function (grade) {
+        if (!grade) return null;
+        return grade.value;
+      },
+
+      _handleGradeChanged: function (grade) {
+        this.style.background = this._getColor(grade);
       },
 
       _getColor: function (grade) {
+        if (!grade) {
+          return "transparent";
+        }
         var colors = this._getColors();
-        if (!grade) return colors[0];
-        return colors[grade.value];
+        var index = grade.value - 1;
+        return colors[index];
       },
 
       _getColors: function () {
         return [
-          'rgba(0, 0, 0, 0.15)', // null
           'rgb(118, 168, 63)', // 1
           'rgb(169, 197, 58)', // 2
           'rgb(213, 208, 43)', // 3
