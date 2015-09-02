@@ -16,6 +16,10 @@
   }
 
   describe("Deserializer", function() {
+    it("should return Profile for empty input", function () {
+      expect(deserialize(null)).to.be.instanceof(Profile);
+    });
+
     it("should ignore missing top level fields", function () {
       expect(function () {
         deserialize({});

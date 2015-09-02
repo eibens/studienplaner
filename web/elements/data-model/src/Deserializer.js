@@ -8,6 +8,7 @@ Deserializer.prototype = {
    * @returns {*}
    */
   deserialize: function (object) {
+    if (!object) return new Profile();
     return this._deserializeProfile(object);
   },
 
