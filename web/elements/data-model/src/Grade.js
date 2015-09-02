@@ -3,8 +3,8 @@
  * @constructor
  */
 function Grade(value) {
-  if (typeof value !== "number") throw new Error();
-  if (value < 1 || 5 < value) throw new Error();
+  if (typeof value !== "number") throw new Error("Value must be number.");
+  if (value < 1 || 5 < value) throw new Error("Value must be in correct range.");
   this._value = value;
 }
 
