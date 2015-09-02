@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../data-model.html">
+</head>
+<body>
+<script>
+  function deserialize(object) {
+    return (new Deserializer()).deserialize(object);
+  }
+
+  describe("Deserializer", function() {
+    it("should ignore missing top level fields", function () {
+      expect(function () {
+        deserialize({});
+      }).to.not.throw();
+    });
+
+    it("should read name", function () {
+      var profile = deserialize({
+        name: "John Doe"
+      });
+      expect(profile.name).to.equal("John Doe");
+    });
+
+    it("should throw for course missing ID", function () {
+      expect(function () {
+        deserialize({
+          courses: [{}]
+        });
+      }).to.throw();
+    });
+
+    it("should read courses", function () {
+      var profile = deserialize({
+        courses: [
+          { id: 1 },
+          { id: 2 }
+        ]
+      });
+      expect(profile.courses.length).to.equal(2);
+    });
+
+    it("should throw for duplicate course ID", function () {
+      expect(function () {
+        deserialize({
+          courses: [
+            { id: 1 },
+            { id: 1 }
+          ]
+        })
+      }).to.throw();
+    });
+
+    it("should tolerate missing optional course fields", function () {
+      expect(function () {
+        deserialize({
+          courses: [
+            { id: 1 }
+          ]
+        })
+      }).to.not.throw();
+    });
+
+    it("should read course properties", function () {
+      var profile = deserialize({
+        courses: [{
+          id: 1,
+          type: "XX",
+          title: "Test course",
+          credits: "2.0"
+        }]
+      });
+      var course = profile.courses[0];
+      expect(course.id).to.equal(1);
+      expect(course.type).to.equal("XX");
+      expect(course.title).to.equal("Test course");
+      expect(course.credits).to.equal("2.0");
+    });
+
+    it("should throw for attendance missing required fields", function () {
+      expect(function () {
+        deserialize({
+          attendances: [{}]
+        });
+      }).to.throw();
+    });
+
+    it("should throw for attendance with unknown course ID", function () {
+      expect(function () {
+        deserialize({
+          courses: [
+            { id: 1 }
+          ],
+          attendances: [
+            { id: 1, course: 2, semester: "2012s" }
+          ]
+        })
+      }).to.throw();
+    });
+
+    it("should read attendances", function () {
+      var profile = deserialize({
+        courses: [
+          { id: 1 }
+        ],
+        attendances: [
+          { id: 1, course: 1, semester: "2012s" },
+          { id: 2, course: 1, semester: "2012s" }
+        ]
+      });
+      expect(profile.attendances.length).to.equal(2);
+    });
+
+    it("should throw for duplicate attendance ID", function () {
+      expect(function () {
+        deserialize({
+          courses: [
+            { id: 1 }
+          ],
+          attendances: [
+            { id: 1, course: 1, semester: "2012s" },
+            { id: 1, course: 1, semester: "2012s" }
+          ]
+        })
+      }).to.throw();
+    });
+
+    it("should ignore missing optional attendance fields", function () {
+      expect(function () {
+        deserialize({
+          courses: [
+            { id: 1 }
+          ],
+          attendances: [
+            { id: 1, course: 1, semester: "2012s" }
+          ]
+        })
+      }).to.not.throw();
+    });
+
+    it("should read attendance properties", function () {
+      var profile = deserialize({
+        courses: [
+          { id: 1 }
+        ],
+        attendances: [
+          { id: 1, course: 1, semester: "2012s", grade: 3 }
+        ]
+      });
+      var attendance = profile.attendances[0];
+      expect(attendance.id).to.equal(1);
+      expect(attendance.course).to.equal(profile.courses[0]);
+      expect(attendance.semester.id).to.equal("2012s");
+      expect(attendance.grade.value).to.equal(3);
+    });
+  });
+</script>
+</body>
+</html>

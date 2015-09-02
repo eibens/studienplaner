@@ -26,12 +26,20 @@ Profile.prototype = {
   get courses() {
     return this._courses;
   },
+  set courses(value) {
+    if (!(value instanceof Array)) throw new Error("Must be Array.");
+    this._courses = value;
+  },
 
   /**
    * @returns {Array}
    */
   get attendances() {
     return this._attendances
+  },
+  set attendances(value) {
+    if (!(value instanceof Array)) throw new Error("Must be Array.");
+    this._attendances = value;
   },
 
   /**
