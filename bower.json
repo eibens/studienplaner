@@ -7,5 +7,8 @@
     "paper-elements": "PolymerElements/paper-elements#1.0.5",
     "platinum-elements": "PolymerElements/platinum-elements#1.0.1",
     "neon-elements": "PolymerElements/neon-elements#1.0.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*"
   }
 }
