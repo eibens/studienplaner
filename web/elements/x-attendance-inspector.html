@@ -99,8 +99,8 @@
           grade="[[attendance.grade]]"
           size="9">
         </x-grade-icon>
-        <div class="year">[[attendance.time.year]]</div>
-        <div class="season">[[_formatSeason(attendance.time.isWinter)]]</div>
+        <div class="year">[[attendance.semester.year]]</div>
+        <div class="season">[[_formatSeason(attendance.semester.isWinter)]]</div>
       </header>
 
       <main>
@@ -108,7 +108,7 @@
           value="{{attendance.grade}}">
         </x-grade-picker>
         <x-semester-picker
-          value="{{attendance.time}}">
+          value="{{attendance.semester}}">
         </x-semester-picker>
       </main>
     </x-inspector>

@@ -30,7 +30,7 @@
       background: #eee;
       margin-bottom: 2px;
     }
-    .time {
+    .semester {
       font-size: 14px;
     }
   </style>
@@ -47,7 +47,7 @@
         class="row"
         on-tap="_handleSelect">
         <paper-ripple></paper-ripple>
-        <div class="time">{{_formatTime(item.time)}}</div>
+        <div class="semester">{{_formatSemester(item.semester)}}</div>
         <x-grade-icon
           size="3"
           grade="[[item.grade]]">
@@ -86,25 +86,23 @@
         return item.course === this.course;
       },
       _sort: function (a, b) {
-        var timeDiff = -Semester.compare(a.time, b.time);
-        if (timeDiff != 0) {
-          return timeDiff;
+        var semesterDiff = -Semester.compare(a.semester, b.semester);
+        if (semesterDiff != 0) {
+          return semesterDiff;
         }
         return Grade.compare(a.grade, b.grade);
       },
 
-      _formatTime: function (time) {
-        return time.year + " " + (time.isWinter ? "Winter" : "Sommer");
+      _formatSemester: function (semester) {
+        return semester.year + " " + (semester.isWinter ? "Winter" : "Sommer");
       },
 
       _handleAdd: function () {
-        var attendance = {
+        this.fire("add-attendance", {
           course: this.course,
-          time: Semester.current(),
+          semester: Semester.current(),
           grade: null
-        };
-        this.fire("add-attendance", { data: attendance });
-        this.fire("select-attendance", { data: attendance });
+        });
       },
 
       _handleSelect: function (event) {

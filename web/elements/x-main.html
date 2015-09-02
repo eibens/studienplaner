@@ -130,13 +130,7 @@
       },
 
       _handleAddButtonTap: function (event) {
-        var course = {
-          type: null,
-          title: null,
-          credits: null
-        };
-        this.fire("add-course", { data: course });
-        this.fire("select-course", { data: course});
+        this.fire("add-course");
       },
 
       _handleExportProfile: function () {
@@ -151,10 +145,10 @@
         this.$.data.clear();
       },
 
-      _handleAddCourse: function (event) {
-        var item = event.detail.data;
-        item.id = this.profile.generateCourseId();
-        this._add("profile.courses", item);
+      _handleAddCourse: function () {
+        var course = new Course(this.profile.generateCourseId());
+        this._add("profile.courses", course);
+        this.fire("select-course", { data: course });
       },
       _handleSelectCourse: function (event) {
         this._select("profile.courses", event.detail.data, this.$.course);
@@ -175,9 +169,12 @@
       },
 
       _handleAddAttendance: function (event) {
-        var item = event.detail.data;
-        item.id = this.profile.generateAttendanceId();
-        this._add("profile.attendances", item);
+        var attendance = new Attendance(
+          this.profile.generateAttendanceId(),
+          event.detail.course
+        );
+        this._add("profile.attendances", attendance);
+        this.fire("select-attendance", { data: attendance });
       },
       _handleSelectAttendance: function (event) {
         this._select("profile.attendances", event.detail.data, this.$.attendance);

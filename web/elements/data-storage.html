@@ -110,55 +110,13 @@
 
       _serialize: function (profile) {
         if (!profile) return null;
-        return JSON.stringify({
-          name: profile.name,
-          courses: profile.courses.map(function (course) {
-            return {
-              id: course.id,
-              type: course.type,
-              title: course.title,
-              credits: course.credits
-            };
-          }),
-          attendances: profile.attendances.map(function (attendance) {
-            return {
-              id: attendance.id,
-              course: attendance.course.id,
-              time: attendance.time.id,
-              grade: attendance.grade ? attendance.grade.value : null
-            }
-          })
-        });
+        var object = (new Serializer()).serialize(profile);
+        return JSON.stringify(object);
       },
 
       _deserialize: function (json) {
-        try {
-          var data = JSON.parse(json);
-          var profile = new Profile();
-          if (data == null) return profile;
-          profile.name = data.name;
-          data.courses.forEach(function (course) {
-            profile.courses.push({
-              id: course.id,
-              type: course.type,
-              title: course.title,
-              credits: course.credits
-            });
-          });
-          data.attendances.forEach(function (attendance) {
-            profile.attendances.push({
-              id: attendance.id,
-              course: profile.courses.filter(function (course) {
-                return course.id == attendance.course;
-              })[0],
-              time: Semester.fromId(attendance.time),
-              grade: attendance.grade ? new Grade(attendance.grade) : null
-            });
-          });
-          return profile;
-        } catch (error) {
-          throw new Error("Failed deserializing data: " + error);
-        }
+        var object = JSON.parse(json);
+        return (new Deserializer()).deserialize(object);
       }
     });
   </script>
