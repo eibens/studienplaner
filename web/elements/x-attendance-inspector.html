@@ -4,10 +4,10 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="x-course-avatar.html">
+<link rel="import" href="x-course-title.html">
 <link rel="import" href="x-grade-icon.html">
 <link rel="import" href="x-grade-picker.html">
 <link rel="import" href="x-inspector.html">
-<link rel="import" href="x-placeholder.html">
 <link rel="import" href="x-semester-picker.html">
 
 <dom-module id="x-attendance-inspector">
@@ -28,19 +28,10 @@
       cursor: pointer;
       padding: 0 12px;
     }
-    nav .back .title {
+    nav .back x-course-title {
       @apply(--layout-flex);
       font-size: 14px;
       font-weight: 100;
-    }
-    nav .back .title div {
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    nav .back .title [placeholder] {
-      opacity: 0.5;
-      font-style: italic;
     }
     nav .back x-course-avatar {
       width: 32px;
@@ -80,12 +71,10 @@
           <x-course-avatar
             label="[[attendance.course.type]]">
           </x-course-avatar>
-          <x-placeholder
-            class="title"
-            value="[[attendance.course.title]]">
-            <div placeholder>Unbenannt</div>
-            <div title$="[[attendance.course.title]]">[[attendance.course.title]]</div>
-          </x-placeholder>
+          <x-course-title
+            text="[[attendance.course.title]]"
+            placeholder="Unbenannt">
+          </x-course-title>
         </div>
         <paper-icon-button
           class="delete"
