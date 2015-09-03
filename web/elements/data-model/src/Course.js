@@ -45,7 +45,7 @@ Course.prototype = {
     return this._credits;
   },
   set credits(value) {
-    if (!value) value = "0.0";
+    if (!value) value = "";
     this._credits = value;
   },
 };
