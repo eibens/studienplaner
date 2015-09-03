@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="x-course-grade.html">
 
 <dom-module id="x-browser">
   <style>
@@ -29,7 +30,7 @@
       height: 40px;
       position: relative;
       cursor: pointer;
-      padding: 8px 0;
+      padding: 8px 16px;
       transition: background 0.2s;
     }
     .row:hover {
@@ -37,15 +38,20 @@
     }
     x-course-avatar {
       width: 40px;
-      margin: 0 16px;
+      margin-right: 16px;
     }
     x-course-title {
       @apply(--layout-flex);
     }
     .credits {
-      width: 80px;
+      @apply(--layout-vertical);
+      @apply(--layout-end-justified);
       text-align: right;
-      margin-right: 16px;
+      margin: 0 16px;
+      font-size: 16px;
+    }
+    .credits .unit {
+      font-size: 10px;
       opacity: 0.5;
     }
     .placeholder {
@@ -80,7 +86,14 @@
               text="[[item.title]]"
               placeholder="Unbenannt">
             </x-course-title>
-            <div class="credits">{{_formatCredits(item.credits)}}</div>
+            <div class="credits">
+              <span>[[_formatCredits(item.credits)]]</span>
+              <span class="unit">ECTS</span>
+            </div>
+            <x-course-grade
+              course="[[item]]"
+              attendances="[[attendances]]">
+            </x-course-grade>
           </div>
         </template>
         <div
@@ -99,6 +112,11 @@
 
       properties: {
         courses: {
+          type: Array,
+          value: []
+        },
+
+        attendances: {
           type: Array,
           value: []
         },

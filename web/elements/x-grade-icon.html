@@ -13,7 +13,7 @@
       box-sizing: border-box;
     }
     :host([empty]) {
-      border: 3px solid rgba(0, 0, 0, 0.2);
+      border: 3px solid rgba(0, 0, 0, 0.25);
     }
     paper-ripple {
       visibility: hidden;
@@ -42,12 +42,18 @@
         size: {
           type: Number,
           value: 3,
-          observer: "_handleSizeChanged"
+          observer: "_handleChanged"
         },
         interactive: {
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+        multiple: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: "_handleChanged"
         },
         empty: {
           type: Boolean,
@@ -60,7 +66,7 @@
           computed: "_computeLabel(grade)"
         }
       },
-
+      
       _computeEmpty: function (grade) {
         return !grade;
       },
@@ -72,11 +78,17 @@
       _handleGradeChanged: function (grade) {
         this.style.background = this._getColor(grade);
       },
-      _handleSizeChanged: function (size) {
+      _handleChanged: function () {
+        var size = this.size;
         this.style.borderRadius = size + "px";
         this.style.width = size * 8 + "px";
         this.style.height = size * 8 + "px";
         this.style.fontSize = size * 4 + "px";
+        this.style.boxShadow = "none";
+        if (this.multiple) {
+          this.style.boxShadow = "-" + size + "px " + size + "px " +
+            "rgba(0, 0, 0, 0.15)";
+        }
       },
 
       _getColor: function (grade) {
