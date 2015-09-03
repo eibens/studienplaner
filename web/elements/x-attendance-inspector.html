@@ -65,7 +65,7 @@
       <nav>
         <div
           class="back"
-          on-tap="_handleClose">
+          on-tap="_handleBack">
           <paper-ripple></paper-ripple>
           <x-course-avatar
             label="[[attendance.course.type]]">
@@ -117,8 +117,10 @@
         return isWinter ? "Winter" : "Sommer";
       },
 
-      _handleClose: function () {
-        this.fire("select-attendance", { data: null });
+      _handleBack: function () {
+        this.fire("select-course", {
+          data: this.attendance.course
+        });
       },
       _handleDelete: function () {
         this.fire("delete-attendance", { data: this.attendance });
