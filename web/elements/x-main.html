@@ -76,14 +76,14 @@
       </x-browser>
     </main>
 
-    <aside
-      hidden$="{{_isEmpty(course)}}">
+    <aside hidden$="[[_areEmpty(course, attendance)]]">
       <x-course-inspector
+        hidden$="[[_isEmpty(course)]]"
         course="{{course}}"
         attendances="{{profile.attendances}}">
       </x-course-inspector>
       <x-attendance-inspector
-        hidden$="{{_isEmpty(attendance)}}"
+        hidden$="[[_isEmpty(attendance)]]"
         attendance="{{attendance}}">
       </x-attendance-inspector>
     </aside>
@@ -209,6 +209,12 @@
 
       _isEmpty: function (object) {
         return !object;
+      },
+      _areEmpty: function () {
+        for (var i = 0; i < arguments.length; i++) {
+          if (arguments[i]) return false;
+        }
+        return true;
       }
     });
   </script>
