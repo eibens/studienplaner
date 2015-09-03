@@ -1,51 +1,96 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 
 <dom-module id="x-browser">
   <style>
     :host {
       @apply(--layout-vertical);
+      @apply(--layout-center);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .wrapper {
+      width: 90%;
+      max-width: 1000px;
+      padding: 16px 0;
+    }
+    main {
+      background: white;
+      @apply(--shadow-elevation-3dp);
+      margin: 16px 0;
+      padding: 8px 0;
     }
     .row {
       @apply(--layout-horizontal);
-      @apply(--layout-justified);
+      @apply(--layout-center-center);
       height: 40px;
+      position: relative;
+      cursor: pointer;
+      padding: 8px 0;
+      transition: background 0.2s;
     }
-    .type {
+    .row:hover {
+      background: #eee;
+    }
+    x-course-avatar {
       width: 40px;
+      margin: 0 16px;
     }
-    .title {
+    x-course-title {
       @apply(--layout-flex);
     }
     .credits {
       width: 80px;
+      text-align: right;
+      margin-right: 16px;
+      opacity: 0.5;
+    }
+    .placeholder {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      margin: 2em;
     }
   </style>
 
   <template>
-    <h1>Alle Kurse</h1>
-    <paper-input
-      label="Suchbegriff"
-      value="{{query}}">
-    </paper-input>
-    <template
-      id="list"
-      is="dom-repeat"
-      items="{{courses}}"
-      filter="_filter"
-      observe="type title credits">
-      <div class="row"
-        on-tap="_handleSelect">
-        <div class="type">{{item.type}}</div>
-        <div class="title">{{item.title}}</div>
-        <div class="credits">{{item.credits}}</div>
-      </div>
-    </template>
-    <p
-      hidden$="[[!empty]]">
-      Keine Kurse gefunden
-    </p>
+    <div class="wrapper">
+      <paper-input
+        label="Suchbegriff"
+        value="{{query}}">
+      </paper-input>
+      <main>
+        <template
+          id="list"
+          is="dom-repeat"
+          items="{{courses}}"
+          filter="_filter"
+          sort="_sort"
+          observe="type title credits">
+          <div class="row"
+               on-tap="_handleSelect">
+            <paper-ripple></paper-ripple>
+            <x-course-avatar
+              label="[[item.type]]"
+              size="5">
+            </x-course-avatar>
+            <x-course-title
+              text="[[item.title]]"
+              placeholder="Unbenannt">
+            </x-course-title>
+            <div class="credits">{{item.credits}}</div>
+          </div>
+        </template>
+        <div
+          class="placeholder"
+          hidden$="[[!empty]]">
+          Keine Kurse gefunden
+        </div>
+      </main>
+    </div>
+
   </template>
 
   <script>
@@ -104,6 +149,10 @@
           if (!match) return false;
         }
         return true;
+      },
+
+      _sort: function (a, b) {
+        return a.title.localeCompare(b.title);
       }
     });
   </script>
