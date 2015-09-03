@@ -80,7 +80,7 @@
               text="[[item.title]]"
               placeholder="Unbenannt">
             </x-course-title>
-            <div class="credits">{{item.credits}}</div>
+            <div class="credits">{{_formatCredits(item.credits)}}</div>
           </div>
         </template>
         <div
@@ -135,6 +135,14 @@
         return this.courses.filter(function (course) {
           return self._filter(course);
         });
+      },
+
+      _formatCredits: function (value) {
+        var number = parseFloat(value);
+        if (isNaN(number)) {
+          return "0.0";
+        }
+        return number.toFixed(1);
       },
 
       _computeEmpty: function () {
