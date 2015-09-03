@@ -4,6 +4,9 @@
  */
 function Course(id) {
   this._id = id;
+  this._type = "";
+  this._title = "";
+  this._credits = "0.0";
 }
 Course.prototype = {
   /**
@@ -14,17 +17,35 @@ Course.prototype = {
   },
 
   /**
-   * @returns {string|null}
+   * @returns {string}
    */
-  type: null,
+  get type() {
+    return this._type;
+  },
+  set type(value) {
+    if (!value) value = "";
+    this._type = value;
+  },
 
   /**
-   * @returns {string|null}
+   * @returns {string}
    */
-  title: null,
+  get title() {
+    return this._title;
+  },
+  set title(value) {
+    if (!value) value = "";
+    this._title = value;
+  },
 
   /**
-   * @returns {string|null}
+   * @returns {string}
    */
-  credits: null
+  get credits() {
+    return this._credits;
+  },
+  set credits(value) {
+    if (!value) value = "0.0";
+    this._credits = value;
+  },
 };
