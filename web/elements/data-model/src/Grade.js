@@ -43,5 +43,14 @@ Grade.prototype = {
    */
   get isFailing() {
     return !this.isPassing;
+  },
+
+  /**
+   * @param {Grade|null} other
+   * @returns {boolean}
+   */
+  equals: function (other) {
+    if (!(other instanceof Grade)) return false;
+    return this.value == other.value;
   }
 };

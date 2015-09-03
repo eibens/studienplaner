@@ -85,10 +85,13 @@
       },
 
       _handleSelectedChanged: function (selected) {
-        if (selected == 0) {
-          this.value = null;
-        } else {
-          this.value = new Grade(selected);
+        var grade = this._grades[selected];
+        if (grade == null) {
+          if (this.value) {
+            this.value = null;
+          }
+        } else if (!grade.equals(this.value)) {
+          this.value = grade;
         }
       }
     });
