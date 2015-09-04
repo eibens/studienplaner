@@ -11,6 +11,10 @@
     x-grade-icon {
       margin-left: 4px;
     }
+    :host([empty]) x-grade-icon {
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+    }
   </style>
 
   <template>
@@ -36,55 +40,45 @@
           type: Array,
           value: []
         },
-        _courseAttendances: {
-          type: Array,
-          computed: "_computeCourseAttendances(course, attendances.*)"
+        empty: {
+          type: Boolean,
+          computed: "_computeEmpty(_latestAttendance)",
+          reflectToAttribute: true
         },
         _latestAttendance: {
           type: Object,
-          computed: "_computeLatestAttendance(_courseAttendances.*)"
-        },
-        _attendanceCount: {
-          type: Boolean,
-          computed: "_computeAttendanceCount(_courseAttendances.*)"
-        },
-        _noAttendances: {
-          type: Boolean,
-          computed: "_computeNoAttendances(_attendanceCount)"
+          value: null
         },
         _multipleAttendances: {
           type: Boolean,
-          computed: "_computeMultipleAttendances(_attendanceCount)"
+          value: false
         }
       },
 
-      _computeCourseAttendances: function (course) {
-        return this.attendances.filter(function (attendance) {
+      observers: [
+        "_handleChange(course, attendances.*)"
+      ],
+
+      _handleChange: function (course, attendancesChanges) {
+        var attendances = attendancesChanges.base.filter(function (attendance) {
           return attendance.course.id == course.id;
-        });
-      },
-
-      _computeLatestAttendance: function (changes) {
-        if (this.empty) return null;
-        return changes.base.sort(function (a, b) {
+        }).sort(function (a, b) {
           return Semester.compare(b.semester, a.semester);
-        })[0];
+        });
+        var count = attendances.length;
+        this._multipleAttendances = count > 1;
+        // Make sure latest attendance is definitely updated, since the path
+        // binding is broken after we filter and sort the attendance array.
+        this._latestAttendance = null;
+        this._latestAttendance = count > 0 ? attendances[0] : null;
       },
 
-      _computeAttendanceCount: function (changes) {
-        return changes.base.length;
-      },
-
-      _computeNoAttendances: function (count) {
-        return count == 0;
-      },
-
-      _computeMultipleAttendances: function (count) {
-        return count > 1;
+      _computeEmpty: function (attendance) {
+        return !attendance;
       },
 
       _handleTap: function (event) {
-        if (this._noAttendances) return;
+        if (!this._latestAttendance) return;
         this.fire("select-attendance", {
           data: this._latestAttendance
         });
