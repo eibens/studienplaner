@@ -49,12 +49,6 @@
           value: false,
           reflectToAttribute: true
         },
-        multiple: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true,
-          observer: "_handleChanged"
-        },
         empty: {
           type: Boolean,
           notify: true,
@@ -95,11 +89,6 @@
         this.style.width = size * 8 + "px";
         this.style.height = size * 8 + "px";
         this.style.fontSize = size * 4 + "px";
-        this.style.boxShadow = "none";
-        if (this.multiple) {
-          this.style.boxShadow = "-" + size + "px " + size + "px " +
-            "rgba(0, 0, 0, 0.15)";
-        }
       },
 
       _getColor: function (grade) {
