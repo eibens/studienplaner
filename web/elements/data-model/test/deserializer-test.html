@@ -78,7 +78,8 @@
           id: 1,
           type: "XX",
           title: "Test course",
-          credits: "2.0"
+          credits: "2.0",
+          tags: ["apples", "oranges"]
         }]
       });
       var course = profile.courses[0];
@@ -86,6 +87,7 @@
       expect(course.type).to.equal("XX");
       expect(course.title).to.equal("Test course");
       expect(course.credits).to.equal("2.0");
+      expect(course.tags).to.deep.equal(["apples", "oranges"]);
     });
 
     it("should throw for attendance missing required fields", function () {

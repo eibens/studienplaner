@@ -59,6 +59,7 @@
       expect(object).to.have.property("type");
       expect(object).to.have.property("title");
       expect(object).to.have.property("credits");
+      expect(object).to.have.property("tags");
     });
 
     it("should include course property values", function () {
@@ -67,6 +68,7 @@
       course.type = "XX";
       course.title = "Test course";
       course.credits = 17.9;
+      course.tags = ["apples", "oranges"];
       profile.courses.push(course);
       var data = serialize(profile);
       var object = data.courses[0];
@@ -74,6 +76,7 @@
       expect(object.type).to.equal("XX");
       expect(object.title).to.equal("Test course");
       expect(object.credits).to.equal(17.9);
+      expect(object.tags).to.deep.equal(["apples", "oranges"]);
     });
 
     it("should include attendances", function () {

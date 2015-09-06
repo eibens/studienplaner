@@ -17,7 +17,8 @@ Serializer.prototype = {
    *          id: Integer,
    *          type: string|null,
    *          title: string|null,
-   *          credits: string|null
+   *          credits: string|null,
+   *          tags: string[]
    *        }[],
    *        attendances: {
    *          id: Integer,
@@ -61,7 +62,8 @@ Serializer.prototype = {
       id: course.id,
       type: course.type,
       title: course.title,
-      credits: course.credits
+      credits: course.credits,
+      tags: course.tags.slice()
     };
   },
 

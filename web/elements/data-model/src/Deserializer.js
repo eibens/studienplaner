@@ -45,6 +45,7 @@ Deserializer.prototype = {
     course.type = this._defined(object.type);
     course.title = this._defined(object.title);
     course.credits = this._defined(object.credits);
+    course.tags = object.tags ? object.tags : [];
     return course;
   },
 
