@@ -188,7 +188,11 @@
         }
       },
       _handleDeleteAttendance: function (event) {
-        this._remove("profile.attendances", event.detail.data, this.$.attendance);
+        var attendance = event.detail.data;
+        this._remove("profile.attendances", attendance, this.$.attendance);
+        this.fire("select-course", {
+          data: attendance.course
+        });
       },
 
       _add: function (path, item, selector) {
