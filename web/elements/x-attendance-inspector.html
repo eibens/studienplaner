@@ -6,6 +6,7 @@
 <link rel="import" href="x-grade-icon.html">
 <link rel="import" href="x-grade-picker.html">
 <link rel="import" href="x-inspector.html">
+<link rel="import" href="x-inspector-link.html">
 <link rel="import" href="x-semester-picker.html">
 
 <dom-module id="x-attendance-inspector">
@@ -16,15 +17,13 @@
     paper-icon-button {
       --paper-icon-button-ink-color: white;
     }
-    nav {
-      position: relative; /* ripple */
-      cursor: pointer;
+    x-inspector-link {
       padding: 0 12px;
     }
-    nav x-course-title {
+    x-inspector-link x-course-title {
       @apply(--layout-flex);
     }
-    nav x-course-avatar {
+    x-inspector-link x-course-avatar {
       margin-right: 12px;
     }
     header {
@@ -50,9 +49,8 @@
     <x-inspector
       on-close="_handleClose"
       on-delete="_handleDelete">
-      <nav
+      <x-inspector-link
         on-tap="_handleBack">
-        <paper-ripple></paper-ripple>
         <x-course-avatar
           label="[[attendance.course.type]]"
           size="4">
@@ -61,7 +59,7 @@
           text="[[attendance.course.title]]"
           placeholder="Unbenannt">
         </x-course-title>
-      </nav>
+      </x-inspector-link>
 
       <header>
         <x-grade-icon

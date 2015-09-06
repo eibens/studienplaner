@@ -33,25 +33,19 @@
       @apply(--layout-center-center);
       position: relative;
       color: white;
-      padding: 16px;
       box-sizing: border-box;
       font-size: 16px;
       font-weight: 100;
       text-align: center;
     }
     :host ::content nav {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      height: 56px;
-      position: relative;
-      background: #eee;
-      font-size: 14px;
-      font-weight: 100;
+      @apply(--layout-vertical);
     }
     :host ::content main {
+      @apply(--layout-vertical);
       @apply(--layout-flex);
       box-sizing: border-box;
-      padding: 8px 16px;
+      padding: 16px;
     }
   </style>
 
@@ -71,9 +65,11 @@
         on-tap="_handleDelete">
       </paper-icon-button>
     </div>
-    <content
-      select="nav">
-    </content>
+    <nav>
+      <content
+        select=".nav, x-inspector-link">
+      </content>
+    </nav>
     <content
       select="main">
     </content>

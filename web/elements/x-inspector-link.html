@@ -1,0 +1,31 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+
+<dom-module id="x-inspector-link">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      @apply(--layout-self-stretch);
+      @apply(--layout-justified);
+      position: relative;
+      font-size: 14px;
+      font-weight: 100;
+      cursor: pointer;
+      height: 56px;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+
+  <template>
+    <paper-ripple></paper-ripple>
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-inspector-link"
+    });
+  </script>
+</dom-module>

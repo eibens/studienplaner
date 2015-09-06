@@ -1,37 +1,25 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
-<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="x-grade-icon.html">
+<link rel="import" href="x-inspector-link.html">
 
 <dom-module id="x-course-attendances">
   <style>
     :host {
       @apply(--layout-vertical);
       @apply(--layout-center);
-      width: 100%;
     }
-    paper-button {
-      margin: 8px 0;
-      color: var(--default-primary-color);
+    x-inspector-link {
+      padding: 0 12px;
     }
-    .row {
-      @apply(--layout);
-      @apply(--layout-center);
-      @apply(--layout-justified);
-      @apply(--layout-self-stretch);
-      position: relative;
-      padding: 8px;
-      transition: background 0.2s;
-      cursor: pointer;
-      border-radius: 3px;
-      background: #eee;
-      margin-bottom: 2px;
+    x-grade-icon {
+      margin: 0 4px; /* same positioning as avatar in x-attendance-inspector */
     }
     .semester {
-      font-size: 14px;
+      margin-left: 12px;
+      @apply(--layout-flex);
     }
   </style>
 
@@ -43,21 +31,15 @@
       filter="_filter"
       sort="_sort"
       observe="time grade">
-      <div
-        class="row"
+      <x-inspector-link
         on-tap="_handleSelect">
-        <paper-ripple></paper-ripple>
-        <div class="semester">{{_formatSemester(item.semester)}}</div>
         <x-grade-icon
           size="3"
           grade="[[item.grade]]">
         </x-grade-icon>
-      </div>
+        <div class="semester">{{_formatSemester(item.semester)}}</div>
+      </x-inspector-link>
     </template>
-    <paper-button
-      on-tap="_handleAdd">
-      + Note hinzuf&uuml;gen
-    </paper-button>
   </template>
 
   <script>
@@ -95,14 +77,6 @@
 
       _formatSemester: function (semester) {
         return semester.year + " " + (semester.isWinter ? "Winter" : "Sommer");
-      },
-
-      _handleAdd: function () {
-        this.fire("add-attendance", {
-          course: this.course,
-          semester: Semester.current(),
-          grade: null
-        });
       },
 
       _handleSelect: function (event) {
