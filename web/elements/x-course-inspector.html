@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="x-course-attendances.html">
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-title.html">
@@ -13,21 +12,7 @@
     x-inspector {
       @apply(--layout-fit);
     }
-    header paper-icon-button {
-      --paper-icon-button-ink-color: white;
-      top: 8px;
-      position: absolute;
-    }
-    header .close {
-      left: 8px;
-    }
-    header .delete {
-      right: 8px;
-    }
     header x-course-title {
-      font-size: 16px;
-      font-weight: 100;
-      text-align: center;
       margin-top: 16px;
     }
     x-course-attendances {
@@ -36,18 +21,10 @@
   </style>
 
   <template>
-    <x-inspector>
+    <x-inspector
+      on-close="_handleClose"
+      on-delete="_handleDelete">
       <header>
-        <paper-icon-button
-          class="close"
-          icon="close"
-          on-tap="_handleClose">
-        </paper-icon-button>
-        <paper-icon-button
-          class="delete"
-          icon="delete"
-          on-tap="_handleDelete">
-        </paper-icon-button>
         <x-course-avatar
           class="dark"
           label="[[course.type]]"

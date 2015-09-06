@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="x-inspector">
   <style>
@@ -8,18 +9,23 @@
       background: white;
       overflow-y: auto;
     }
-    :host .banner {
-      @apply(--layout-vertical);
+    .header {
+      @apply(--layout);
+      position: relative;
       height: 240px;
       background: #272822;
-    }
-    :host ::content nav {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      position: relative;
-      background: rgba(255, 255, 255, 0.1);
       color: white;
-      height: 56px;
+    }
+    .header .close {
+      left: 8px;
+    }
+    .header .delete {
+      right: 8px;
+    }
+    .header paper-icon-button {
+      --paper-icon-button-ink-color: white;
+      top: 8px;
+      position: absolute;
     }
     :host ::content header {
       @apply(--layout-flex);
@@ -29,6 +35,18 @@
       color: white;
       padding: 16px;
       box-sizing: border-box;
+      font-size: 16px;
+      font-weight: 100;
+      text-align: center;
+    }
+    :host ::content nav {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      height: 56px;
+      position: relative;
+      background: #eee;
+      font-size: 14px;
+      font-weight: 100;
     }
     :host ::content main {
       @apply(--layout-flex);
@@ -38,15 +56,24 @@
   </style>
 
   <template>
-    <div class="banner">
-      <content
-        select="nav">
-      </content>
-
+    <div class="header">
       <content
         select="header">
       </content>
+      <paper-icon-button
+        class="close"
+        icon="close"
+        on-tap="_handleClose">
+      </paper-icon-button>
+      <paper-icon-button
+        class="delete"
+        icon="delete"
+        on-tap="_handleDelete">
+      </paper-icon-button>
     </div>
+    <content
+      select="nav">
+    </content>
     <content
       select="main">
     </content>
@@ -54,7 +81,19 @@
 
   <script>
     Polymer({
-      is: "x-inspector"
+      is: "x-inspector",
+
+      _handleClose: function () {
+        this.fire("close", null, {
+          bubbles: false
+        });
+      },
+
+      _handleDelete: function () {
+        this.fire("delete", null, {
+          bubbles: false
+        });
+      }
     });
   </script>
 </dom-module>

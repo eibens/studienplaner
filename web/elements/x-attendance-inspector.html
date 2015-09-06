@@ -1,7 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-title.html">
@@ -18,28 +16,16 @@
     paper-icon-button {
       --paper-icon-button-ink-color: white;
     }
-    nav .back {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      @apply(--layout-self-stretch);
-      @apply(--layout-flex);
-      position: relative;
+    nav {
+      position: relative; /* ripple */
       cursor: pointer;
       padding: 0 12px;
     }
-    nav .back x-course-title {
+    nav x-course-title {
       @apply(--layout-flex);
-      font-size: 14px;
-      font-weight: 100;
     }
-    nav .back x-course-avatar {
-      width: 32px;
-      height: 32px;
-      font-size: 14px;
+    nav x-course-avatar {
       margin-right: 12px;
-    }
-    nav paper-icon-button {
-      margin: 0 8px;
     }
     header {
       font-weight: 100;
@@ -61,25 +47,20 @@
   </style>
 
   <template>
-    <x-inspector>
-      <nav>
-        <div
-          class="back"
-          on-tap="_handleBack">
-          <paper-ripple></paper-ripple>
-          <x-course-avatar
-            label="[[attendance.course.type]]">
-          </x-course-avatar>
-          <x-course-title
-            text="[[attendance.course.title]]"
-            placeholder="Unbenannt">
-          </x-course-title>
-        </div>
-        <paper-icon-button
-          class="delete"
-          icon="delete"
-          on-tap="_handleDelete">
-        </paper-icon-button>
+    <x-inspector
+      on-close="_handleClose"
+      on-delete="_handleDelete">
+      <nav
+        on-tap="_handleBack">
+        <paper-ripple></paper-ripple>
+        <x-course-avatar
+          label="[[attendance.course.type]]"
+          size="4">
+        </x-course-avatar>
+        <x-course-title
+          text="[[attendance.course.title]]"
+          placeholder="Unbenannt">
+        </x-course-title>
       </nav>
 
       <header>
@@ -122,6 +103,11 @@
           data: this.attendance.course
         });
       },
+
+      _handleClose: function () {
+        this.fire("select-attendance", { data: null });
+      },
+
       _handleDelete: function () {
         this.fire("delete-attendance", { data: this.attendance });
       }
