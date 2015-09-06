@@ -19,11 +19,11 @@
     }
     :host {
       @apply(--layout-fit);
-      @apply(--layout-horizontal);
+      @apply(--layout-vertical);
     }
     main {
       @apply(--layout-flex);
-      @apply(--layout-vertical);
+      @apply(--layout-horizontal);
     }
     main > x-browser {
       @apply(--layout-flex);
@@ -63,30 +63,30 @@
       selected="{{attendance}}">
     </array-selector>
 
+    <x-toolbar
+      name="{{profile.name}}"
+      saving="[[_storageDirty]]"
+      cleared="[[_profileEmpty]]">
+    </x-toolbar>
+
     <main>
-      <x-toolbar
-        name="{{profile.name}}"
-        saving="[[_storageDirty]]"
-        cleared="[[_profileEmpty]]">
-      </x-toolbar>
       <x-browser
         class="main"
         courses="{{profile.courses}}"
         attendances="[[profile.attendances]]">
       </x-browser>
+      <aside hidden$="[[_areEmpty(course, attendance)]]">
+        <x-course-inspector
+          hidden$="[[_isEmpty(course)]]"
+          course="{{course}}"
+          attendances="{{profile.attendances}}">
+        </x-course-inspector>
+        <x-attendance-inspector
+          hidden$="[[_isEmpty(attendance)]]"
+          attendance="{{attendance}}">
+        </x-attendance-inspector>
+      </aside>
     </main>
-
-    <aside hidden$="[[_areEmpty(course, attendance)]]">
-      <x-course-inspector
-        hidden$="[[_isEmpty(course)]]"
-        course="{{course}}"
-        attendances="{{profile.attendances}}">
-      </x-course-inspector>
-      <x-attendance-inspector
-        hidden$="[[_isEmpty(attendance)]]"
-        attendance="{{attendance}}">
-      </x-attendance-inspector>
-    </aside>
 
     <paper-fab
       icon="add"
