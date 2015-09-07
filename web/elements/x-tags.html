@@ -101,7 +101,8 @@
       },
 
       _handleAdd: function () {
-        var tag = this.$.input.value;
+        var tag = this.$.input.value.trim();
+        if (!tag) return;
         this.push("tags", tag);
         this.$.input.value = "";
       },
