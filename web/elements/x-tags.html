@@ -54,7 +54,8 @@
     <div class="input">
       <paper-input
         id="input"
-        label="Kategorien">
+        label="Kategorien"
+        on-keyup="_handleKeyUp">
       </paper-input>
       <paper-button
         raised
@@ -103,6 +104,12 @@
         var tag = this.$.input.value;
         this.push("tags", tag);
         this.$.input.value = "";
+      },
+
+      _handleKeyUp: function (event) {
+        if (event.keyCode == 13) {
+          this._handleAdd();
+        }
       }
     });
   </script>
