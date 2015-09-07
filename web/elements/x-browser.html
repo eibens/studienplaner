@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="x-course-grade.html">
+<link rel="import" href="x-tag-string.html">
 
 <dom-module id="x-browser">
   <style>
@@ -27,7 +28,6 @@
     .row {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
-      height: 40px;
       position: relative;
       cursor: pointer;
       padding: 8px 16px;
@@ -40,8 +40,15 @@
       width: 40px;
       margin-right: 16px;
     }
-    x-course-title {
+    .title {
       @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    x-tag-string {
+      margin-top: 4px;
+    }
+    x-tag-string[empty] {
+      margin-top: 0;
     }
     .credits {
       @apply(--layout-vertical);
@@ -82,10 +89,15 @@
               label="[[item.type]]"
               size="5">
             </x-course-avatar>
-            <x-course-title
-              text="[[item.title]]"
-              placeholder="Unbenannt">
-            </x-course-title>
+            <div class="title">
+              <x-course-title
+                text="[[item.title]]"
+                placeholder="Unbenannt">
+              </x-course-title>
+              <x-tag-string
+                tags="[[item.tags]]">
+              </x-tag-string>
+            </div>
             <div class="credits">
               <span>[[_formatCredits(item.credits)]]</span>
               <span class="unit">ECTS</span>

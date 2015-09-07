@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
+<dom-module id="x-tag-string">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      color: rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    :host([empty]) iron-icon {
+      display: none;
+    }
+    label {
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    label:after {
+      content: " - ";
+    }
+    label:last-of-type:after {
+      content: "";
+    }
+    iron-icon {
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
+    }
+  </style>
+
+  <template>
+    <iron-icon
+      icon="label-outline">
+    </iron-icon>
+    <template
+      is="dom-repeat"
+      items="[[tags]]">
+      <label>[[item]]</label>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-tag-string",
+
+      properties: {
+        tags: {
+          type: Array,
+          value: []
+        },
+        empty: {
+          type: Boolean,
+          computed: "_computeEmpty(tags)",
+          reflectToAttribute: true
+        }
+      },
+
+      _computeEmpty: function (tags) {
+        return !tags || !tags.length;
+      }
+    });
+  </script>
+</dom-module>
