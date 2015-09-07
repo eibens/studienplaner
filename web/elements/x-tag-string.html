@@ -54,12 +54,14 @@
         },
         empty: {
           type: Boolean,
-          computed: "_computeEmpty(tags)",
+          notify: true,
+          computed: "_computeEmpty(tags.*)",
           reflectToAttribute: true
         }
       },
 
-      _computeEmpty: function (tags) {
+      _computeEmpty: function (tagsChange) {
+        var tags = tagsChange.base;
         return !tags || !tags.length;
       }
     });
