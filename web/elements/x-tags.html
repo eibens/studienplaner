@@ -103,6 +103,8 @@
       _handleAdd: function () {
         var tag = this.$.input.value.trim();
         if (!tag) return;
+        // Ignore duplicate tags
+        if (this.tags.indexOf(tag) >= 0) return;
         this.push("tags", tag);
         this.$.input.value = "";
       },
