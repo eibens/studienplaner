@@ -6,6 +6,7 @@
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-grade.html">
 <link rel="import" href="x-course-title.html">
+<link rel="import" href="x-grade-chart.html">
 <link rel="import" href="x-tag-string.html">
 
 <dom-module id="x-browser">
@@ -20,6 +21,16 @@
       width: 90%;
       max-width: 1000px;
       padding: 16px 0;
+    }
+
+    header {
+      @apply(--shadow-elevation-3dp);
+      background: white;
+      margin: 16px 0;
+      padding: 16px;
+    }
+    header x-grade-chart {
+      height: 160px;
     }
     main {
       background: white;
@@ -76,6 +87,12 @@
         label="Suchbegriff"
         value="{{query}}">
       </paper-input>
+      <header>
+        <x-grade-chart
+          attendances="[[attendances]]">
+        </x-grade-chart>
+      </header>
+
       <main>
         <template
           id="list"
