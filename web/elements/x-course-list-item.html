@@ -1,0 +1,106 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="x-course-avatar.html">
+<link rel="import" href="x-course-grade.html">
+<link rel="import" href="x-course-title.html">
+<link rel="import" href="x-tag-string.html">
+
+<dom-module id="x-course-list-item">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      position: relative;
+      cursor: pointer;
+      padding: 8px 16px;
+      transition: background 0.2s;
+    }
+    :host(:hover) {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    x-course-avatar {
+      width: 40px;
+      margin-right: 16px;
+    }
+    main {
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    x-tag-string {
+      margin-top: 4px;
+    }
+    x-tag-string[empty] {
+      margin-top: 0;
+    }
+    .credits {
+      @apply(--layout-vertical);
+      @apply(--layout-end-justified);
+      text-align: right;
+      margin: 0 16px;
+      font-size: 16px;
+    }
+    .credits .unit {
+      font-size: 10px;
+      opacity: 0.5;
+    }
+  </style>
+
+  <template>
+    <paper-ripple></paper-ripple>
+    <x-course-avatar
+      label="[[course.type]]"
+      size="5">
+    </x-course-avatar>
+    <main>
+      <x-course-title
+        text="[[course.title]]"
+        placeholder="Unbenannt">
+      </x-course-title>
+      <x-tag-string
+        tags="[[course.tags]]">
+      </x-tag-string>
+    </main>
+    <div class="credits">
+      <span>[[_formatCredits(course.credits)]]</span>
+      <span class="unit">ECTS</span>
+    </div>
+    <x-course-grade
+      course="[[course]]"
+      attendances="[[attendances]]">
+    </x-course-grade>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-course-list-item",
+
+      properties: {
+        course: {
+          type: Object,
+          value: null
+        },
+        attendances: {
+          type: Array,
+          value: []
+        }
+      },
+
+      listeners: {
+        "tap": "_handleTap"
+      },
+
+      _handleTap: function (event) {
+        var self = this;
+        this.fire("select-course", {
+          data: self.course
+        });
+      },
+
+      _formatCredits: function (value) {
+        var number = parseFloat(value);
+        return !isNaN(number) ? number.toFixed(1) : "0.0";
+      }
+    });
+  </script>
+</dom-module>

@@ -2,12 +2,8 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
-<link rel="import" href="x-course-avatar.html">
-<link rel="import" href="x-course-grade.html">
-<link rel="import" href="x-course-title.html">
+<link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
-<link rel="import" href="x-tag-string.html">
 
 <dom-module id="x-browser">
   <style>
@@ -38,42 +34,6 @@
       margin: 16px 0;
       padding: 8px 0;
     }
-    .row {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      position: relative;
-      cursor: pointer;
-      padding: 8px 16px;
-      transition: background 0.2s;
-    }
-    .row:hover {
-      background: #eee;
-    }
-    x-course-avatar {
-      width: 40px;
-      margin-right: 16px;
-    }
-    .title {
-      @apply(--layout-flex);
-      @apply(--layout-vertical);
-    }
-    x-tag-string {
-      margin-top: 4px;
-    }
-    x-tag-string[empty] {
-      margin-top: 0;
-    }
-    .credits {
-      @apply(--layout-vertical);
-      @apply(--layout-end-justified);
-      text-align: right;
-      margin: 0 16px;
-      font-size: 16px;
-    }
-    .credits .unit {
-      font-size: 10px;
-      opacity: 0.5;
-    }
     .placeholder {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
@@ -101,31 +61,10 @@
           filter="_filter"
           sort="_sort"
           observe="type title credits">
-          <div class="row"
-               on-tap="_handleSelect">
-            <paper-ripple></paper-ripple>
-            <x-course-avatar
-              label="[[item.type]]"
-              size="5">
-            </x-course-avatar>
-            <div class="title">
-              <x-course-title
-                text="[[item.title]]"
-                placeholder="Unbenannt">
-              </x-course-title>
-              <x-tag-string
-                tags="[[item.tags]]">
-              </x-tag-string>
-            </div>
-            <div class="credits">
-              <span>[[_formatCredits(item.credits)]]</span>
-              <span class="unit">ECTS</span>
-            </div>
-            <x-course-grade
-              course="[[item]]"
-              attendances="[[attendances]]">
-            </x-course-grade>
-          </div>
+          <x-course-list-item
+            course="[[item]]"
+            attendances="[[attendances]]">
+          </x-course-list-item>
         </template>
         <div
           class="placeholder"
@@ -173,25 +112,11 @@
         this.$.list.render();
       },
 
-      _handleSelect: function (event) {
-        this.fire("select-course", {
-          data: event.model.item
-        })
-      },
-
       _computeResult: function () {
         var self = this;
         return this.courses.filter(function (course) {
           return self._filter(course);
         });
-      },
-
-      _formatCredits: function (value) {
-        var number = parseFloat(value);
-        if (isNaN(number)) {
-          return "0.0";
-        }
-        return number.toFixed(1);
       },
 
       _computeEmpty: function () {
