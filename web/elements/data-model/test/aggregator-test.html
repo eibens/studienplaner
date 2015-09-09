@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../bower_components/web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../data-model.html">
+</head>
+<body>
+<script>
+  describe("Aggregator", function() {
+
+    describe("values", function () {
+      it("should return added values", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.add("orange");
+        expect(aggregator.values).to.deep.equal(["apple", "orange"]);
+      });
+      it("should not return removed values", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.remove("apple");
+        expect(aggregator.values).to.deep.equal([]);
+      });
+    });
+
+    describe("contains", function () {
+      it("should return true for value that was added", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        expect(aggregator.contains("apple")).to.be.true;
+      });
+      it("should return false for value that was not added", function () {
+        var aggregator = new Aggregator();
+        expect(aggregator.contains("apple")).to.be.false;
+      });
+      it("should return false for value that was removed", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.remove("apple");
+        expect(aggregator.contains("apple")).to.be.false;
+      });
+    });
+
+    describe("count", function () {
+      it("should return zero for value that was not added", function () {
+        var aggregator = new Aggregator();
+        expect(aggregator.count("apple")).to.equal(0);
+      });
+      it("should return two if the value was added twice", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.add("apple");
+        expect(aggregator.count("apple")).to.equal(2);
+      });
+      it("should return zero for value that was removed", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.remove("apple");
+        expect(aggregator.count("apple")).to.equal(0);
+      });
+      it("should return zero for value that was more often removed than added", function () {
+        var aggregator = new Aggregator();
+        aggregator.add("apple");
+        aggregator.remove("apple");
+        aggregator.remove("apple");
+        expect(aggregator.count("apple")).to.equal(0);
+      });
+    });
+  });
+</script>
+</body>
+</html>
