@@ -4,6 +4,7 @@
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-grade.html">
 <link rel="import" href="x-course-title.html">
+<link rel="import" href="x-drop-target.html">
 <link rel="import" href="x-tag-string.html">
 
 <dom-module id="x-course-list-item">
@@ -18,6 +19,15 @@
     }
     :host(:hover) {
       background: rgba(0, 0, 0, 0.05);
+    }
+    x-drop-target {
+      @apply(--layout-fit);
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      transition: background 0.2s;
+    }
+    x-drop-target[dropping] {
+      background: rgba(0, 0, 0, 0.2);
     }
     x-course-avatar {
       width: 40px;
@@ -69,6 +79,10 @@
       course="[[course]]"
       attendances="[[attendances]]">
     </x-course-grade>
+    <x-drop-target
+      type="application/x-tag"
+      on-receive="_handleTagReceive">
+    </x-drop-target>
   </template>
 
   <script>
@@ -94,6 +108,15 @@
         var self = this;
         this.fire("select-course", {
           data: self.course
+        });
+      },
+
+      _handleTagReceive: function (event) {
+        var tag = event.detail.data;
+        if (!tag) return;
+        this.fire("add-course-tag", {
+          course: this.course,
+          tag: tag
         });
       },
 

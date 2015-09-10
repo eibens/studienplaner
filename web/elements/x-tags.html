@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="x-draggable.html">
 
 <dom-module id="x-tags">
   <style>
@@ -28,17 +29,23 @@
       @apply(--layout-wrap);
       margin-top: 4px;
     }
-    label {
+    .tag {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
+      position: relative;
       background: rgba(0, 0, 0, 0.1);
       border-radius: 3px;
       font-size: 12px;
       margin-right: 8px;
       margin-bottom: 8px;
       padding: 4px;
+      box-sizing: border-box;
+      border: 1px solid transparent;
     }
-    label span {
+    .tag[dragging] {
+      border: 1px dashed rgba(0, 0, 0, 0.5);
+    }
+    .tag span {
       margin: 0 2px;
     }
     iron-icon {
@@ -70,14 +77,18 @@
       <template
         is="dom-repeat"
         items="{{tags}}">
-        <label>
+        <x-draggable
+          class="tag"
+          data="[[item]]"
+          type="application/x-tag"
+          effect="copy">
           <span>[[item]]</span>
           <iron-icon
             class="remove"
             icon="close"
             on-tap="_handleRemove">
           </iron-icon>
-        </label>
+        </x-draggable>
       </template>
     </div>
   </template>

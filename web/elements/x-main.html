@@ -127,7 +127,8 @@
         "delete-course": "_handleDeleteCourse",
         "add-attendance": "_handleAddAttendance",
         "select-attendance": "_handleSelectAttendance",
-        "delete-attendance": "_handleDeleteAttendance"
+        "delete-attendance": "_handleDeleteAttendance",
+        "add-course-tag": "_handleAddCourseTag"
       },
 
       _handleAddButtonTap: function (event) {
@@ -193,6 +194,14 @@
         this.fire("select-course", {
           data: attendance.course
         });
+      },
+
+      _handleAddCourseTag: function (event) {
+        var course = event.detail.course;
+        var tag = event.detail.tag;
+        if (course.tags.indexOf(tag) >= 0) return;
+        var index = this.profile.courses.indexOf(course);
+        this.push("profile.courses." + index + ".tags", tag);
       },
 
       _add: function (path, item, selector) {

@@ -1,0 +1,57 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="x-draggable">
+  <template>
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-draggable",
+
+      properties: {
+        data: {
+          type: String,
+          value: ""
+        },
+
+        type: {
+          type: String,
+          value: "text/plain"
+        },
+
+        effect: {
+          type: String,
+          value: "all"
+        },
+
+        dragging: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          readOnly: true,
+          reflectToAttribute: true
+        }
+      },
+
+      hostAttributes: {
+        draggable: "true"
+      },
+
+      listeners: {
+        "dragstart": "_handleDragStart",
+        "dragend": "_handleDragEnd"
+      },
+
+      _handleDragStart: function (event) {
+        this._setDragging(true);
+        event.dataTransfer.effectAllowed = this.effect;
+        event.dataTransfer.setData(this.type, this.data);
+      },
+
+      _handleDragEnd: function (event) {
+        this._setDragging(false);
+      }
+    });
+  </script>
+</dom-module>
