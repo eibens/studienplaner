@@ -3,6 +3,7 @@
 <dom-module id="x-draggable">
   <template>
     <content></content>
+    <span id="hidden" hidden></span>
   </template>
 
   <script>
@@ -25,6 +26,11 @@
           value: "all"
         },
 
+        hideGhost: {
+          type: Boolean,
+          value: false
+        },
+
         dragging: {
           type: Boolean,
           value: false,
@@ -45,6 +51,9 @@
 
       _handleDragStart: function (event) {
         this._setDragging(true);
+        if (this.hideGhost) {
+          event.dataTransfer.setDragImage(this.$.hidden, 0, 0);
+        }
         event.dataTransfer.effectAllowed = this.effect;
         event.dataTransfer.setData(this.type, this.data);
       },
