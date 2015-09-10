@@ -32,19 +32,14 @@
       },
 
       listeners: {
-        "dragenter": "_handleDragEnter",
         "dragover": "_handleDragOver",
         "dragleave": "_handleDragLeave",
         "drop": "_handleDrop"
       },
 
-      _handleDragEnter: function () {
-        this._setDropping(true);
-      },
-
       _handleDragOver: function (event) {
-        this._setDropping(true);
         if (event.dataTransfer.types.indexOf(this.type) >= 0) {
+          this._setDropping(true);
           event.preventDefault();
         }
       },
