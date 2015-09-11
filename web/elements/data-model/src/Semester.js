@@ -91,5 +91,14 @@ Semester.prototype = {
    */
   get id() {
     return this.year + (this.isWinter ? "w" : "s");
+  },
+
+  /**
+   * @param {Semester|null} other
+   * @returns {boolean}
+   */
+  equals: function (other) {
+    if (!(other instanceof Semester)) return false;
+    return this.id == other.id;
   }
 };
