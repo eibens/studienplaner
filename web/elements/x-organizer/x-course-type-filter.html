@@ -22,7 +22,8 @@
     <template
       id="list"
       is="dom-repeat"
-      items="[[options]]">
+      items="[[options]]"
+      sort="_sort">
       <x-course-avatar
         label="[[item.value]]"
         size="4"
@@ -49,6 +50,10 @@
       _handleDoubleTap: function (event) {
         this.deselectAll();
         this.select(event.model.item.value);
+      },
+
+      _sort: function (a, b) {
+        return a.value.localeCompare(b.value);
       }
     });
   </script>
