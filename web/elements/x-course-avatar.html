@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 
 <dom-module id="x-course-avatar">
   <style>
@@ -10,12 +11,20 @@
       font-weight: 100;
       box-sizing: border-box;
       border-radius: 9999px;
+      position: relative;
     }
     :host([empty]) {
       border: 3px solid rgba(0, 0, 0, 0.15);
     }
     :host([empty].dark) {
       border-color: rgba(255, 255, 255, 0.1);
+    }
+    paper-ripple {
+      visibility: hidden;
+    }
+    :host([interactive]) paper-ripple {
+      visibility: visible;
+      cursor: pointer;
     }
     :host([size="4"]) {
       width: 32px;
@@ -40,6 +49,7 @@
   </style>
 
   <template>
+    <paper-ripple></paper-ripple>
     <span>[[label]]</span>
   </template>
 
@@ -56,6 +66,11 @@
         size: {
           type: Number,
           value: 5,
+          reflectToAttribute: true
+        },
+        interactive: {
+          type: Boolean,
+          value: false,
           reflectToAttribute: true
         },
         empty: {
