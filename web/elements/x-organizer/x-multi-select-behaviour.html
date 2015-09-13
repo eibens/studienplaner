@@ -1,0 +1,73 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<script>
+  var App = App || {};
+
+  App.MultiSelectBehaviour = {
+    is: "x-multi-select-behaviour",
+
+    properties: {
+
+      items: {
+        type: Array,
+        value: [],
+        notify: true
+      },
+
+      selected: {
+        type: Array,
+        value: [],
+        notify: true
+      },
+
+      options: {
+        type: Array,
+        computed: "_computeOptions(items.*, selected.*)",
+        notify: true
+      }
+    },
+
+    select: function (item) {
+      this.push("selected", item);
+    },
+
+    selectAll: function () {
+      this.set("selected", this.items.slice());
+    },
+
+    isSelected: function (item) {
+      return this.selected.indexOf(item) >= 0;
+    },
+
+    toggle: function (item) {
+      if (this.isSelected(item)) {
+        this.unselect(item);
+      } else {
+        this.select(item);
+      }
+    },
+
+    unselect: function (item) {
+      var index = this.selected.indexOf(item);
+      while (index >= 0) {
+        this.splice("selected", index, 1);
+        index = this.selected.indexOf(item);
+      }
+    },
+
+    unselectAll: function () {
+      this.selected = [];
+    },
+
+    _computeOptions: function (itemsChange, selectedChange) {
+      return itemsChange.base.map(function (item) {
+        return {
+          value: item,
+          selected: selectedChange.base.indexOf(item) >= 0
+        };
+      });
+    }
+  };
+
+</script>

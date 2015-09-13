@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="../x-grade-icon.html">
-<link rel="import" href="x-exclude-filter-behaviour.html">
+<link rel="import" href="x-multi-select-behaviour.html">
 
 <dom-module id="x-grade-filter">
   <style>
@@ -14,8 +14,8 @@
       transition: opacity 0.2s;
       margin: 0 8px 8px 0;
     }
-    [excluded] {
-      opacity: 0.25;
+    [selected] {
+      opacity: 0.3;
     }
   </style>
 
@@ -28,7 +28,7 @@
         grade="[[item.value]]"
         size="4"
         interactive
-        excluded$="[[item.excluded]]"
+        selected$="[[item.selected]]"
         on-tap="_handleTap"
         on-dblclick="_handleDoubleTap">
       </x-grade-icon>
@@ -40,7 +40,7 @@
       is: "x-grade-filter",
 
       behaviors: [
-        App.ExcludeFilterBehaviour
+        App.MultiSelectBehaviour
       ],
 
       ready: function () {
@@ -59,7 +59,8 @@
       },
 
       _handleDoubleTap: function (event) {
-        this.solo(event.model.item.value);
+        this.selectAll();
+        this.unselect(event.model.item.value);
       }
     });
   </script>

@@ -17,7 +17,7 @@
       is="dom-bind">
       <x-grade-filter
         id="filter"
-        excluded="{{excluded}}">
+        selected="{{selected}}">
       </x-grade-filter>
       <button
         onclick="handleClearButtonTap()">
@@ -27,7 +27,7 @@
       <ul>
         <template
           is="dom-repeat"
-          items="[[excluded]]">
+          items="[[selected]]">
           <li>
             <span>Grade: </span>
             <span>[[item.value]]</span>
@@ -37,7 +37,7 @@
     </template>
     <script>
       function handleClearButtonTap() {
-        document.getElementById("filter").clearAll();
+        document.getElementById("filter").unselectAll();
       }
     </script>
   </body>
