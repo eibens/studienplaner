@@ -20,10 +20,10 @@
         selected="{{selected}}">
       </x-grade-filter>
       <button
-        onclick="handleClearButtonTap()">
-        CLEAR
+        onclick="reset()">
+        RESET
       </button>
-      <p>Excluded values:</p>
+      <p>Selected grades:</p>
       <ul>
         <template
           is="dom-repeat"
@@ -36,8 +36,8 @@
       </ul>
     </template>
     <script>
-      function handleClearButtonTap() {
-        document.getElementById("filter").unselectAll();
+      function reset() {
+        document.getElementById("filter").selectAll();
       }
     </script>
   </body>

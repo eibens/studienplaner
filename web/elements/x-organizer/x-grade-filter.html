@@ -13,9 +13,10 @@
     x-grade-icon {
       transition: opacity 0.2s;
       margin: 0 8px 8px 0;
+      opacity: 0.3;
     }
     [selected] {
-      opacity: 0.3;
+      opacity: 1.0;
     }
   </style>
 
@@ -52,6 +53,7 @@
           new Grade(4),
           new Grade(5)
         ]);
+        this.selectAll();
       },
 
       _handleTap: function (event) {
@@ -59,8 +61,8 @@
       },
 
       _handleDoubleTap: function (event) {
-        this.selectAll();
-        this.unselect(event.model.item.value);
+        this.unselectAll();
+        this.select(event.model.item.value);
       }
     });
   </script>
