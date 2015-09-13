@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../data-model/data-model.html">
+<link rel="import" href="../x-grade-icon.html">
+<link rel="import" href="x-exclude-filter-behaviour.html">
+
+<dom-module id="x-grade-filter">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+    }
+    x-grade-icon {
+      transition: opacity 0.2s;
+      margin: 0 8px 8px 0;
+    }
+    [excluded] {
+      opacity: 0.25;
+    }
+  </style>
+
+  <template>
+    <template
+      id="list"
+      is="dom-repeat"
+      items="[[options]]">
+      <x-grade-icon
+        grade="[[item.value]]"
+        size="4"
+        interactive
+        excluded$="[[item.excluded]]"
+        on-tap="_handleTap"
+        on-dblclick="_handleDoubleTap">
+      </x-grade-icon>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-grade-filter",
+
+      behaviors: [
+        App.ExcludeFilterBehaviour
+      ],
+
+      ready: function () {
+        this.set("items", [
+          null,
+          new Grade(1),
+          new Grade(2),
+          new Grade(3),
+          new Grade(4),
+          new Grade(5)
+        ]);
+      },
+
+      _handleTap: function (event) {
+        this.toggle(event.model.item.value);
+      },
+
+      _handleDoubleTap: function (event) {
+        this.solo(event.model.item.value);
+      }
+    });
+  </script>
+</dom-module>

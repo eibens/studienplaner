@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>x-grade-filter Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-grade-filter.html">
+    <style>
+      body {
+        font-family: Roboto, Noto, sans-serif;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <template
+      is="dom-bind">
+      <x-grade-filter
+        id="filter"
+        excluded="{{excluded}}">
+      </x-grade-filter>
+      <button
+        onclick="handleClearButtonTap()">
+        CLEAR
+      </button>
+      <p>Excluded values:</p>
+      <ul>
+        <template
+          is="dom-repeat"
+          items="[[excluded]]">
+          <li>
+            <span>Grade: </span>
+            <span>[[item.value]]</span>
+          </li>
+        </template>
+      </ul>
+    </template>
+    <script>
+      function handleClearButtonTap() {
+        document.getElementById("filter").clearAll();
+      }
+    </script>
+  </body>
+</html>

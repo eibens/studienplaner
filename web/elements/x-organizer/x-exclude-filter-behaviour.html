@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  var App = App || {};
+
+  App.ExcludeFilterBehaviour = {
+    is: "x-exclude-filter-behaviour",
+
+    properties: {
+
+      items: {
+        type: Array,
+        value: [],
+        notify: true
+      },
+
+      excluded: {
+        type: Array,
+        value: [],
+        notify: true
+      },
+
+      options: {
+        type: Array,
+        computed: "_computeOptions(items.*, excluded.*)",
+        notify: true
+      }
+    },
+
+    test: function (input) {
+      return !this.isExcluded(input);
+    },
+
+    exclude: function (item) {
+      this.push("excluded", item);
+    },
+
+    excludeAll: function () {
+      this.set("excluded", this.items.slice());
+    },
+
+    isExcluded: function (item) {
+      return this.excluded.indexOf(item) >= 0;
+    },
+
+    solo: function (item) {
+      this.excludeAll();
+      this.clear(item);
+    },
+
+    toggle: function (item) {
+      if (this.isExcluded(item)) {
+        this.clear(item);
+      } else {
+        this.exclude(item);
+      }
+    },
+
+    clear: function (item) {
+      var index = this.excluded.indexOf(item);
+      while (index >= 0) {
+        this.splice("excluded", index, 1);
+        index = this.excluded.indexOf(item);
+      }
+    },
+
+    clearAll: function () {
+      this.excluded = [];
+    },
+
+    _computeOptions: function (itemsChange, excludedChange) {
+      return itemsChange.base.map(function (item) {
+        return {
+          value: item,
+          excluded: excludedChange.base.indexOf(item) >= 0
+        };
+      });
+    }
+  };
+
+</script>
