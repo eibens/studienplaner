@@ -42,13 +42,13 @@
 
     toggle: function (item) {
       if (this.isSelected(item)) {
-        this.unselect(item);
+        this.deselect(item);
       } else {
         this.select(item);
       }
     },
 
-    unselect: function (item) {
+    deselect: function (item) {
       var index = this.selected.indexOf(item);
       while (index >= 0) {
         this.splice("selected", index, 1);
@@ -56,7 +56,7 @@
       }
     },
 
-    unselectAll: function () {
+    deselectAll: function () {
       this.selected = [];
     },
 
