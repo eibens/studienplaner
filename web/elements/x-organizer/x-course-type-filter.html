@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../x-course-avatar.html">
+<link rel="import" href="x-multi-select-behaviour.html">
+
+<dom-module id="x-course-type-filter">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+    }
+    x-course-avatar {
+      transition: opacity 0.2s;
+      margin: 0 8px 8px 0;
+      opacity: 0.3;
+    }
+    [selected] {
+      opacity: 1.0;
+    }
+  </style>
+
+  <template>
+    <template
+      id="list"
+      is="dom-repeat"
+      items="[[options]]">
+      <x-course-avatar
+        label="[[item.value]]"
+        size="4"
+        interactive
+        selected$="[[item.selected]]"
+        on-tap="_handleTap"
+        on-dblclick="_handleDoubleTap">
+      </x-course-avatar>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-course-type-filter",
+
+      behaviors: [
+        App.MultiSelectBehaviour
+      ],
+
+      _handleTap: function (event) {
+        this.toggle(event.model.item.value);
+      },
+
+      _handleDoubleTap: function (event) {
+        this.deselectAll();
+        this.select(event.model.item.value);
+      }
+    });
+  </script>
+</dom-module>

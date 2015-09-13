@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>x-course-type-filter Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-course-type-filter.html">
+    <style>
+      body {
+        font-family: Roboto, Noto, sans-serif;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <template
+      is="dom-bind">
+      <x-course-type-filter
+        id="filter"
+        items='["VU", "VO", "UE", "PR"]'
+        selected="{{selected}}">
+      </x-course-type-filter>
+      <button
+        onclick="reset()">
+        RESET
+      </button>
+      <p>Selected course types:</p>
+      <ul>
+        <template
+          is="dom-repeat"
+          items="[[selected]]">
+          <li>
+            <span>Course type: </span>
+            <span>[[item]]</span>
+          </li>
+        </template>
+      </ul>
+    </template>
+    <script>
+      function reset() {
+        document.getElementById("filter").selectAll();
+      }
+    </script>
+  </body>
+</html>
