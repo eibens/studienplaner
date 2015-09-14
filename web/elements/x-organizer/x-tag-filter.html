@@ -57,6 +57,9 @@
       sort="_sort">
       <x-draggable
         class="tag"
+        data="[[item.value]]"
+        type="application/x-tag"
+        effect="copy"
         required$="[[item.required]]"
         forbidden$="[[item.forbidden]]"
         on-tap="_handleTap">
