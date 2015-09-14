@@ -1,0 +1,211 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../x-draggable.html">
+
+<dom-module id="x-tag-filter">
+  <style>
+    :host {
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: pointer;
+    }
+    .tag {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      cursor: pointer;
+      height: 32px;
+      border-radius: 3px;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .tag[dragging] {
+      border-radius: 0;
+    }
+    .tag:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .tag iron-icon {
+      margin: 0 16px;
+      width: 16px;
+      height: 16px;
+      user-select: none;
+    }
+    .tag span {
+      @apply(--layout-flex);
+    }
+    [required] {
+      font-weight: bold;
+    }
+    [required] iron-icon {
+      color: var(--default-primary-color);
+    }
+    [forbidden] {
+      text-decoration: line-through;
+      color: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+
+  <template>
+    <template
+      is="dom-repeat"
+      items="[[options]]"
+      sort="_sort">
+      <x-draggable
+        class="tag"
+        required$="[[item.required]]"
+        forbidden$="[[item.forbidden]]"
+        on-tap="_handleTap">
+        <iron-icon
+          icon="label-outline"
+          hidden$="[[!item.cleared]]">
+        </iron-icon>
+        <iron-icon
+          icon="label"
+          hidden$="[[!item.required]]">
+        </iron-icon>
+        <iron-icon
+          icon="remove-circle"
+          hidden$="[[!item.forbidden]]">
+        </iron-icon>
+        <span>[[item.value]]</span>
+      </x-draggable>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-tag-filter",
+
+      properties: {
+        items: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+        required: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+        forbidden: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+        options: {
+          type: Array,
+          computed: "_computeOptions(items.*, required.*, forbidden.*)",
+          notify: true
+        }
+      },
+
+      test: function (tags) {
+        return this.testRequired(tags) && this.testForbidden(tags);
+      },
+
+      testRequired: function (tags) {
+        var match = true;
+        this.required.forEach(function (required) {
+          match = match && tags.contains(required);
+        });
+        return match;
+      },
+
+      testForbidden: function (tags) {
+        var match = true;
+        var self = this;
+        tags.forEach(function (tag) {
+          match = match && !self.isForbidden(tag);
+        });
+        return match;
+      },
+
+      isCleared: function (tag) {
+        return !this.isRequired(tag) && !this.isForbidden(tag);
+      },
+
+      isRequired: function (tag) {
+        return this._contains("required", tag);
+      },
+
+      isForbidden: function (tag) {
+        return this._contains("forbidden", tag);
+      },
+
+      clear: function (tag) {
+        this._remove("required", tag);
+        this._remove("forbidden", tag);
+      },
+
+      require: function (tag) {
+        this._remove("forbidden", tag);
+        this.push("required", tag);
+      },
+
+      forbid: function (tag) {
+        this._remove("required", tag);
+        this.push("forbidden", tag);
+      },
+
+      toggle: function (tag) {
+        if (this.isCleared(tag)) {
+          this.require(tag);
+        } else if (this.isRequired(tag)) {
+          this.forbid(tag);
+        } else {
+          this.clear(tag);
+        }
+      },
+
+      clearAll: function () {
+        this.set("required", []);
+        this.set("forbidden", []);
+      },
+
+      requireAll: function () {
+        this.set("forbidden", []);
+        this.set("required", this.items);
+      },
+
+      forbidAll: function () {
+        this.set("required", []);
+        this.set("forbidden", this.items);
+      },
+
+      _handleTap: function (event) {
+        this.toggle(event.model.item.value);
+      },
+
+      _computeOptions: function (itemsChange) {
+        var self = this;
+        return itemsChange.base.map(function (item) {
+          return {
+            value: item,
+            cleared: self.isCleared(item),
+            required: self.isRequired(item),
+            forbidden: self.isForbidden(item)
+          };
+        });
+      },
+
+      _remove: function (path, value) {
+        while (this._contains(path, value)) {
+          var index = this.get(path).indexOf(value);
+          this.splice(path, index, 1);
+        }
+      },
+
+      _contains: function (path, value) {
+        return this.get(path).indexOf(value) >= 0;
+      },
+
+      _sort: function (a, b) {
+        return a.value.localeCompare(b.value);
+      }
+    });
+  </script>
+</dom-module>
