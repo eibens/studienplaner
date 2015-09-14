@@ -45,6 +45,9 @@
 
       _handleTap: function (event) {
         this.toggle(event.model.item.value);
+        if (this.selected.length == 0) {
+          this.selectAll();
+        }
       },
 
       _handleDoubleTap: function (event) {

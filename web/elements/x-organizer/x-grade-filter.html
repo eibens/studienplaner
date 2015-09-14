@@ -27,7 +27,7 @@
       items="[[options]]">
       <x-grade-icon
         grade="[[item.value]]"
-        size="4"
+        size="3"
         interactive
         selected$="[[item.selected]]"
         on-tap="_handleTap"
@@ -58,6 +58,9 @@
 
       _handleTap: function (event) {
         this.toggle(event.model.item.value);
+        if (this.selected.length == 0) {
+          this.selectAll();
+        }
       },
 
       _handleDoubleTap: function (event) {
