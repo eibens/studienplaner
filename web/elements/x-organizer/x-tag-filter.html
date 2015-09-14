@@ -17,7 +17,7 @@
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
       cursor: pointer;
-      height: 32px;
+      height: 48px;
       border-radius: 3px;
       transition: background 0.2s;
       position: relative;
@@ -29,9 +29,9 @@
       background: rgba(0, 0, 0, 0.05);
     }
     .tag iron-icon {
-      margin: 0 16px;
-      width: 16px;
-      height: 16px;
+      margin: 0 24px 0 16px;
+      width: 24px;
+      height: 24px;
       user-select: none;
     }
     .tag span {
@@ -39,13 +39,14 @@
     }
     [required] {
       font-weight: bold;
+      color: black;
     }
     [required] iron-icon {
       color: var(--default-primary-color);
     }
     [forbidden] {
+      color: black;
       text-decoration: line-through;
-      color: rgba(0, 0, 0, 0.5);
     }
   </style>
 
