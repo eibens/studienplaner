@@ -11,6 +11,7 @@
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
 <link rel="import" href="x-toolbar.html">
+<link rel="import" href="x-organizer/x-organizer.html">
 
 <dom-module id="x-main">
   <style>
@@ -43,6 +44,9 @@
       bottom: 16px;
       right: 16px;
     }
+    x-organizer {
+      margin: 8px;
+    }
   </style>
 
   <template>
@@ -70,6 +74,11 @@
     </x-toolbar>
 
     <main>
+      <x-organizer
+        id="element"
+        types='[null, "VU", "VO", "UE", "PR"]'
+        tags='["Red", "Blue", "Green", "Gold", "Brown", "Yellow"]'>
+      </x-organizer>
       <x-browser
         class="main"
         courses="{{profile.courses}}"

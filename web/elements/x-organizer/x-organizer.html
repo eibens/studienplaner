@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../data-model/data-model.html">
+<link rel="import" href="x-course-type-filter.html">
+<link rel="import" href="x-grade-filter.html">
+<link rel="import" href="x-tag-filter.html">
+
+<dom-module id="x-organizer">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      -webkit-user-select: none;
+      user-select: none;
+      width: 240px;
+      color: rgb(97, 97, 97);
+    }
+    section {
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 8px;
+    }
+    section:first-of-type {
+      border: none;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 14px;
+      margin: 16px 16px 8px 16px;
+    }
+    x-course-type-filter {
+      padding-left: 16px;
+    }
+    x-grade-filter {
+      padding-left: 16px;
+    }
+    x-tag-filter {
+      font-size: 14px;
+    }
+  </style>
+
+  <template>
+    <section>
+      <h1>Bewertungen</h1>
+      <x-grade-filter
+        selected="{{filter.grades.allowed}}">
+      </x-grade-filter>
+    </section>
+    <section>
+      <h1>Kurstypen</h1>
+      <x-course-type-filter
+        items="[[types]]"
+        selected="{{filter.types.allowed}}">
+      </x-course-type-filter>
+    </section>
+    <section>
+      <h1>Kategorien</h1>
+      <x-tag-filter
+        items="[[tags]]"
+        required="{{filter.tags.required}}"
+        forbidden="{{filter.tags.forbidden}}">
+      </x-tag-filter>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-organizer",
+
+      properties: {
+
+        types: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        tags: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        filter: {
+          type: Object,
+          value: new Filter(),
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>

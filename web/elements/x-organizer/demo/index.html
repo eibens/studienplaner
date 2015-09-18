@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>x-organizer Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-organizer.html">
+    <style>
+      body {
+        font-family: Roboto, Noto, sans-serif;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <template
+      is="dom-bind">
+      <x-organizer
+        id="element"
+        types='[null, "VU", "VO", "UE", "PR"]'
+        tags='["Red", "Blue", "Green", "Gold", "Brown", "Yellow"]'>
+      </x-organizer>
+      <button
+        onclick="reset()">
+        RESET
+      </button>
+    </template>
+    <script>
+      function reset() {
+        document.getElementById("element").filter = new Filter();
+      }
+    </script>
+  </body>
+</html>
