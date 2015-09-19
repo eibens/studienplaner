@@ -53,12 +53,8 @@ Profile.prototype = {
    *
    * @returns {number}
    */
-  generateAttendanceId: function () {
-    return this._getLastId(
-      Array.prototype.concat.apply(this.courses.map(function (course) {
-        return course.attendances;
-      }))
-    );
+  generateAttendanceId: function (course) {
+    return this._getLastId(course.attendances) + 1;
   },
 
   _getLastId: function (array) {
