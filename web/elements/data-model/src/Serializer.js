@@ -18,13 +18,11 @@ Serializer.prototype = {
    *          type: string|null,
    *          title: string|null,
    *          credits: string|null,
-   *          tags: string[]
-   *        }[],
-   *        attendances: {
-   *          id: Integer,
-   *          course: Integer,
-   *          semester: string,
-   *          grade: Integer|null
+   *          tags: string[],
+   *          attendances: {
+   *            id: Integer,
+   *            semester: string,
+   *            grade: Integer|null
    *        }[]
    *      }
    *
@@ -35,8 +33,7 @@ Serializer.prototype = {
     if (!(profile instanceof Profile)) throw new Error("Must be profile.");
     return {
       name: profile.name,
-      courses: this._serializeCourses(profile.courses),
-      attendances: this._serializeAttendances(profile.attendances)
+      courses: this._serializeCourses(profile.courses)
     };
   },
 
@@ -48,6 +45,18 @@ Serializer.prototype = {
     });
   },
 
+  _serializeCourse: function (course) {
+    if (!(course instanceof Course)) throw new Error("Must be a Course.");
+    return {
+      id: course.id,
+      type: course.type,
+      title: course.title,
+      credits: course.credits,
+      tags: course.tags.slice(),
+      attendances: this._serializeAttendances(course.attendances)
+    };
+  },
+
   _serializeAttendances: function (attendances) {
     if (!(attendances instanceof Array)) throw new Error("Must be an Array.");
     var self = this;
@@ -56,22 +65,10 @@ Serializer.prototype = {
     });
   },
 
-  _serializeCourse: function (course) {
-    if (!(course instanceof Course)) throw new Error("Must be a Course.");
-    return {
-      id: course.id,
-      type: course.type,
-      title: course.title,
-      credits: course.credits,
-      tags: course.tags.slice()
-    };
-  },
-
   _serializeAttendance: function (attendance) {
     if (!(attendance instanceof Attendance)) throw new Error("Must be an Attendance.");
     return {
       id: attendance.id,
-      course: attendance.course.id,
       semester: this._serializeSemester(attendance.semester),
       grade: attendance.grade ? this._serializeGrade(attendance.grade) : null
     };

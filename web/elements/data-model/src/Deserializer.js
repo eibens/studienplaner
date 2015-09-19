@@ -18,9 +18,6 @@ Deserializer.prototype = {
     profile.courses = (object.courses instanceof Array)
       ? this._deserializeCourses(object.courses)
       : [];
-    profile.attendances = (object.attendances instanceof Array)
-      ? this._deserializeAttendances(object.attendances, profile.courses)
-      : [];
     return profile;
   },
 
@@ -28,13 +25,6 @@ Deserializer.prototype = {
     var self = this;
     return this._deserializeEntityArray(array, function (object) {
       return self._deserializeCourse(object);
-    });
-  },
-
-  _deserializeAttendances: function (array, courses) {
-    var self = this;
-    return this._deserializeEntityArray(array, function (object) {
-      return self._deserializeAttendance(object, courses);
     });
   },
 
@@ -46,15 +36,24 @@ Deserializer.prototype = {
     course.title = this._defined(object.title);
     course.credits = this._defined(object.credits);
     course.tags = object.tags ? object.tags : [];
+    course.attendances = (object.attendances instanceof Array)
+      ? this._deserializeAttendances(object.attendances, course)
+      : [];
     return course;
   },
 
-  _deserializeAttendance: function (object, courses) {
+  _deserializeAttendances: function (array, course) {
+    var self = this;
+    return this._deserializeEntityArray(array, function (object) {
+      return self._deserializeAttendance(object, course);
+    });
+  },
+
+  _deserializeAttendance: function (object, course) {
     if (!object) throw new Error("Must be an Object.");
     if (!object.id) throw new Error("Missing ID for attendance.");
-    if (!object.course) throw new Error("Missing course ID for attendance.");
-    var course = this._resolveReference(object.course, courses);
     var attendance = new Attendance(object.id, course);
+    course.attendances.push(attendance);
     attendance.semester = this._deserializeSemester(object.semester);
     attendance.grade = object.grade ? this._deserializeGrade(object.grade) : null;
     return attendance;
@@ -82,16 +81,6 @@ Deserializer.prototype = {
       ids.push(entity.id);
     });
     return result;
-  },
-
-  _resolveReference: function (id, array) {
-    if (!id) throw new Error("Must not be empty.");
-    for (var i = 0; i < array.length; i++) {
-      if (array[i].id == id) {
-        return array[i];
-      }
-    }
-    throw new Error("Failed resolving reference: " + id);
   },
 
   // Returns the value if it is defined, otherwise null.

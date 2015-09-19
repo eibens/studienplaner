@@ -8,6 +8,7 @@ function Course(id) {
   this._title = "";
   this._credits = "0.0";
   this._tags = [];
+  this._attendances = [];
 }
 Course.prototype = {
   /**
@@ -59,5 +60,16 @@ Course.prototype = {
   set tags(value) {
     if (!(value instanceof Array)) throw new Error("Must be Array.");
     this._tags = value;
+  },
+
+  /**
+   * @returns {Attendance[]}
+   */
+  get attendances() {
+    return this._attendances;
+  },
+  set attendances(value) {
+    if (!(value instanceof Array)) throw new Error("Must be Array.");
+    this._attendances = value;
   }
 };

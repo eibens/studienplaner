@@ -32,23 +32,11 @@ Profile.prototype = {
   },
 
   /**
-   * @returns {Array}
-   */
-  get attendances() {
-    return this._attendances
-  },
-  set attendances(value) {
-    if (!(value instanceof Array)) throw new Error("Must be Array.");
-    this._attendances = value;
-  },
-
-  /**
    * @returns {Boolean}
    */
   get isEmpty() {
     return !(this.name ||
-        this.courses.length > 0 ||
-        this.attendances.length > 0);
+        this.courses.length > 0);
   },
 
   /**
@@ -66,7 +54,11 @@ Profile.prototype = {
    * @returns {number}
    */
   generateAttendanceId: function () {
-    return this._getLastId(this.attendances) + 1;
+    return this._getLastId(
+      Array.prototype.concat.apply(this.courses.map(function (course) {
+        return course.attendances;
+      }))
+    );
   },
 
   _getLastId: function (array) {
