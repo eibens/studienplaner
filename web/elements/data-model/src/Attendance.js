@@ -4,6 +4,7 @@
  * @constructor
  */
 function Attendance(id, course) {
+  if (id <= 0) throw new Error("ID must be positive.");
   if (!course) throw new Error("Course must not be null.");
   if (!(course instanceof Course)) throw new Error("Course must be of type Course.");
   this._id = id;

@@ -3,6 +3,7 @@
  * @constructor
  */
 function Course(id) {
+  if (id <= 0) throw new Error("ID must be positive.");
   this._id = id;
   this._type = "";
   this._title = "";
