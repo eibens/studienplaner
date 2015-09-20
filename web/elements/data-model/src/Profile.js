@@ -45,24 +45,11 @@ Profile.prototype = {
    * @returns {number}
    */
   generateCourseId: function () {
-    return this._getLastId(this.courses) + 1;
-  },
-
-  /**
-   * Generates a unique ID for an attendance.
-   *
-   * @returns {number}
-   */
-  generateAttendanceId: function (course) {
-    return this._getLastId(course.attendances) + 1;
-  },
-
-  _getLastId: function (array) {
     var max = 0;
-    array.forEach(function (item) {
-      if (!item.id) return;
-      max = Math.max(max, item.id);
+    this.courses.forEach(function (course) {
+      if (!course.id) return;
+      max = Math.max(max, course.id);
     });
-    return max;
+    return max + 1;
   }
 };

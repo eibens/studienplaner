@@ -72,5 +72,19 @@ Course.prototype = {
   set attendances(value) {
     if (!(value instanceof Array)) throw new Error("Must be Array.");
     this._attendances = value;
+  },
+
+  /**
+   * Generates a unique ID for an attendance.
+   *
+   * @returns {number}
+   */
+  generateAttendanceId: function () {
+    var max = 0;
+    this.attendances.forEach(function (attendance) {
+      if (!attendance.id) return;
+      max = Math.max(max, attendance.id);
+    });
+    return max + 1;
   }
 };
