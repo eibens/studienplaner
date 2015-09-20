@@ -79,8 +79,7 @@
       <span class="unit">ECTS</span>
     </div>
     <x-course-grade
-      course="[[course]]"
-      attendances="[[attendances]]">
+      course="[[course]]">
     </x-course-grade>
     <x-drop-target
       type="application/x-tag"
@@ -96,10 +95,6 @@
         course: {
           type: Object,
           value: null
-        },
-        attendances: {
-          type: Array,
-          value: []
         }
       },
 

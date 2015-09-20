@@ -36,10 +36,6 @@
           type: Object,
           value: null
         },
-        attendances: {
-          type: Array,
-          value: []
-        },
         size: {
           type: Number,
           value: 3
@@ -60,14 +56,13 @@
       },
 
       observers: [
-        "_handleChange(course, attendances.*)",
+        "_handleChange(course.*)",
         "_handleShadowChanged(size, _multiple)"
       ],
 
-      _handleChange: function (course, attendancesChanges) {
-        var attendances = attendancesChanges.base.filter(function (attendance) {
-          return attendance.course.id == course.id;
-        }).sort(function (a, b) {
+      _handleChange: function (courseChange) {
+        var course = courseChange.base;
+        var attendances = course.attendances.sort(function (a, b) {
           return Semester.compare(b.semester, a.semester);
         });
         var count = attendances.length;

@@ -63,7 +63,7 @@
     </array-selector>
     <array-selector
       id="attendance"
-      items="{{profile.attendances}}"
+      items="{{course.attendances}}"
       selected="{{attendance}}">
     </array-selector>
 
@@ -81,14 +81,12 @@
       </x-organizer>
       <x-browser
         class="main"
-        courses="{{profile.courses}}"
-        attendances="[[profile.attendances]]">
+        courses="{{profile.courses}}">
       </x-browser>
       <aside hidden$="[[_areEmpty(course, attendance)]]">
         <x-course-inspector
           hidden$="[[_isEmpty(course)]]"
-          course="{{course}}"
-          attendances="{{profile.attendances}}">
+          course="{{course}}">
         </x-course-inspector>
         <x-attendance-inspector
           hidden$="[[_isEmpty(attendance)]]"
@@ -140,6 +138,26 @@
         "add-course-tag": "_handleAddCourseTag"
       },
 
+      selectCourse: function (course) {
+        if (course != null && this.profile.courses.indexOf(course) < 0) {
+          throw new Error("Cannot select unknown course.");
+        }
+        this.selectAttendance(null);
+        this.$.course.select(course);
+      },
+
+      selectAttendance: function (attendance) {
+        if (attendance) {
+          this.selectCourse(attendance.course);
+          if (this.course.attendances.indexOf(attendance) < 0) {
+            throw new Error("Cannot select unknown attendance.");
+          }
+        }
+        if (this.course) {
+          this.$.attendance.select(attendance);
+        }
+      },
+
       _handleAddButtonTap: function (event) {
         this.fire("add-course");
       },
@@ -158,51 +176,38 @@
 
       _handleAddCourse: function () {
         var course = new Course(this.profile.generateCourseId());
-        this._add("profile.courses", course);
-        this.fire("select-course", { data: course });
+        this.push("profile.courses", course);
+        this.selectCourse(course);
       },
       _handleSelectCourse: function (event) {
-        var course = event.detail.data;
-        this._select("profile.courses", course, this.$.course);
-        if (course) {
-          this.fire("select-attendance", { data: null });
-        }
+        this.selectCourse(event.detail.data);
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
-        this._remove("profile.courses", event.detail.data, this.$.course);
-
-        // Delete associated attendances as well.
-        var self = this;
-        var attendances = this.profile.attendances.filter(function (attendance) {
-          return course == attendance.course;
-        });
-        attendances.forEach(function (attendance) {
-          self.fire("delete-attendance", { data: attendance});
-        });
+        if (course == null) throw new Error("Cannot delete null course.");
+        this.selectCourse(null);
+        this.selectAttendance(null);
+        this._remove("profile.courses", course);
       },
 
-      _handleAddAttendance: function (event) {
+      _handleAddAttendance: function () {
+        if (!this.course) throw new Error("No course selected.")
         var attendance = new Attendance(
-          this.profile.generateAttendanceId(),
-          event.detail.course
+          this.course.generateAttendanceId(),
+          this.course
         );
-        this._add("profile.attendances", attendance);
-        this.fire("select-attendance", { data: attendance });
+        this.push("course.attendances", attendance);
+        this.selectAttendance(attendance);
       },
       _handleSelectAttendance: function (event) {
-        var attendance = event.detail.data;
-        this._select("profile.attendances", attendance, this.$.attendance);
-        if (attendance) {
-          this.fire("select-course", { data: null });
-        }
+        this.selectAttendance(event.detail.data);
       },
       _handleDeleteAttendance: function (event) {
         var attendance = event.detail.data;
-        this._remove("profile.attendances", attendance, this.$.attendance);
-        this.fire("select-course", {
-          data: attendance.course
-        });
+        if (attendance == null) throw new Error("Cannot delete null attendance.");
+        this.selectCourse(attendance.course);
+        this.selectAttendance(null);
+        this._remove("course.attendances", attendance);
       },
 
       _handleAddCourseTag: function (event) {
@@ -213,27 +218,12 @@
         this.push("profile.courses." + index + ".tags", tag);
       },
 
-      _add: function (path, item, selector) {
-        if (this.get(path).indexOf(item) >= 0) {
-          throw new Error("Item already added.");
-        }
-        this.push(path, item);
-      },
-      _select: function (path, item, selector) {
-        if (item != null && this.get(path).indexOf(item) < 0) {
-          throw new Error("Cannot select unknown item.");
-        }
-        selector.select(item);
-      },
-      _remove: function (path, item, selector) {
+      _remove: function (path, item) {
         if (this.get(path).indexOf(item) < 0) {
           throw new Error("Cannot delete unknown item.");
         }
         var index = this.get(path).indexOf(item);
         this.splice(path, index, 1);
-        if (selector.selected == item) {
-          selector.select(null);
-        }
       },
 
       _isEmpty: function (object) {

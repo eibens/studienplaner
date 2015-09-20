@@ -103,7 +103,8 @@
       },
 
       _handleClose: function () {
-        this.fire("select-attendance", { data: null });
+        // Close both course and attendance inspectors.
+        this.fire("select-course", { data: null });
       },
 
       _handleDelete: function () {

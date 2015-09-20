@@ -44,8 +44,7 @@
 
       <x-course-attendances
         class="nav"
-        course="[[course]]"
-        attendances="[[attendances]]">
+        attendances="[[course.attendances]]">
       </x-course-attendances>
 
       <main>
@@ -90,10 +89,6 @@
         course: {
           type: Object,
           value: null
-        },
-        attendances: {
-          type: Array,
-          value: []
         }
       },
 
@@ -110,11 +105,7 @@
       },
 
       _handleAddAttendance: function () {
-        this.fire("add-attendance", {
-          course: this.course,
-          semester: Semester.current(),
-          grade: null
-        });
+        this.fire("add-attendance");
       }
     });
   </script>

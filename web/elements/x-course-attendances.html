@@ -28,7 +28,6 @@
       id="list"
       is="dom-repeat"
       items="{{attendances}}"
-      filter="_filter"
       sort="_sort"
       observe="time grade">
       <x-inspector-link
@@ -50,23 +49,9 @@
         attendances: {
           type: Array,
           value: []
-        },
-        course: {
-          type: Object,
-          value: null
         }
       },
 
-      observers: [
-        "_render(course)"
-      ],
-
-      _render: function () {
-        this.$.list.render();
-      },
-      _filter: function (item) {
-        return item.course === this.course;
-      },
       _sort: function (a, b) {
         var semesterDiff = -Semester.compare(a.semester, b.semester);
         if (semesterDiff != 0) {
