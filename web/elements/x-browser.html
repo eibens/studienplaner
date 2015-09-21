@@ -71,9 +71,9 @@
           value: []
         },
 
-        attendances: {
-          type: Array,
-          value: []
+        filter: {
+          type: Object,
+          value: null
         },
 
         query: {
@@ -84,7 +84,7 @@
 
         result: {
           type: Array,
-          computed: "_computeResult(courses.*, query)"
+          computed: "_computeResult(courses.*, filter.*, query)"
         },
 
         empty: {
@@ -92,6 +92,10 @@
           computed: "_computeEmpty(result)"
         }
       },
+
+      observers: [
+        "_handleFilterChanged(filter.*)"
+      ],
 
       _handleFilterChanged: function () {
         this.$.list.render();
@@ -115,7 +119,7 @@
           var match = title.indexOf(query) >= 0;
           if (!match) return false;
         }
-        return true;
+        return this.filter.test(course);
       },
 
       _sort: function (a, b) {

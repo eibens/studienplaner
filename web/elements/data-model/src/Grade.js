@@ -9,7 +9,17 @@ function Grade(value) {
 }
 
 /**
- *
+ * @param {Grade} a
+ * @param {Grade} b
+ * @returns {boolean}
+ */
+Grade.equals = function (a, b) {
+  if (a != null) return a.equals(b);
+  if (b != null) return b.equals(a);
+  return true;
+};
+
+/**
  * @param {Grade} a
  * @param {Grade} b
  * @returns {number}

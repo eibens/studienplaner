@@ -75,13 +75,13 @@
 
     <main>
       <x-organizer
-        id="element"
-        types='[null, "VU", "VO", "UE", "PR"]'
-        tags='["Red", "Blue", "Green", "Gold", "Brown", "Yellow"]'>
+        filter="{{filter}}"
+        courses="[[profile.courses]]">
       </x-organizer>
       <x-browser
         class="main"
-        courses="{{profile.courses}}">
+        courses="{{profile.courses}}"
+        filter="{{filter}}">
       </x-browser>
       <aside hidden$="[[_areEmpty(course, attendance)]]">
         <x-course-inspector
@@ -108,6 +108,10 @@
       properties: {
         profile: {
           type: Object
+        },
+        filter: {
+          type: Object,
+          value: new Filter()
         },
         course: {
           type: Object,

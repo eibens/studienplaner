@@ -47,14 +47,14 @@
     <section>
       <h1>Kurstypen</h1>
       <x-course-type-filter
-        items="[[types]]"
+        items="[[_types]]"
         selected="{{filter.types.allowed}}">
       </x-course-type-filter>
     </section>
     <section>
       <h1>Kategorien</h1>
       <x-tag-filter
-        items="[[tags]]"
+        items="[[_tags]]"
         required="{{filter.tags.required}}"
         forbidden="{{filter.tags.forbidden}}">
       </x-tag-filter>
@@ -67,23 +67,52 @@
 
       properties: {
 
-        types: {
+        courses: {
           type: Array,
-          value: [],
-          notify: true
-        },
-
-        tags: {
-          type: Array,
-          value: [],
-          notify: true
+          value: []
         },
 
         filter: {
           type: Object,
           value: new Filter(),
           notify: true
+        },
+
+        _types: {
+          type: Array,
+          computed: "_computeTypes(courses.*)"
+        },
+
+        _tags: {
+          type: Array,
+          computed: "_computeTags(courses.*)"
         }
+      },
+
+      _computeTypes: function (courseChange) {
+        var courses = courseChange.base;
+        if (!courses) return [];
+        var types = [ null ];
+        courses.forEach(function (course) {
+          if (types.indexOf(course.type) < 0) {
+            types.push(course.type);
+          }
+        });
+        return types;
+      },
+
+      _computeTags: function (courseChange) {
+        var courses = courseChange.base;
+        if (!courses) return [];
+        var tags = [ ];
+        courses.forEach(function (course) {
+          course.tags.forEach(function (tag) {
+            if (tags.indexOf(tag) < 0) {
+              tags.push(tag);
+            }
+          });
+        });
+        return tags;
       }
     });
   </script>

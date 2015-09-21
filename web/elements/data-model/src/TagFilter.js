@@ -56,7 +56,7 @@ TagFilter.prototype = {
     var match = true;
     var self = this;
     tags.forEach(function (tag) {
-      match = match && !self.isForbidden(tag);
+      match = match && self.forbidden.indexOf(tag) < 0;
     });
     return match;
   }

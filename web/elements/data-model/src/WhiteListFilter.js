@@ -3,7 +3,8 @@
  *
  * @constructor
  */
-function WhiteListFilter() {
+function WhiteListFilter(equals) {
+  this._equals = equals;
   this._allowed = [];
 }
 WhiteListFilter.prototype = {
@@ -39,7 +40,18 @@ WhiteListFilter.prototype = {
    * @returns {boolean}
    */
   test: function (input) {
-    if (!this.allAllowed) return true;
-    return this.allowed.indexOf(input) >= 0;
+    if (this.allAllowed) return true;
+    var equals = this._equals;
+    if (!equals) {
+      equals = function (a, b) {
+        return a == b;
+      }
+    }
+    for (var i = 0; i < this.allowed.length; i++) {
+      if (equals(this.allowed[i], input)) {
+        return true;
+      }
+    }
+    return false;
   }
 };

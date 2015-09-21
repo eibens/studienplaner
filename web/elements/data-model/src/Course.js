@@ -75,6 +75,24 @@ Course.prototype = {
   },
 
   /**
+   * @returns {Attendance}
+   */
+  get latestAttendance() {
+    if (this.attendances.length == 0) return null;
+    return this.attendances.sort(function (b, a) {
+      return Semester.compare(a.semester, b.semester);
+    })[0];
+  },
+
+  /**
+   * @returns {Grade}
+   */
+  get latestGrade() {
+    if (this.latestAttendance == null) return null;
+    return this.latestAttendance.grade;
+  },
+
+  /**
    * Generates a unique ID for an attendance.
    *
    * @returns {number}

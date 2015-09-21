@@ -1,7 +1,9 @@
 
 function Filter() {
   this._types = new WhiteListFilter();
-  this._grades = new WhiteListFilter();
+  this._grades = new WhiteListFilter(function (a, b) {
+    return Grade.equals(a, b);
+  });
   this._tags = new TagFilter();
 }
 
@@ -26,5 +28,15 @@ Filter.prototype = {
    */
   get tags() {
     return this._tags;
+  },
+
+  /**
+   * @param {Course} course
+   * @returns {boolean}
+   */
+  test: function (course) {
+    return this.grades.test(course.latestGrade) &&
+        this.types.test(course.type) &&
+        this.tags.test(course.tags);
   }
 };
