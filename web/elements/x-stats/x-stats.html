@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="x-stats">
+  <style>
+    header {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      height: 48px;
+      font-size: 14px;
+      font-weight: 200;
+      color: rgba(0, 0, 0, 0.5);
+    }
+    header > div {
+      @apply(--layout-flex);
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+    }
+    header label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-right: 4px;
+    }
+    header label:after {
+      content: ":";
+    }
+    header output {
+      margin-right: 4px;
+    }
+    header output.total:before {
+      content: "/";
+      margin-right: 4px;
+    }
+  </style>
+
+  <template>
+    <header>
+      <div>
+        <label>Kurse</label>
+        <output>[[_computeCount(_passed.*)]]</output>
+        <output class="total">[[_computeCount(courses.*)]]</output>
+      </div>
+      <div>
+        <label>ECTS</label>
+        <output>[[_computeCredits(_passed.*)]]</output>
+        <output class="total">[[_computeCredits(courses.*)]]</output>
+      </div>
+      <div>
+        <label>Note</label>
+        <output>[[_computeGrade(_passed.*)]]</output>
+      </div>
+    </header>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-stats",
+
+      properties: {
+        courses: {
+          type: Array,
+          value: []
+        },
+
+        _passed: {
+          type: Array,
+          computed: "_computePassedCourses(courses.*)"
+        }
+      },
+
+      _computePassedCourses: function (courseChange) {
+        return courseChange.base.filter(function (course) {
+          if (course.latestGrade == null) return false;
+          return course.latestGrade.isPassing;
+        });
+      },
+
+      _computeCount: function (change) {
+        return change.base.length;
+      },
+
+      _computeCredits: function (change) {
+        return change.base.reduce(function (sum, course) {
+          return sum + parseFloat(course.credits);
+        }, 0.0).toFixed(1);
+      },
+
+      _computeGrade: function (change) {
+        var weightedSum = change.base.reduce(function (sum, course) {
+          if (!course.hasGrade) return sum;
+          return sum + parseFloat(course.credits) * course.latestGrade.value;
+        }, 0.0);
+        var credits = this._computeCredits(change);
+        if (credits == 0) return "Keine";
+        if (weightedSum == 0) return "Keine";
+        return (weightedSum / credits).toFixed(2);
+
+      }
+    });
+  </script>
+</dom-module>

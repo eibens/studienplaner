@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
+<link rel="import" href="x-stats/x-stats.html">
 
 <dom-module id="x-browser">
   <style>
@@ -20,15 +21,20 @@
     }
 
     main {
+      @apply(--layout-vertical);
       background: white;
       @apply(--shadow-elevation-3dp);
       margin: 16px 0;
-      padding: 8px 0;
+      padding-bottom: 8px;
     }
     .placeholder {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
       margin: 2em;
+    }
+    x-stats {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 8px;
     }
   </style>
 
@@ -40,6 +46,9 @@
       </paper-input>
 
       <main>
+        <x-stats
+          courses="[[result]]">
+        </x-stats>
         <template
           id="list"
           is="dom-repeat"

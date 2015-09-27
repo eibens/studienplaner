@@ -93,6 +93,13 @@ Course.prototype = {
   },
 
   /**
+   * @returns {boolean}
+   */
+  get hasGrade() {
+    return this.latestGrade !== null;
+  },
+
+  /**
    * Generates a unique ID for an attendance.
    *
    * @returns {number}
