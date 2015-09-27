@@ -7,17 +7,36 @@
 <dom-module id="x-grade-filter">
   <style>
     :host {
-      @apply(--layout-horizontal);
+      @apply(--layout-vertical);
       @apply(--layout-wrap);
-      padding: 12px 0 4px 0;
+    }
+    .item {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      height: 48px;
+      border-radius: 3px;
+      transition: background 0.2s;
+      color: black;
+    }
+    .item:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .item, .item > * {
+      cursor: pointer;
+    }
+    .item[unselected] > * {
+      opacity: 0.5;
+    }
+    .item[unselected] label {
+      text-decoration: line-through;
     }
     x-grade-icon {
       transition: opacity 0.2s;
-      margin: 0 8px 8px 0;
-      opacity: 0.3;
+      margin: 0 24px 0 16px;
     }
-    [selected] {
-      opacity: 1.0;
+    label {
+      @apply(--layout-flex);
+      font-size: 14px;
     }
   </style>
 
@@ -26,14 +45,17 @@
       id="list"
       is="dom-repeat"
       items="[[options]]">
-      <x-grade-icon
-        grade="[[item.value]]"
-        size="3"
-        interactive
-        selected$="[[item.selected]]"
+      <div
+        class="item"
+        unselected$="[[!item.selected]]"
         on-tap="_handleTap"
         on-dblclick="_handleDoubleTap">
-      </x-grade-icon>
+        <x-grade-icon
+          grade="[[item.value]]"
+          size="3">
+        </x-grade-icon>
+        <label>[[_computeLabel(item.value)]]</label>
+      </div>
     </template>
   </template>
 
@@ -47,14 +69,28 @@
 
       ready: function () {
         this.set("items", [
-          null,
           new Grade(1),
           new Grade(2),
           new Grade(3),
           new Grade(4),
-          new Grade(5)
+          new Grade(5),
+          null
         ]);
         this.selectAll();
+      },
+
+      _computeLabel: function (item) {
+        if (item instanceof Grade) {
+          return [
+            "Sehr gut",
+            "Gut",
+            "Befriedigend",
+            "Gen\u00fcgend",
+            "Nicht gen\u00fcgend"
+          ][item.value - 1];
+        } else {
+          return "Keine Teilnahme";
+        }
       },
 
       _handleTap: function (event) {

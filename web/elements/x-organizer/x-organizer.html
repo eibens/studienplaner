@@ -13,6 +13,7 @@
       user-select: none;
       width: 240px;
       color: rgb(97, 97, 97);
+      overflow: scroll;
     }
     section {
       border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -29,9 +30,6 @@
     x-course-type-filter {
       padding-left: 16px;
     }
-    x-grade-filter {
-      padding-left: 16px;
-    }
     x-tag-filter {
       font-size: 14px;
     }
@@ -39,17 +37,17 @@
 
   <template>
     <section>
-      <h1>Bewertungen</h1>
-      <x-grade-filter
-        selected="{{filter.grades.allowed}}">
-      </x-grade-filter>
-    </section>
-    <section>
       <h1>Kurstypen</h1>
       <x-course-type-filter
         items="[[_types]]"
         selected="{{filter.types.allowed}}">
       </x-course-type-filter>
+    </section>
+    <section>
+      <h1>Bewertungen</h1>
+      <x-grade-filter
+        selected="{{filter.grades.allowed}}">
+      </x-grade-filter>
     </section>
     <section>
       <h1>Kategorien</h1>
@@ -92,7 +90,7 @@
       _computeTypes: function (courseChange) {
         var courses = courseChange.base;
         if (!courses) return [];
-        var types = [ null ];
+        var types = [];
         courses.forEach(function (course) {
           if (types.indexOf(course.type) < 0) {
             types.push(course.type);
@@ -104,7 +102,7 @@
       _computeTags: function (courseChange) {
         var courses = courseChange.base;
         if (!courses) return [];
-        var tags = [ ];
+        var tags = [];
         courses.forEach(function (course) {
           course.tags.forEach(function (tag) {
             if (tags.indexOf(tag) < 0) {
