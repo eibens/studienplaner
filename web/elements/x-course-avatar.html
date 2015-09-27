@@ -14,10 +14,10 @@
       position: relative;
     }
     :host([empty]) {
-      border: 3px solid rgba(0, 0, 0, 0.15);
+      border: 3px solid rgba(0, 0, 0, 0.3);
     }
     :host([empty].dark) {
-      border-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
     }
     paper-ripple {
       visibility: hidden;
@@ -25,6 +25,11 @@
     :host([interactive]) paper-ripple {
       visibility: visible;
       cursor: pointer;
+    }
+    :host([size="3"]) {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
     }
     :host([size="4"]) {
       width: 32px;
