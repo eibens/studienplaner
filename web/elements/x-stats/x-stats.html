@@ -1,20 +1,32 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
 <dom-module id="x-stats">
   <style>
     header {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      height: 48px;
       font-size: 14px;
       font-weight: 200;
       color: rgba(0, 0, 0, 0.5);
     }
-    header > div {
+    header > * {
+      cursor: pointer;
+    }
+    header iron-selector {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      height: 48px;
+    }
+    header div {
+      @apply(--layout-self-stretch);
       @apply(--layout-flex);
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
+      padding-top: 3px;
+      border-bottom: 3px solid transparent;
+    }
+    header .iron-selected {
+      border-color: rgba(0, 0, 0, 0.1);
     }
     header label {
       font-size: 14px;
@@ -35,20 +47,23 @@
 
   <template>
     <header>
-      <div>
-        <label>Kurse</label>
-        <output>[[_computeCount(_passed.*)]]</output>
-        <output class="total">[[_computeCount(courses.*)]]</output>
-      </div>
-      <div>
-        <label>ECTS</label>
-        <output>[[_computeCredits(_passed.*)]]</output>
-        <output class="total">[[_computeCredits(courses.*)]]</output>
-      </div>
-      <div>
-        <label>Note</label>
-        <output>[[_computeGrade(_passed.*)]]</output>
-      </div>
+      <iron-selector
+        selected="{{_modeIndex}}">
+        <div>
+          <label>Kurse</label>
+          <output>[[_computeCount(_passed.*)]]</output>
+          <output class="total">[[_computeCount(courses.*)]]</output>
+        </div>
+        <div>
+          <label>ECTS</label>
+          <output>[[_computeCredits(_passed.*)]]</output>
+          <output class="total">[[_computeCredits(courses.*)]]</output>
+        </div>
+        <div>
+          <label>Note</label>
+          <output>[[_computeGrade(_passed.*)]]</output>
+        </div>
+      </iron-selector>
     </header>
   </template>
 
@@ -62,10 +77,28 @@
           value: []
         },
 
+        mode: {
+          type: String,
+          computed: "_computeMode(_modeIndex)"
+        },
+
         _passed: {
           type: Array,
           computed: "_computePassedCourses(courses.*)"
+        },
+
+        _modeIndex: {
+          type: Number,
+          value: 0
         }
+      },
+
+      _computeMode: function (modeIndex) {
+        return [
+          "count",
+          "credit",
+          "grade"
+        ][modeIndex];
       },
 
       _computePassedCourses: function (courseChange) {
@@ -94,7 +127,6 @@
         if (credits == 0) return "Keine";
         if (weightedSum == 0) return "Keine";
         return (weightedSum / credits).toFixed(2);
-
       }
     });
   </script>
