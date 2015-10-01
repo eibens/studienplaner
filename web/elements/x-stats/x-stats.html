@@ -9,9 +9,6 @@
       font-weight: 200;
       color: rgba(0, 0, 0, 0.5);
     }
-    header > * {
-      cursor: pointer;
-    }
     header iron-selector {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
@@ -24,6 +21,7 @@
       @apply(--layout-center-center);
       padding-top: 3px;
       border-bottom: 3px solid transparent;
+      cursor: pointer;
     }
     header .iron-selected {
       border-color: rgba(0, 0, 0, 0.1);
@@ -32,6 +30,7 @@
       font-size: 14px;
       font-weight: bold;
       margin-right: 4px;
+      cursor: pointer;
     }
     header label:after {
       content: ":";
