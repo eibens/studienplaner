@@ -92,6 +92,7 @@
         // Replacing the whole profile is an operation that is not performed
         // frequently and where an instant response is more intuitive.
         if (event.path == "profile") {
+          this._setDirty(true);
           this.save();
           return;
         }
@@ -109,7 +110,9 @@
       },
 
       _serialize: function (profile) {
-        if (!profile) return null;
+        if (!profile) {
+          profile = new Profile();
+        }
         var object = (new Serializer()).serialize(profile);
         return JSON.stringify(object);
       },
