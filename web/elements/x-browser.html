@@ -46,7 +46,8 @@
 
       <main>
         <x-stats
-          courses="[[result]]">
+          courses="[[result]]"
+          mode="{{_sortMode}}">
         </x-stats>
         <template
           id="list"
@@ -87,7 +88,7 @@
         query: {
           type: String,
           value: null,
-          observer: "_handleFilterChanged"
+          observer: "_render"
         },
 
         result: {
@@ -98,14 +99,19 @@
         empty: {
           type: Boolean,
           computed: "_computeEmpty(result)"
+        },
+
+        _sortMode: {
+          type: String,
+          observer: "_render"
         }
       },
 
       observers: [
-        "_handleFilterChanged(filter.*)"
+        "_render(filter.*)"
       ],
 
-      _handleFilterChanged: function () {
+      _render: function () {
         this.$.list.render();
       },
 
@@ -131,7 +137,55 @@
       },
 
       _sort: function (a, b) {
+        switch (this._sortMode) {
+          case "credit":
+            return this._compare(a, b, [
+              this._compareCredits,
+              this._compareGrade,
+              this._compareTitle,
+              this._compareType
+            ]);
+          case "grade":
+            return this._compare(a, b, [
+              this._compareGrade,
+              this._compareCredits,
+              this._compareTitle,
+              this._compareType
+            ]);
+          default:
+            return this._compare(a, b, [
+              this._compareTitle,
+              this._compareType
+            ]);
+        }
+      },
+
+      _compareTitle: function (a, b) {
         return a.title.localeCompare(b.title);
+      },
+
+      _compareType: function (a, b) {
+        return a.type.localeCompare(b.type);
+      },
+
+      _compareGrade: function (a, b) {
+        var gradeA = a.hasGrade ? a.latestGrade.value : 6;
+        var gradeB = b.hasGrade ? b.latestGrade.value : 6;
+        return gradeA - gradeB;
+      },
+
+      _compareCredits: function (a, b) {
+        return b.credits - a.credits;
+      },
+
+      _compare: function (a, b, comparators) {
+        for (var i = 0; i < comparators.length; i++) {
+          var delta = comparators[i](a, b);
+          if (delta) {
+            return delta;
+          }
+        }
+        return 0;
       }
     });
   </script>
