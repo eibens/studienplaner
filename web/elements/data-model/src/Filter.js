@@ -1,5 +1,6 @@
 
 function Filter() {
+  this._query = null;
   this._types = new WhiteListFilter();
   this._grades = new WhiteListFilter(function (a, b) {
     return Grade.equals(a, b);
@@ -8,6 +9,16 @@ function Filter() {
 }
 
 Filter.prototype = {
+
+  /**
+   * @returns {String|null}
+   */
+  get query() {
+    return this._query;
+  },
+  set query(value) {
+    this._query = value;
+  },
 
   /**
    * @returns {WhiteListFilter<string>}
@@ -35,8 +46,16 @@ Filter.prototype = {
    * @returns {boolean}
    */
   test: function (course) {
-    return this.grades.test(course.latestGrade) &&
+    return this._testQuery(course) &&
+        this.grades.test(course.latestGrade) &&
         this.types.test(course.type) &&
         this.tags.test(course.tags);
+  },
+
+  _testQuery: function (course) {
+    if (!this.query) return true;
+    var title = (course.title ? course.title : "").toLowerCase();
+    var query = this.query .toLowerCase();
+    return title.indexOf(query) >= 0;
   }
 };

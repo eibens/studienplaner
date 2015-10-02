@@ -41,7 +41,7 @@
     <div class="wrapper">
       <paper-input
         label="Suchbegriff"
-        value="{{query}}">
+        value="{{filter.query}}">
       </paper-input>
 
       <main>
@@ -85,15 +85,9 @@
           value: null
         },
 
-        query: {
-          type: String,
-          value: null,
-          observer: "_render"
-        },
-
         result: {
           type: Array,
-          computed: "_computeResult(courses.*, filter.*, query)"
+          computed: "_computeResult(courses.*, filter.*)"
         },
 
         empty: {
@@ -127,12 +121,6 @@
       },
 
       _filter: function (course) {
-        if (this.query) {
-          var title = course.title.toLowerCase();
-          var query = this.query.toLowerCase();
-          var match = title.indexOf(query) >= 0;
-          if (!match) return false;
-        }
         return this.filter.test(course);
       },
 
