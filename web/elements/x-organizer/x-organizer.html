@@ -13,16 +13,20 @@
       -webkit-user-select: none;
       user-select: none;
       width: 240px;
-      color: rgb(97, 97, 97);
       overflow: hidden;
       padding: 8px;
+      background: #272822;
+      color: white;
     }
     :host(:hover) {
-      overflow: scroll;
+      overflow-y: scroll;
+    }
+    :host(::-webkit-scrollbar-thumb) {
+      background: rgba(255, 255, 255, 0.1);
     }
     section {
       @apply(--layout-vertical);
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 8px;
     }
     section:first-of-type {
@@ -32,6 +36,7 @@
       font-weight: normal;
       font-size: 14px;
       margin: 16px 16px 8px 16px;
+      opacity: 0.5;
     }
     input {
       display: block;
@@ -40,19 +45,19 @@
       box-sizing: border-box;
       padding: 8px;
       border-radius: 3px;
-      background: rgba(0, 0, 0, 0.05);
-      margin: 12px 16px;
-      color: black;
+      background: rgba(255, 255, 255, 0.05);
+      margin: 12px 8px;
+      color: white;
     }
     input:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
     input:focus {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
     input::-webkit-input-placeholder {
       opacity: 0.5;
-      color: black;
+      color: white;
       font-style: italic;
     }
     x-course-type-filter {

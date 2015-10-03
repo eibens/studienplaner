@@ -24,9 +24,10 @@
     }
     .tag[dragging] {
       border-radius: 0;
+      outline-color: rgba(255, 255, 255, 0.1);
     }
     .tag:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.05);
     }
     .tag iron-icon {
       margin: 0 24px 0 16px;
@@ -39,17 +40,15 @@
     }
     [required] {
       font-weight: bold;
-      color: black;
     }
     [required] iron-icon {
       color: var(--default-primary-color);
     }
     [forbidden] {
-      color: black;
       text-decoration: line-through;
     }
     [forbidden] > * {
-      opacity: 0.5;
+      opacity: 0.3;
     }
   </style>
 
