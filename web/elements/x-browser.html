@@ -1,7 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
 <link rel="import" href="x-stats/x-stats.html">
@@ -39,11 +38,6 @@
 
   <template>
     <div class="wrapper">
-      <paper-input
-        label="Suchbegriff"
-        value="{{filter.query}}">
-      </paper-input>
-
       <main>
         <x-stats
           courses="[[result]]"
@@ -67,7 +61,6 @@
         </div>
       </main>
     </div>
-
   </template>
 
   <script>

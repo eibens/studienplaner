@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="x-course-type-filter.html">
 <link rel="import" href="x-grade-filter.html">
@@ -20,6 +21,7 @@
       overflow: scroll;
     }
     section {
+      @apply(--layout-vertical);
       border-top: 1px solid rgba(0, 0, 0, 0.1);
       margin-bottom: 8px;
     }
@@ -31,6 +33,28 @@
       font-size: 14px;
       margin: 16px 16px 8px 16px;
     }
+    input {
+      display: block;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+      padding: 8px;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.05);
+      margin: 12px 16px;
+      color: black;
+    }
+    input:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    input:focus {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    input::-webkit-input-placeholder {
+      opacity: 0.5;
+      color: black;
+      font-style: italic;
+    }
     x-course-type-filter {
       padding-left: 16px;
     }
@@ -40,6 +64,9 @@
   </style>
 
   <template>
+    <section class="pad">
+      <input value="{{filter.query::input}}" placeholder="Suchtext"/>
+    </section>
     <section>
       <h1>Kurstypen</h1>
       <x-course-type-filter
