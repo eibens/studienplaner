@@ -167,11 +167,13 @@
         this.$.data.export();
       },
       _handleImportProfile: function () {
+        this.filter = new Filter();
         this.$.data.import();
       },
       _handleDeleteProfile: function () {
         var result = window.confirm("Willst du deine Daten wirklich löschen?");
         if (!result) return;
+        this.filter = new Filter();
         this.$.data.clear();
       },
 
