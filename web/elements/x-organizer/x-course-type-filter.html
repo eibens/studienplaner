@@ -46,14 +46,10 @@
 
       _handleTap: function (event) {
         this.toggle(event.model.item.value);
-        if (this.selected.length == 0) {
-          this.selectAll();
-        }
       },
 
       _handleDoubleTap: function (event) {
-        this.deselectAll();
-        this.select(event.model.item.value);
+        this.selected = [event.model.item.value];
       },
 
       _sort: function (a, b) {

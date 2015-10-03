@@ -5,8 +5,6 @@
   var App = App || {};
 
   App.MultiSelectBehaviour = {
-    is: "x-multi-select-behaviour",
-
     properties: {
 
       items: {
@@ -28,16 +26,21 @@
       }
     },
 
+    observers: [
+      "_handleItemsChange(items.*)"
+    ],
+
     select: function (item) {
       this.push("selected", item);
     },
 
     selectAll: function () {
-      this.set("selected", this.items.slice());
+      this.set("selected", []);
     },
 
     isSelected: function (item) {
-      return this.selected.indexOf(item) >= 0;
+      return !this.selected || this.selected.length == 0 ||
+        this.selected.indexOf(item) >= 0;
     },
 
     toggle: function (item) {
@@ -49,6 +52,9 @@
     },
 
     deselect: function (item) {
+      if (!this.selected || this.selected.length == 0) {
+        this.selected = this.items.slice();
+      }
       var index = this.selected.indexOf(item);
       while (index >= 0) {
         this.splice("selected", index, 1);
@@ -56,15 +62,26 @@
       }
     },
 
-    deselectAll: function () {
-      this.selected = [];
+    _handleItemsChange: function (itemsChange) {
+      var path = itemsChange.path;
+      if (path == "items") {
+        this.selectAll();
+      } else if (path == "items.splices") {
+        var splices = itemsChange.indexSplices;
+        for (var i = 0; i < splices.addedCount; i++) {
+          var index = splices.index + i;
+          var item = this.items[index];
+          this.select(item);
+        }
+      }
     },
 
-    _computeOptions: function (itemsChange, selectedChange) {
+    _computeOptions: function (itemsChange) {
+      var self = this;
       return itemsChange.base.map(function (item) {
         return {
           value: item,
-          selected: selectedChange.base.indexOf(item) >= 0
+          selected: self.isSelected(item)
         };
       });
     }
