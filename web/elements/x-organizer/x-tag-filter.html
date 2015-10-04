@@ -27,12 +27,6 @@
     [required] iron-icon {
       color: var(--default-primary-color);
     }
-    [forbidden] {
-      text-decoration: line-through;
-    }
-    [forbidden] > * {
-      opacity: 0.3;
-    }
   </style>
 
   <template>
@@ -47,7 +41,7 @@
         <x-organizer-item
           text="[[item.value]]"
           required$="[[item.required]]"
-          forbidden$="[[item.forbidden]]"
+          disabled="[[item.forbidden]]"
           on-tap="_handleTap">
           <iron-icon
             icon="label-outline"

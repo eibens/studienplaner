@@ -9,7 +9,7 @@
       cursor: pointer;
       height: 48px;
       border-radius: 3px;
-      transition: background 0.2s;
+      transition: background 0.2s, opacity 0.2s;
       position: relative;
       padding: 0 16px;
       user-select: none;
@@ -18,7 +18,13 @@
     :host(:hover) {
       background: rgba(255, 255, 255, 0.05);
     }
-    :host ::content iron-icon, :host ::content .icon{
+    :host([disabled]) *, :host([disabled]) ::content {
+      opacity: 0.3;
+    }
+    :host([disabled]) label {
+      text-decoration: line-through;
+    }
+    :host ::content iron-icon, :host ::content .icon {
       margin-right: 24px;
       width: 24px;
       height: 24px;
@@ -47,6 +53,12 @@
         text: {
           type: String,
           value: ""
+        },
+
+        disabled: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         }
       }
     });

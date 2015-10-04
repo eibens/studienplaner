@@ -10,12 +10,6 @@
     :host {
       @apply(--layout-vertical);
     }
-    x-organizer-item[unselected] > * {
-      opacity: 0.3;
-    }
-    x-organizer-item[unselected] x-grade-icon {
-      text-decoration: line-through;
-    }
     x-grade-icon {
       transition: opacity 0.2s;
     }
@@ -30,7 +24,7 @@
         text="[[_computeLabel(item.value)]]"
         on-tap="_handleTap"
         on-dblclick="_handleDoubleTap"
-        unselected$="[[!item.selected]]">
+        disabled="[[!item.selected]]">
         <x-grade-icon
           class="icon"
           grade="[[item.value]]"
