@@ -5,38 +5,21 @@
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="../x-draggable.html">
+<link rel="import" href="x-organizer-item.html">
 
 <dom-module id="x-tag-filter">
   <style>
     :host {
-      user-select: none;
-      -webkit-user-select: none;
-      cursor: pointer;
+      @apply(--layout-vertical);
     }
-    .tag {
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      cursor: pointer;
-      height: 48px;
-      border-radius: 3px;
-      transition: background 0.2s;
-      position: relative;
+    x-draggable {
+      @apply(--layout-vertical);
     }
-    .tag[dragging] {
-      border-radius: 0;
+    [dragging] {
       outline-color: rgba(255, 255, 255, 0.1);
     }
-    .tag:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .tag iron-icon {
-      margin: 0 24px 0 16px;
-      width: 24px;
-      height: 24px;
-      user-select: none;
-    }
-    .tag span {
-      @apply(--layout-flex);
+    [dragging] x-organizer-item {
+      border-radius: 0;
     }
     [required] {
       font-weight: bold;
@@ -58,26 +41,27 @@
       items="[[options]]"
       sort="_sort">
       <x-draggable
-        class="tag"
         data="[[item.value]]"
         type="application/x-tag"
-        effect="copy"
-        required$="[[item.required]]"
-        forbidden$="[[item.forbidden]]"
-        on-tap="_handleTap">
-        <iron-icon
-          icon="label-outline"
-          hidden$="[[!item.cleared]]">
-        </iron-icon>
-        <iron-icon
-          icon="label"
-          hidden$="[[!item.required]]">
-        </iron-icon>
-        <iron-icon
-          icon="remove-circle"
-          hidden$="[[!item.forbidden]]">
-        </iron-icon>
-        <span>[[item.value]]</span>
+        effect="copy">
+        <x-organizer-item
+          text="[[item.value]]"
+          required$="[[item.required]]"
+          forbidden$="[[item.forbidden]]"
+          on-tap="_handleTap">
+          <iron-icon
+            icon="label-outline"
+            hidden$="[[!item.cleared]]">
+          </iron-icon>
+          <iron-icon
+            icon="label"
+            hidden$="[[!item.required]]">
+          </iron-icon>
+          <iron-icon
+            icon="remove-circle"
+            hidden$="[[!item.forbidden]]">
+          </iron-icon>
+        </x-organizer-item>
       </x-draggable>
     </template>
   </template>

@@ -1,0 +1,54 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="x-organizer-item">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      cursor: pointer;
+      height: 48px;
+      border-radius: 3px;
+      transition: background 0.2s;
+      position: relative;
+      padding: 0 16px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    :host(:hover) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    :host ::content iron-icon, :host ::content .icon{
+      margin-right: 24px;
+      width: 24px;
+      height: 24px;
+      user-select: none;
+    }
+    :host label {
+      @apply(--layout-flex);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+
+  <template>
+    <content
+      select="iron-icon, .icon">
+    </content>
+    <label>[[text]]</label>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-organizer-item",
+
+      properties: {
+        text: {
+          type: String,
+          value: ""
+        }
+      }
+    });
+  </script>
+</dom-module>

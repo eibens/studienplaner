@@ -3,39 +3,21 @@
 <link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="../x-grade-icon/x-grade-icon.html">
 <link rel="import" href="x-multi-select-behaviour.html">
+<link rel="import" href="x-organizer-item.html">
 
 <dom-module id="x-grade-filter">
   <style>
     :host {
       @apply(--layout-vertical);
-      @apply(--layout-wrap);
     }
-    .item {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-      height: 48px;
-      border-radius: 3px;
-      transition: background 0.2s;
-    }
-    .item:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .item, .item > * {
-      cursor: pointer;
-    }
-    .item[unselected] > * {
+    x-organizer-item[unselected] > * {
       opacity: 0.3;
     }
-    .item[unselected] label {
+    x-organizer-item[unselected] x-grade-icon {
       text-decoration: line-through;
     }
     x-grade-icon {
       transition: opacity 0.2s;
-      margin: 0 24px 0 16px;
-    }
-    label {
-      @apply(--layout-flex);
-      font-size: 14px;
     }
   </style>
 
@@ -44,17 +26,17 @@
       id="list"
       is="dom-repeat"
       items="[[options]]">
-      <div
-        class="item"
-        unselected$="[[!item.selected]]"
+      <x-organizer-item
+        text="[[_computeLabel(item.value)]]"
         on-tap="_handleTap"
-        on-dblclick="_handleDoubleTap">
+        on-dblclick="_handleDoubleTap"
+        unselected$="[[!item.selected]]">
         <x-grade-icon
+          class="icon"
           grade="[[item.value]]"
           size="3">
         </x-grade-icon>
-        <label>[[_computeLabel(item.value)]]</label>
-      </div>
+      </x-organizer-item>
     </template>
   </template>
 
