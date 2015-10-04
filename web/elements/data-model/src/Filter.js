@@ -6,6 +6,7 @@ function Filter() {
     return Grade.equals(a, b);
   });
   this._tags = new TagFilter();
+  this._semester = new SemesterFilter();
 }
 
 Filter.prototype = {
@@ -18,6 +19,13 @@ Filter.prototype = {
   },
   set query(value) {
     this._query = value;
+  },
+
+  /**
+   * @returns {SemesterFilter}
+   */
+  get semester() {
+    return this._semester;
   },
 
   /**
@@ -46,7 +54,8 @@ Filter.prototype = {
    * @returns {boolean}
    */
   test: function (course) {
-    return this._testQuery(course) &&
+    return this._semester.test(course) &&
+        this._testQuery(course) &&
         this.grades.test(course.latestGrade) &&
         this.types.test(course.type) &&
         this.tags.test(course.tags);

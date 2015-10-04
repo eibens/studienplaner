@@ -4,6 +4,7 @@
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
 <link rel="import" href="x-stats/x-stats.html">
+<link rel="import" href="x-semester-picker.html">
 
 <dom-module id="x-browser">
   <style>
@@ -34,10 +35,20 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       margin-bottom: 8px;
     }
+    header {
+      height: 40px;
+      width: 100%;
+    }
   </style>
 
   <template>
     <div class="wrapper">
+      <header
+        hidden$="[[!filter.semester.enabled]]">
+        <x-semester-picker
+          value="{{filter.semester.value}}">
+        </x-semester-picker>
+      </header>
       <main>
         <x-stats
           courses="[[result]]"
