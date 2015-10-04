@@ -43,11 +43,11 @@
           on-tap="_handleTap">
           <iron-icon
             icon="label-outline"
-            hidden$="[[item.forbidden]]">
+            hidden$="[[!item.cleared]]">
           </iron-icon>
           <iron-icon
-            icon="remove-circle"
-            hidden$="[[!item.forbidden]]">
+            icon="label"
+            hidden$="[[item.cleared]]">
           </iron-icon>
         </x-organizer-item>
       </x-draggable>
