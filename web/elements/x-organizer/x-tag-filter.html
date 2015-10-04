@@ -14,6 +14,10 @@
     }
     x-draggable {
       @apply(--layout-vertical);
+      margin-bottom: 1px;
+    }
+    x-draggable:last-of-type {
+      margin-bottom: 0;
     }
     [dragging] {
       outline-color: rgba(255, 255, 255, 0.1);
