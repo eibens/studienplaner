@@ -21,10 +21,7 @@
     [dragging] x-organizer-item {
       border-radius: 0;
     }
-    [required] {
-      font-weight: bold;
-    }
-    [required] iron-icon {
+    [selected] iron-icon {
       color: var(--default-primary-color);
     }
   </style>
@@ -40,7 +37,7 @@
         effect="copy">
         <x-organizer-item
           text="[[item.value]]"
-          required$="[[item.required]]"
+          selected="[[item.required]]"
           disabled="[[item.forbidden]]"
           on-tap="_handleTap">
           <iron-icon

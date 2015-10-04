@@ -24,6 +24,10 @@
     :host([disabled]) label {
       text-decoration: line-through;
     }
+    :host([selected]) {
+      background: rgba(255, 255, 255, 0.1);
+      font-weight: bold;
+    }
     :host ::content iron-icon, :host ::content .icon {
       margin-right: 24px;
       width: 24px;
@@ -56,6 +60,12 @@
         },
 
         disabled: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        selected: {
           type: Boolean,
           value: false,
           reflectToAttribute: true
