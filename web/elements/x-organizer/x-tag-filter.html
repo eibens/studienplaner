@@ -21,9 +21,6 @@
     [dragging] x-organizer-item {
       border-radius: 0;
     }
-    [selected] iron-icon {
-      color: var(--default-primary-color);
-    }
   </style>
 
   <template>
@@ -42,11 +39,7 @@
           on-tap="_handleTap">
           <iron-icon
             icon="label-outline"
-            hidden$="[[!item.cleared]]">
-          </iron-icon>
-          <iron-icon
-            icon="label"
-            hidden$="[[!item.required]]">
+            hidden$="[[item.forbidden]]">
           </iron-icon>
           <iron-icon
             icon="remove-circle"
