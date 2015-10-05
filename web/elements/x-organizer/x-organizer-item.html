@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="x-organizer-item">
   <style>
@@ -16,30 +17,39 @@
       -webkit-user-select: none;
     }
     :host(:hover) {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--highlight-color);
     }
-    :host([disabled]) label, :host([disabled]) ::content > * {
-      opacity: 0.3;
+    :host label {
+      @apply(--layout-flex);
+      @apply(--font-body-1);
+      @apply(--paper-font-common-nowrap);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    :host([disabled]) label {
+      color: var(--disabled-text-color);
+      opacity: 1;
+    }
+    :host([disabled]) ::content > * {
+      opacity: 0.38;
     }
     :host([disabled]) label {
       text-decoration: line-through;
     }
     :host([selected]) {
-      background: rgba(255, 255, 255, 0.1);
-      font-weight: bold;
+      background: var(--selection-color);
+    }
+    :host([selected]) label {
+      @apply(--font-body-2);
     }
     :host ::content iron-icon, :host ::content .icon {
       margin-right: 24px;
       width: 24px;
       height: 24px;
       user-select: none;
+      color: var(--secondary-text-color);
     }
     :host label {
-      @apply(--layout-flex);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      cursor: pointer;
     }
   </style>
 
