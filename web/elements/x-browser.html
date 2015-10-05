@@ -13,6 +13,27 @@
       @apply(--layout-center);
       overflow-y: scroll;
     }
+    .filter-message {
+      @apply(--layout-self-stretch);
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      padding: 16px;
+      color: white;
+      background: #689F38;
+      font-size: 16px;
+    }
+    .filter-message span {
+      @apply(--layout-flex);
+      margin: 0 16px;
+    }
+    .filter-message iron-icon {
+      width: 24px;
+      height: 24px;
+      margin: 0 8px;
+    }
+    .filter-message paper-button {
+      margin: 0;
+    }
     .wrapper {
       width: 90%;
       max-width: 1000px;
@@ -42,6 +63,18 @@
   </style>
 
   <template>
+    <div
+      class="filter-message"
+      hidden$="[[_filterActive]]">
+      <iron-icon
+        icon="filter-list">
+      </iron-icon>
+      <span>Filter sind aktiv. Es werden nicht alle Kurse angezeigt.</span>
+      <paper-button
+        on-tap="_resetFilter">
+        Zur&uuml;cksetzen
+      </paper-button>
+    </div>
     <div class="wrapper">
       <header
         hidden$="[[!filter.semester.enabled]]">
@@ -102,6 +135,11 @@
         _sortMode: {
           type: String,
           observer: "_render"
+        },
+
+        _filterActive: {
+          type: Boolean,
+          computed: "_computeFilterActive(filter.*)"
         }
       },
 
@@ -113,11 +151,20 @@
         this.$.list.render();
       },
 
+      _resetFilter: function () {
+        this.filter = new Filter();
+      },
+
       _computeResult: function () {
         var self = this;
         return this.courses.filter(function (course) {
           return self._filter(course);
         });
+      },
+
+      _computeFilterActive: function (filterChange) {
+        // TODO
+        return false;
       },
 
       _computeEmpty: function () {
