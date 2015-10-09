@@ -1,0 +1,165 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+
+<dom-module id="x-grade-avatar">
+  <style>
+    :host {
+      @apply(--layout);
+      @apply(--layout-center-center);
+      position: relative; /* contain ripple */
+      box-sizing: border-box; /* border should not increase size */
+      font-weight: 100;
+      @apply(--paper-font-common-base);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* size */
+    :host, :host([size="small"]) {
+      /* base factor: 3 */
+      box-shadow: -3px 3px 0 var(--disabled-text-color);
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      border-radius: 3px;
+    }
+    :host([size="medium"]) {
+      /* base factor: 5 */
+      box-shadow: -5px 5px 0 var(--disabled-text-color);
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      border-radius: 5px;
+    }
+    :host([size="large"]) {
+      /* base factor: 9 */
+      box-shadow: -9px 9px 0 var(--disabled-text-color);
+      width: 72px;
+      height: 72px;
+      font-size: 36px;
+      border-radius: 9px;
+    }
+
+    /* count */
+    :host([count="0"]) {
+      /* shadow only for multiple grades */
+      box-shadow: none !important;
+      border: 1px dashed var(--secondary-text-color);
+    }
+    :host([count="1"]) {
+      box-shadow: none !important;
+    }
+
+    /* grades */
+    :host {
+      border: 3px solid var(--secondary-text-color);
+    }
+    :host([grade="1"]) {
+      border: none !important;
+      background: rgb(118, 168, 63);
+    }
+    :host([grade="2"]) {
+      border: none !important;
+      background: rgb(169, 197, 58);
+    }
+    :host([grade="3"]) {
+      border: none !important;
+      background: rgb(213, 208, 43);
+    }
+    :host([grade="4"]) {
+      border: none !important;
+      background: rgb(225, 186, 30);
+    }
+    :host([grade="5"]) {
+      border: none !important;
+      background: rgb(242, 150, 75);
+    }
+
+    /* interactivity */
+    :host paper-ripple {
+      visibility: hidden;
+    }
+    :host([interactive]) paper-ripple {
+      visibility: visible;
+      cursor: pointer;
+    }
+
+    span {
+      /* make sure text is always white, no matter which theme is used */
+      color: white;
+      cursor: default;
+    }
+  </style>
+
+  <template>
+    <paper-ripple></paper-ripple>
+    <span>[[_computeText(grade, count)]]</span>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-grade-avatar",
+
+      properties: {
+
+        /**
+         * Grade which should be displayed.
+         *
+         * The numbers from 1 to 5 are considered grades. Any other value
+         * indicates that a student has not received a grade yet.
+         */
+        grade: {
+          type: String,
+          value: null,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Number of grades available in the current context.
+         *
+         * A value of zero means that the student is not expecting a grade at
+         * all, for example because they are not attending a course. In this
+         * case the value of `grade` is ignored.
+         *
+         * Any value other than one or zero indicates, that there are multiple
+         * grades available, for example if the student had to repeat a course.
+         */
+        count: {
+          type: Number,
+          value: 1,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Size of the icon.
+         *
+         * Valid values are 'small', 'medium', and 'large'.
+         */
+        size: {
+          type: String,
+          value: null,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Indicates whether the icon can be clicked.
+         */
+        interactive: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      _computeText: function (grade, count) {
+        var isGrade = ["1", "2", "3", "4", "5"].indexOf(grade) >= 0;
+        if (!isGrade || count === 0) {
+          return "";
+        }
+        return grade;
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>x-grade-avatar Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-grade-avatar.html">
+    <style>
+      section {
+        float: left;
+        width: 100%;
+      }
+      h1 {
+        float: left;
+        width: 100%;
+      }
+      x-grade-avatar {
+        float: left;
+        margin: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1>All grades, small</h1>
+      <x-grade-avatar count="0"></x-grade-avatar>
+      <x-grade-avatar></x-grade-avatar>
+      <x-grade-avatar grade="1"></x-grade-avatar>
+      <x-grade-avatar grade="2"></x-grade-avatar>
+      <x-grade-avatar grade="3"></x-grade-avatar>
+      <x-grade-avatar grade="4"></x-grade-avatar>
+      <x-grade-avatar grade="5"></x-grade-avatar>
+    </section>
+    <section>
+      <h1>Interactive, medium</h1>
+      <x-grade-avatar count="0" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar count="2" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar grade="1" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar grade="2" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar grade="3" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar grade="4" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar grade="5" size="medium" interactive></x-grade-avatar>
+    </section>
+    <section>
+      <h1>Multiple</h1>
+      <x-grade-avatar count="2" grade="1" size="small"></x-grade-avatar>
+      <x-grade-avatar count="2" grade="1" size="medium"></x-grade-avatar>
+      <x-grade-avatar count="2" grade="1" size="large"></x-grade-avatar>
+    </section>
+  </body>
+</html>
