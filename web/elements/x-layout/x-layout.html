@@ -1,0 +1,263 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<dom-module id="x-layout">
+  <style>
+    :host {
+      @apply(--layout-fit);
+      @apply(--layout-vertical);
+    }
+    .body {
+      @apply(--layout-fit);
+      @apply(--layout-horizontal);
+      background: var(--primary-background-color);
+    }
+    paper-fab {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+    }
+
+    /* As long as there is enough space left and right the center area should
+       not be affected by the drawers. Once the drawers would start overlaying
+       the center area switch from absolute positioned drawers to a flex model.
+       Here the center area will adjust to the space left empty by the drawers. */
+    .drawer {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: white;
+    }
+    .drawer.left {
+      left: -240px;
+      width: 240px;
+      transition: left 0.2s, box-shadow 0.2s;
+    }
+    .drawer.left[open] {
+      left: 0;
+    }
+    .drawer.right {
+      right: -340px;
+      width: 340px;
+      transition: right 0.2s, box-shadow 0.2s;
+    }
+    .drawer.right[open] {
+      right: 0;
+    }
+    .center {
+      width: 900px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
+    }
+    /* 900 + 2 * 340 */
+    @media screen and (max-width: 1580px) {
+      .center {
+        @apply(--layout-flex);
+      }
+      .drawer {
+        position: relative;
+      }
+      .drawer.right {
+        margin-right: -340px;
+        transition: margin 0.2s, box-shadow 0.2s;
+      }
+      .drawer.right[open] {
+        margin-right: 0;
+      }
+      .drawer.left {
+        margin-left: -240px;
+        transition: margin 0.2s, box-shadow 0.2s;
+      }
+      .drawer.left[open] {
+        margin-left: 0;
+      }
+    }
+
+    .right {
+      background: var(--secondary-background-color);
+    }
+    .right[open] {
+      @apply(--shadow-elevation-4dp);
+    }
+
+    paper-toolbar .menu-button {
+      margin-right: 16px;
+    }
+    .title {
+      @apply(--paper-font-title);
+    }
+
+    @media screen and (max-width: 970px) {
+      .center {
+        left: 32px;
+        right: 32px;
+      }
+    }
+
+    /* mobile behaviour */
+    @media screen and (max-width: 767px) {
+
+      /* Right panel should look as if it was an overlay over the whole app.
+         This is accomplished by moving it upwards out of the visible area
+         when the right panel is opened. */
+      paper-toolbar {
+        transition: margin 0.2s 0.2s;
+      }
+      :host([right-open]) paper-toolbar {
+        position: relative;
+        transition: margin 0.2s;
+        margin-top: -64px;
+      }
+
+      /* overlay for the left drawer */
+      .body-overlay {
+        content: "";
+        @apply(--layout-fit);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        background: var(--primary-text-color);
+      }
+      :host([left-open]) .body-overlay {
+        display: block;
+        pointer-events: all;
+        opacity: 0.5;
+      }
+
+      .drawer {
+        position: absolute;
+      }
+      .drawer.left {
+        /* Bit of the overlay should always be visible. */
+        max-width: 90%;
+        background: var(--primary-background-color);
+        margin: 0;
+        transition: left 0.2s;
+      }
+      .drawer.left[open] {
+        /* box-shadow should not be visible when drawer is closed.
+           Otherwise it would be visible on the left edge. */
+        @apply(--shadow-elevation-4dp);
+      }
+
+      .drawer.right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        right: -100%;
+        margin: 0;
+        transition: right 0.2s;
+      }
+      .drawer.right[open] {
+        right: 0;
+        transition: right 0.2s 0.2s;
+      }
+
+      .center {
+        width: 100%;
+      }
+    }
+
+    /* x-toolbar's media-query breakpoint that reduces it's height to 56px */
+    @media screen and (max-width: 639px) {
+      :host([right-open]) paper-toolbar {
+        margin-top: -56px;
+      }
+    }
+  </style>
+
+  <template>
+    <paper-header-panel>
+      <paper-toolbar>
+        <paper-icon-button
+          class="menu-button"
+          icon="menu"
+          on-tap="toggleLeft">
+        </paper-icon-button>
+        <h1 class="title">Studienplaner</h1>
+        <content select="[toolbar], .toolbar"></content>
+      </paper-toolbar>
+      <div class="body">
+        <div
+          class="body-overlay"
+          on-tap="closeLeft"></div>
+        <div
+          class="left drawer"
+          open$="[[leftOpen]]">
+          <content select="[left], .left"></content>
+        </div>
+        <div class="center">
+          <content select="[center], .center"></content>
+        </div>
+        <div
+          class="right drawer"
+          open$="[[rightOpen]]">
+          <content select="[right], .right"></content>
+        </div>
+        <paper-fab
+          icon="add"
+          on-tap="_handleAction">
+        </paper-fab>
+      </div>
+    </paper-header-panel>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-layout",
+
+      properties: {
+        leftOpen: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        rightOpen: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+
+      openLeft: function () {
+        this.leftOpen = true;
+      },
+
+      openRight: function () {
+        this.rightOpen = true;
+      },
+
+      closeLeft: function () {
+        this.leftOpen = false;
+      },
+
+      closeRight: function () {
+        this.rightOpen = false;
+      },
+
+      toggleLeft: function () {
+        this.leftOpen = !this.leftOpen;
+      },
+
+      toggleRight: function () {
+        this.rightOpen = !this.rightOpen;
+      },
+
+      _handleAction: function () {
+        this.fire("action", {
+          bubbles: true
+        });
+      }
+    });
+  </script>
+</dom-module>

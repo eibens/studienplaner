@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>x-layout Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html"/>
+    <link rel="import" href="../../../bower_components/paper-styles/paper-styles.html"/>
+    <link rel="import" href="../x-layout.html">
+    <style>
+    </style>
+  </head>
+  <body>
+    <template is="dom-bind"
+      id="template">
+      <style is="custom-style">
+        x-layout {
+          @apply(--layout-fit);
+          @apply(--paper-font-body1);
+        }
+        .left {
+          @apply(--layout-fit);
+          background: #ddd;
+          padding: 16px;
+          box-sizing: border-box;
+        }
+        .center {
+          padding: 8px 24px;
+          box-sizing: border-box;
+        }
+        .right {
+          padding: 16px;
+          box-sizing: border-box;
+        }
+      </style>
+      <x-layout id="layout">
+        <div class="left">
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+          sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+          rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+          ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+          sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+          dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+          et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+          takimata sanctus est Lorem ipsum dolor sit amet.
+        </div>
+        <div class="center">
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+          sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+          rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+          ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+          sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+          dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+          et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+          takimata sanctus est Lorem ipsum dolor sit amet.
+          </p>
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum dolor sit amet.
+          </p>
+        </div>
+        <div class="right">
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+          sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+          rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+          ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+          sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+          dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+          et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+          takimata sanctus est Lorem ipsum dolor sit amet.
+        </div>
+      </x-layout>
+    </template>
+    <script>
+      var template = document.getElementById("template");
+      template.addEventListener("dom-change", function(event) {
+        var layout = document.getElementById("layout");
+        layout.addEventListener("action", function(event) {
+          layout.toggleRight();
+        });
+      });
+    </script>
+  </body>
+</html>
