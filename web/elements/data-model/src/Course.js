@@ -100,6 +100,17 @@ Course.prototype = {
   },
 
   /**
+   * Value of latest grade or 'none', if the course has no attendances.
+   *
+   * @returns {String}
+   */
+  get grade() {
+    if (this.attendances.length === 0) return "none";
+    if (!this.latestGrade) return null;
+    return this.latestGrade.value.toString();
+  },
+
+  /**
    * Generates a unique ID for an attendance.
    *
    * @returns {number}
