@@ -24,7 +24,7 @@
   <body>
     <section>
       <h1>All grades, small</h1>
-      <x-grade-avatar count="0"></x-grade-avatar>
+      <x-grade-avatar mode="placeholder"></x-grade-avatar>
       <x-grade-avatar></x-grade-avatar>
       <x-grade-avatar grade="1"></x-grade-avatar>
       <x-grade-avatar grade="2"></x-grade-avatar>
@@ -34,8 +34,8 @@
     </section>
     <section>
       <h1>Interactive, medium</h1>
-      <x-grade-avatar count="0" size="medium" interactive></x-grade-avatar>
-      <x-grade-avatar count="2" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar mode="placeholder" size="medium" interactive></x-grade-avatar>
+      <x-grade-avatar mode="multi" size="medium" interactive></x-grade-avatar>
       <x-grade-avatar grade="1" size="medium" interactive></x-grade-avatar>
       <x-grade-avatar grade="2" size="medium" interactive></x-grade-avatar>
       <x-grade-avatar grade="3" size="medium" interactive></x-grade-avatar>
@@ -44,9 +44,9 @@
     </section>
     <section>
       <h1>Multiple</h1>
-      <x-grade-avatar count="2" grade="1" size="small"></x-grade-avatar>
-      <x-grade-avatar count="2" grade="1" size="medium"></x-grade-avatar>
-      <x-grade-avatar count="2" grade="1" size="large"></x-grade-avatar>
+      <x-grade-avatar mode="multi" grade="1" size="small"></x-grade-avatar>
+      <x-grade-avatar mode="multi" grade="1" size="medium"></x-grade-avatar>
+      <x-grade-avatar mode="multi" grade="1" size="large"></x-grade-avatar>
     </section>
   </body>
 </html>

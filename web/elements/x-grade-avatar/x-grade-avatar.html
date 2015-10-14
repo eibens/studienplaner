@@ -42,13 +42,13 @@
       border-radius: 9px;
     }
 
-    /* count */
-    :host([count="0"]) {
+    /* mode */
+    :host([mode="placeholder"]) {
       /* shadow only for multiple grades */
       box-shadow: none !important;
       border: 1px dashed var(--secondary-text-color);
     }
-    :host([count="1"]) {
+    :host(:not([mode="multi"])) {
       box-shadow: none !important;
     }
 
@@ -95,7 +95,7 @@
 
   <template>
     <paper-ripple></paper-ripple>
-    <span>[[_computeText(grade, count)]]</span>
+    <span>[[_computeText(grade, mode)]]</span>
   </template>
 
   <script>
@@ -117,18 +117,19 @@
         },
 
         /**
-         * Number of grades available in the current context.
+         * Value controlling special appearance modes of the avatar.
          *
-         * A value of zero means that the student is not expecting a grade at
-         * all, for example because they are not attending a course. In this
-         * case the value of `grade` is ignored.
+         * 'multi' indicates that there are more than one grade in the current
+         * context. This can be used if the student repeats a course and
+         * therefore has a previous grade.
          *
-         * Any value other than one or zero indicates, that there are multiple
-         * grades available, for example if the student had to repeat a course.
+         * 'placeholder' indicates that no grade was received and none is
+         * expected in the future. This can be used for courses the student
+         * is not planning to attend at all.
          */
-        count: {
-          type: Number,
-          value: 1,
+        mode: {
+          type: String,
+          value: null,
           reflectToAttribute: true
         },
 
@@ -153,9 +154,9 @@
         }
       },
 
-      _computeText: function (grade, count) {
+      _computeText: function (grade, mode) {
         var isGrade = ["1", "2", "3", "4", "5"].indexOf(grade) >= 0;
-        if (!isGrade || count === 0) {
+        if (!isGrade || mode === "placeholder") {
           return "";
         }
         return grade;
