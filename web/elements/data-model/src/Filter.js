@@ -2,9 +2,7 @@
 function Filter() {
   this._query = null;
   this._types = new WhiteListFilter();
-  this._grades = new WhiteListFilter(function (a, b) {
-    return Grade.equals(a, b);
-  });
+  this._grades = new WhiteListFilter();
   this._tags = new TagFilter();
   this._semester = new SemesterFilter();
 }
@@ -36,7 +34,7 @@ Filter.prototype = {
   },
 
   /**
-   * @returns {WhiteListFilter<Grade>}
+   * @returns {WhiteListFilter<string>}
    */
   get grades() {
     return this._grades;
@@ -56,7 +54,7 @@ Filter.prototype = {
   test: function (course) {
     return this._semester.test(course) &&
         this._testQuery(course) &&
-        this.grades.test(course.latestGrade) &&
+        this.grades.test(course.grade) &&
         this.types.test(course.type) &&
         this.tags.test(course.tags);
   },

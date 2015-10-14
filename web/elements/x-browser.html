@@ -208,9 +208,12 @@
       },
 
       _compareGrade: function (a, b) {
-        var gradeA = a.hasGrade ? a.latestGrade.value : 6;
-        var gradeB = b.hasGrade ? b.latestGrade.value : 6;
-        return gradeA - gradeB;
+        if (a.grade == b.grade) return 0;
+        if (a.grade == "none") return 1;
+        if (b.grade == "none") return -1;
+        if (!a.grade) return 1;
+        if (!b.grade) return -1;
+        return a.grade.toString().localeCompare(b.grade.toString());
       },
 
       _compareCredits: function (a, b) {

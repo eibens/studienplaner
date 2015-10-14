@@ -5,7 +5,6 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
-<link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="x-course-type-filter.html">
 <link rel="import" href="x-grade-filter.html">
 <link rel="import" href="x-organizer-item.html">
@@ -34,10 +33,15 @@
     section:first-of-type {
       border-top: none !important;
     }
-    h1 {
+    section h1 {
       @apply(--paper-font-caption);
-      margin: 8px 16px 8px 16px;
+      margin: 8px 16px;
       color: var(--secondary-text-color);
+    }
+    section .placeholder {
+      margin: 8px 16px;
+      color: var(--disabled-text-color);
+      font-style: italic;
     }
     input {
       display: block;
@@ -75,7 +79,7 @@
       <x-organizer-item
         text="Kurse"
         on-tap="_handleListMode"
-        selected="[[!filter.semester.enabled]]">
+        selected="[[!semesterActive]]">
         <iron-icon
           icon="reorder">
         </iron-icon>
@@ -83,34 +87,57 @@
       <x-organizer-item
         text="Semester"
         on-tap="_handleSemesterMode"
-        selected="[[filter.semester.enabled]]">
+        selected="[[semesterActive]]">
         <iron-icon
           icon="editor:insert-chart">
         </iron-icon>
       </x-organizer-item>
     </section>
+
     <section>
-      <input value="{{filter.query::input}}" placeholder="Suchtext"/>
+      <input value="{{query::input}}" placeholder="Suchtext"/>
     </section>
+
     <section>
       <h1>Kurstypen</h1>
+      <span
+        hidden$="[[!_empty(types.*)]]"
+        class="placeholder">
+        Keine Kurstypen
+      </span>
       <x-course-type-filter
-        items="[[_types]]"
-        selected="{{filter.types.allowed}}">
+        hidden$="[[_empty(types.*)]]"
+        items="[[types]]"
+        selected="{{selectedTypes}}">
       </x-course-type-filter>
     </section>
+
     <section>
-      <h1>Bewertungen</h1>
+      <h1>Teilnahmen</h1>
+      <span
+        hidden$="[[!_empty(grades.*)]]"
+        class="placeholder">
+        Keine Noten
+      </span>
       <x-grade-filter
-        selected="{{filter.grades.allowed}}">
+        hidden$="[[_empty(grades.*)]]"
+        items="[[grades]]"
+        selected="{{selectedGrades}}">
       </x-grade-filter>
     </section>
+
     <section>
       <h1>Kategorien</h1>
+      <span
+        hidden$="[[!_empty(tags.*)]]"
+        class="placeholder">
+        Keine Kategorien
+      </span>
       <x-tag-filter
-        items="[[_tags]]"
-        required="{{filter.tags.required}}"
-        forbidden="{{filter.tags.forbidden}}">
+        hidden$="[[_empty(tags.*)]]"
+        items="[[tags]]"
+        required="{{requiredTags}}"
+        forbidden="{{forbiddenTags}}">
       </x-tag-filter>
     </section>
   </template>
@@ -121,45 +148,152 @@
 
       properties: {
 
+        /**
+         * Courses that are managed by this organizer.
+         */
         courses: {
           type: Array,
           value: []
         },
 
-        filter: {
-          type: Object,
-          value: new Filter(),
-          notify: true
-        },
-
-        _types: {
+        /**
+         * Types collected from the `courses` array.
+         */
+        types: {
           type: Array,
           computed: "_computeTypes(courses.*)"
         },
 
-        _tags: {
+        /**
+         * Grades collected from the `courses` array.
+         */
+        grades: {
+          type: Array,
+          computed: "_computeGrades(courses.*)"
+        },
+
+        /**
+         * Tags collected from the `courses` array.
+         */
+        tags: {
           type: Array,
           computed: "_computeTags(courses.*)"
+        },
+
+        /**
+         * Current search query.
+         */
+        query: {
+          type: String,
+          value: "",
+          notify: true
+        },
+
+        /**
+         * Array of selected course types.
+         */
+        selectedTypes: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        /**
+         * Array of selected grades.
+         */
+        selectedGrades: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        /**
+         * Array of required tags.
+         */
+        requiredTags: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        /**
+         * Array of forbidden tags.
+         */
+        forbiddenTags: {
+          type: Array,
+          value: [],
+          notify: true
+        },
+
+        /**
+         * Value indicating that the semester filter is active.
+         */
+        semesterActive: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
       },
 
-      _computeTypes: function (courseChange) {
-        var courses = courseChange.base;
-        if (!courses) return [];
+      reset: function () {
+        this.set("query", "");
+        this.set("selectedTypes", []);
+        this.set("selectedGrades", []);
+        this.set("requiredTags", []);
+        this.set("forbiddenTags", []);
+        this.set("semesterActive", false);
+      },
+
+
+      _handleListMode: function () {
+        this.set("semesterActive", false);
+      },
+
+      _handleSemesterMode: function () {
+        this.set("semesterActive", true);
+      },
+
+      _empty: function (arrayChange) {
+        return !arrayChange.base || arrayChange.base.length === 0;
+      },
+
+      _computeTypes: function (coursesChange) {
+        var courses = coursesChange.base;
+        if (!(courses instanceof Array)) return [];
         var types = [];
         courses.forEach(function (course) {
-          if (types.indexOf(course.type) < 0) {
-            types.push(course.type);
+          var type = course.type || null;
+          if (types.indexOf(type) < 0) {
+            types.push(type);
           }
         });
         return types;
       },
 
-      _computeTags: function (courseChange) {
-        var courses = courseChange.base;
-        if (!courses) return [];
+      _computeGrades: function (coursesChange) {
+        var courses = coursesChange.base;
+        if (!(courses instanceof Array)) return [];
+        var grades = [];
+        courses.map(function (course) {
+          var grade = course.grade !== undefined ? course.grade : "none";
+          if (grade) {
+            if (["1", "2", "3", "4", "5", "none"].indexOf(grade.toString()) < 0) {
+              grade = null;
+            }
+          }
+          if (grades.indexOf(grade) < 0) {
+            grades.push(grade);
+          }
+        });
+        return grades;
+      },
+
+      _computeTags: function (coursesChange) {
+        var courses = coursesChange.base;
+        if (!(courses instanceof Array)) return [];
         var tags = [];
         courses.forEach(function (course) {
+          if (!(course.tags instanceof Array)) return;
           course.tags.forEach(function (tag) {
             if (tags.indexOf(tag) < 0) {
               tags.push(tag);
@@ -169,12 +303,13 @@
         return tags;
       },
 
-      _handleListMode: function () {
-        this.set("filter.semester.enabled", false);
-      },
-
-      _handleSemesterMode: function () {
-        this.set("filter.semester.enabled", true);
+      _contains: function (array, val, comparer) {
+        for (var i = 0; i < array.length; i++) {
+          if (comparer(array[i], val)) {
+            return true;
+          }
+        }
+        return false;
       }
     });
   </script>

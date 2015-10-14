@@ -17,6 +17,7 @@
       is="dom-bind">
       <x-grade-filter
         id="filter"
+        items='[1, 2, 3, 4, 5, null, "none"]'
         selected="{{selected}}">
       </x-grade-filter>
       <button
@@ -30,7 +31,7 @@
           items="[[selected]]">
           <li>
             <span>Grade: </span>
-            <span>[[item.value]]</span>
+            <span>[[item]]</span>
           </li>
         </template>
       </ul>

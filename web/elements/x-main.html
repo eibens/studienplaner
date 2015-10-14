@@ -69,8 +69,13 @@
 
     <main>
       <x-organizer
-        filter="{{filter}}"
-        courses="[[profile.courses]]">
+        courses="[[profile.courses]]"
+        query="{{filter.query}}"
+        selected-types="{{filter.types.allowed}}"
+        selected-grades="{{filter.grades.allowed}}"
+        required-tags="{{filter.tags.required}}"
+        forbidden-tags="{{filter.tags.forbidden}}"
+        semester-active="{{filter.semester.enabled}}">
       </x-organizer>
       <x-browser
         class="main"

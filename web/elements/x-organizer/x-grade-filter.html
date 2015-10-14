@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../data-model/data-model.html">
-<link rel="import" href="../x-grade-icon/x-grade-icon.html">
+<link rel="import" href="../x-grade-avatar/x-grade-avatar.html">
 <link rel="import" href="x-multi-select-behaviour.html">
 <link rel="import" href="x-organizer-item.html">
 
@@ -25,17 +24,19 @@
     <template
       id="list"
       is="dom-repeat"
-      items="[[options]]">
+      items="[[options]]"
+      sort="_sort">
       <x-organizer-item
-        text="[[_computeLabel(item.value)]]"
+        text="[[_computeTitle(item.value)]]"
         on-tap="_handleTap"
         on-dblclick="_handleDoubleTap"
         disabled="[[!item.selected]]">
-        <x-grade-icon
+        <x-grade-avatar
           class="icon"
           grade="[[item.value]]"
+          mode="[[_computeMode(item.value)]]"
           size="3">
-        </x-grade-icon>
+        </x-grade-avatar>
       </x-organizer-item>
     </template>
   </template>
@@ -48,30 +49,14 @@
         App.MultiSelectBehaviour
       ],
 
-      ready: function () {
-        this.set("items", [
-          new Grade(1),
-          new Grade(2),
-          new Grade(3),
-          new Grade(4),
-          new Grade(5),
-          null
-        ]);
-        this.selectAll();
-      },
-
-      _computeLabel: function (item) {
-        if (item instanceof Grade) {
-          return [
-            "Sehr gut",
-            "Gut",
-            "Befriedigend",
-            "Gen\u00fcgend",
-            "Nicht gen\u00fcgend"
-          ][item.value - 1];
-        } else {
-          return "Keine Teilnahme";
-        }
+      _sort: function (a, b) {
+        a = a.value;
+        b = b.value;
+        if (a == "none") return 1;
+        if (b == "none") return -1;
+        if (!this._isGrade(a)) return 1;
+        if (!this._isGrade(b)) return -1;
+        return parseInt(a) - parseInt(b);
       },
 
       _handleTap: function (event) {
@@ -80,6 +65,31 @@
 
       _handleDoubleTap: function (event) {
         this.selected = [event.model.item.value];
+      },
+
+      _computeTitle: function (grade) {
+        if (grade == "none") {
+          return "Keine Teilnahme";
+        }
+        if (!this._isGrade(grade)) {
+          return "Note ausst\u00e4ndig";
+        }
+        return [
+          "Sehr gut",
+          "Gut",
+          "Befriedigend",
+          "Gen\u00fcgend",
+          "Nicht gen\u00fcgend"
+        ][parseInt(grade) - 1];
+      },
+
+      _computeMode: function (grade) {
+        return grade == "none" ? "placeholder" : null;
+      },
+
+      _isGrade: function (grade) {
+        if (!grade) return false;
+        return ["1", "2", "3", "4", "5"].indexOf(grade.toString()) >= 0;
       }
     });
   </script>

@@ -5,30 +5,160 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>x-organizer Demo</title>
     <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+    <link rel="import" href="../../x-styles/x-dark-theme.html">
     <link rel="import" href="../../x-styles/x-light-theme.html">
     <link rel="import" href="../x-organizer.html">
     <style>
       body {
+        background: #eee;
+        display: flex;
         font-family: Roboto, Noto, sans-serif;
       }
+      body > * {
+        margin: 16px;
+      }
+      aside {
+        display: flex;
+        flex-direction: column;
+        width: 240px;
+      }
+      aside > * {
+        margin-bottom: 16px;
+      }
+
+      x-organizer {
+        background: white;
+      }
+      x-organizer[dark] {
+        background: #222;
+      }
+
     </style>
   </head>
   <body unresolved>
     <template
       is="dom-bind">
-      <x-organizer
-        id="element"
-        types='[null, "VU", "VO", "UE", "PR"]'
-        tags='["Red", "Blue", "Green", "Gold", "Brown", "Yellow"]'>
-      </x-organizer>
-      <button
-        onclick="reset()">
-        RESET
-      </button>
+      <section>
+        <h1>Light Theme</h1>
+        <x-organizer
+          id="light"
+          query="{{query}}"
+          selected-types="{{selectedTypes}}"
+          selected-grades="{{selectedGrades}}"
+          required-tags="{{requiredTags}}"
+          forbidden-tags="{{forbiddenTags}}"
+          semester-active="{{semesterActive}}">
+        </x-organizer>
+      </section>
+      <section>
+        <h1>Dark Theme</h1>
+        <x-organizer
+          id="dark"
+          dark
+          query="{{query}}"
+          selected-types="{{selectedTypes}}"
+          selected-grades="{{selectedGrades}}"
+          required-tags="{{requiredTags}}"
+          forbidden-tags="{{forbiddenTags}}"
+          semester-active="{{semesterActive}}">
+        </x-organizer>
+      </section>
+      <aside>
+        <h1>Output</h1>
+        <button
+          onclick="init()">
+          INITIALIZE
+        </button>
+        <button
+          onclick="reset()">
+          RESET
+        </button>
+        <ul>
+          <li>
+            <span>semester-actve:</span>
+            <span>[[semesterActive]]</span>
+          </li>
+          <li>
+            <span>query:</span>
+            <span>[[query]]</span>
+          </li>
+          <li>
+            <span>selected-types:</span>
+            <ul>
+              <template
+                is="dom-repeat"
+                items="[[selectedTypes]]">
+                <li>[[item]]</li>
+              </template>
+            </ul>
+          </li>
+          <li>
+            <span>selected-grades:</span>
+            <ul>
+              <template
+                is="dom-repeat"
+                items="[[selectedGrades]]">
+                <li>
+                  <span>[[item]]</span>
+                </li>
+              </template>
+            </ul>
+          </li>
+          <li>
+            <span>required-tags:</span>
+            <ul>
+              <template
+                is="dom-repeat"
+                items="[[requiredTags]]">
+                <li>[[item]]</li>
+              </template>
+            </ul>
+          </li>
+          <li>
+            <span>forbidden-tags:</span>
+            <ul>
+              <template
+                is="dom-repeat"
+                items="[[forbiddenTags]]">
+                <li>[[item]]</li>
+              </template>
+            </ul>
+          </li>
+        </ul>
+      </aside>
     </template>
     <script>
+      function init() {
+        setup(document.getElementById("light"));
+        setup(document.getElementById("dark"));
+      }
+      function setup(element) {
+
+        element.courses = [{
+          "type": "VO",
+          "tags": ["Red"]
+        }, {
+          "type": "UE",
+          "tags": ["Blue"],
+          "grade": 1
+        }, {
+          "type": "VU",
+          "tags": ["Green", "Gold", "Brown", "Yellow"],
+          "grade": null
+        }, {
+          "type": "PR",
+          "grade": 2
+        }, {
+          "type": null,
+          "grade": 3
+        }, {
+          "grade": "none"
+        }, {
+        }];
+      }
       function reset() {
-        document.getElementById("element").filter = new Filter();
+        document.getElementById("light").reset();
       }
     </script>
   </body>
