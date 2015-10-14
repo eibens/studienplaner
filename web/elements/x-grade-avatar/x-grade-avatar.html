@@ -155,7 +155,8 @@
       },
 
       _computeText: function (grade, mode) {
-        var isGrade = ["1", "2", "3", "4", "5"].indexOf(grade) >= 0;
+        if (!grade) return "";
+        var isGrade = ["1", "2", "3", "4", "5"].indexOf(grade.toString()) >= 0;
         if (!isGrade || mode === "placeholder") {
           return "";
         }
