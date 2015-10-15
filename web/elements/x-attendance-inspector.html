@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-title.html">
 <link rel="import" href="x-grade-icon/x-grade-icon.html">
@@ -13,9 +14,6 @@
   <style>
     x-inspector {
       @apply(--layout-fit);
-    }
-    paper-icon-button {
-      --paper-icon-button-ink-color: white;
     }
     x-inspector-link {
       padding: 0 12px;
@@ -31,11 +29,11 @@
     }
     header .year {
       margin-top: 16px;
-      font-size: 20px;
+      @apply(--paper-font-title);
     }
     header .season {
-      opacity: 0.5;
-      font-size: 15px;
+      @apply(--paper-font-subhead);
+      color: var(--secondary-text-color);
     }
     main > * {
       height: 64px;

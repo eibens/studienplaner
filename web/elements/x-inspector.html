@@ -1,20 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="x-inspector">
   <style>
     :host {
       @apply(--layout-vertical);
-      background: white;
+      color: var(--primary-text-color);
+      background: var(--secondary-background-color);
       overflow-y: auto;
     }
     .header {
       @apply(--layout);
       position: relative;
       height: 240px;
-      background: #272822;
-      color: white;
+      background: var(--selection-color);
     }
     .header .close {
       left: 8px;
@@ -23,19 +24,17 @@
       right: 8px;
     }
     .header paper-icon-button {
-      --paper-icon-button-ink-color: white;
       top: 8px;
       position: absolute;
+      color: var(--secondary-text-color);
     }
     :host ::content header {
       @apply(--layout-flex);
       @apply(--layout-vertical);
       @apply(--layout-center-center);
+      @apply(--paper-font-subhead);
       position: relative;
-      color: white;
       box-sizing: border-box;
-      font-size: 16px;
-      font-weight: 100;
       text-align: center;
     }
     :host ::content nav {

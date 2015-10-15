@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="x-inspector-link">
   <style>
@@ -9,12 +10,11 @@
       @apply(--layout-center-center);
       @apply(--layout-self-stretch);
       @apply(--layout-justified);
+      @apply(--paper-font-body1);
       position: relative;
-      font-size: 14px;
-      font-weight: 100;
       cursor: pointer;
       height: 56px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--divider-color);
     }
   </style>
 

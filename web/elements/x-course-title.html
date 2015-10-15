@@ -1,19 +1,19 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="x-course-title">
   <style>
     :host {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @apply(--paper-font-common-nowrap);
+      color: var(--primary-text-color);
     }
     :host([wrap]) {
-      white-space: normal;
-      overflow: visible;
+      white-space: normal !important;
+      overflow: visible !important;
     }
     :host([empty]) {
       font-style: italic;
-      opacity: 0.5;
+      color: var(--disabled-text-color);
     }
   </style>
 

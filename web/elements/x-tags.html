@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="x-draggable.html">
 
 <dom-module id="x-tags">
@@ -32,10 +33,10 @@
     .tag {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
+      @apply(--paper-font-body1);
       position: relative;
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--divider-color);
       border-radius: 3px;
-      font-size: 12px;
       margin-right: 8px;
       margin-bottom: 8px;
       padding: 4px;

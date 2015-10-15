@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="x-grade-icon/x-grade-icon.html">
 <link rel="import" href="x-inspector-link.html">
@@ -18,6 +19,7 @@
       margin: 0 4px; /* same positioning as avatar in x-attendance-inspector */
     }
     .semester {
+      @apply(--paper-font-body1);
       margin-left: 12px;
       @apply(--layout-flex);
     }
