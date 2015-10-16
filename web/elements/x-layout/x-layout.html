@@ -9,10 +9,34 @@
 
 <dom-module id="x-layout">
   <style>
+    ::-webkit-scrollbar {
+      width: 8px;  /* for vertical scrollbars */
+      height: 8px; /* for horizontal scrollbars */
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--divider-color);
+    }
+
     :host {
       @apply(--layout-fit);
       @apply(--layout-vertical);
     }
+
+    .container {
+      position: relative;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .container:hover {
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
     .body {
       @apply(--layout-fit);
       @apply(--layout-horizontal);
@@ -22,6 +46,12 @@
       position: absolute;
       bottom: 16px;
       right: 16px;
+      transition: transform 0.2s 0.2s;
+    }
+
+    :host ::content > * {
+      @apply(--layout-flex);
+      @apply(--layout-self-stretch);
     }
 
     /* As long as there is enough space left and right the center area should
@@ -32,59 +62,61 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      background: white;
     }
-    .drawer.left {
+    #left {
       left: -240px;
       width: 240px;
       transition: left 0.2s, box-shadow 0.2s;
+      order: 0;
     }
-    .drawer.left[open] {
+    #left[open] {
       left: 0;
     }
-    .drawer.right {
+    #right {
       right: -340px;
       width: 340px;
       transition: right 0.2s, box-shadow 0.2s;
+      order: 2;
     }
-    .drawer.right[open] {
+    #right[open] {
       right: 0;
     }
-    .center {
+    #center {
       width: 900px;
       max-width: 900px;
       margin-left: auto;
       margin-right: auto;
-      background: white;
+      order: 1;
     }
     /* 900 + 2 * 340 */
     @media screen and (max-width: 1580px) {
-      .center {
+      #center {
         @apply(--layout-flex);
+        position: static;
       }
       .drawer {
         position: relative;
       }
-      .drawer.right {
+      #right {
         margin-right: -340px;
         transition: margin 0.2s, box-shadow 0.2s;
       }
-      .drawer.right[open] {
+      #right[open] {
         margin-right: 0;
       }
-      .drawer.left {
+      #left {
         margin-left: -240px;
         transition: margin 0.2s, box-shadow 0.2s;
       }
-      .drawer.left[open] {
+      #left[open] {
         margin-left: 0;
       }
     }
 
-    .right {
+    #right {
       background: var(--secondary-background-color);
     }
-    .right[open] {
+    #right[open] {
       @apply(--shadow-elevation-4dp);
     }
 
@@ -96,7 +128,7 @@
     }
 
     @media screen and (max-width: 970px) {
-      .center {
+      #center {
         left: 32px;
         right: 32px;
       }
@@ -117,6 +149,15 @@
         margin-top: -64px;
       }
 
+      :host([right-open]) paper-fab {
+        transform: scale(0);
+        transition: transform 0.2s;
+      }
+      :host([left-open]) paper-fab {
+        transform: scale(0);
+        transition: transform 0.2s;
+      }
+
       /* overlay for the left drawer */
       .body-overlay {
         content: "";
@@ -134,21 +175,22 @@
 
       .drawer {
         position: absolute;
+        background: white;
       }
-      .drawer.left {
+      #left {
         /* Bit of the overlay should always be visible. */
         max-width: 90%;
-        background: var(--primary-background-color);
+        background: var(--secondary-background-color);
         margin: 0;
         transition: left 0.2s;
       }
-      .drawer.left[open] {
+      #left[open] {
         /* box-shadow should not be visible when drawer is closed.
            Otherwise it would be visible on the left edge. */
         @apply(--shadow-elevation-4dp);
       }
 
-      .drawer.right {
+      #right {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -157,13 +199,14 @@
         margin: 0;
         transition: right 0.2s;
       }
-      .drawer.right[open] {
+      #right[open] {
         right: 0;
         transition: right 0.2s 0.2s;
       }
 
-      .center {
+      #center {
         width: 100%;
+        position: static;
       }
     }
 
@@ -188,18 +231,23 @@
       </paper-toolbar>
       <div class="body">
         <div
-          class="body-overlay"
-          on-tap="closeLeft"></div>
-        <div
-          class="left drawer"
-          open$="[[leftOpen]]">
-          <content select="[left], .left"></content>
-        </div>
-        <div class="center">
+          id="center"
+          class="container">
           <content select="[center], .center"></content>
         </div>
         <div
-          class="right drawer"
+          class="body-overlay"
+          on-tap="closeLeft">
+        </div>
+        <div
+          id="left"
+          class="drawer container"
+          open$="[[leftOpen]]">
+          <content select="[left], .left"></content>
+        </div>
+        <div
+          id="right"
+          class="drawer container"
           open$="[[rightOpen]]">
           <content select="[right], .right"></content>
         </div>
