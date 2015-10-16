@@ -10,42 +10,16 @@
   <style>
     :host {
       @apply(--layout-vertical);
-      @apply(--layout-center);
-      overflow-y: scroll;
     }
-    .filter-message {
-      @apply(--layout-self-stretch);
-      @apply(--layout-horizontal);
-      @apply(--layout-center-center);
-      padding: 16px;
-      color: white;
-      background: #689F38;
-      font-size: 16px;
+    header {
+      height: 40px;
+      width: 100%;
     }
-    .filter-message span {
-      @apply(--layout-flex);
-      margin: 0 16px;
-    }
-    .filter-message iron-icon {
-      width: 24px;
-      height: 24px;
-      margin: 0 8px;
-    }
-    .filter-message paper-button {
-      margin: 0;
-    }
-    .wrapper {
-      width: 90%;
-      max-width: 1000px;
-      padding: 16px 0;
-    }
-
     main {
       @apply(--layout-vertical);
-      background: white;
       @apply(--shadow-elevation-3dp);
-      margin: 16px 0;
-      padding-bottom: 8px;
+      background: white;
+      width: 100%;
     }
     .placeholder {
       @apply(--layout-horizontal);
@@ -56,55 +30,37 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       margin-bottom: 8px;
     }
-    header {
-      height: 40px;
-      width: 100%;
-    }
   </style>
 
   <template>
-    <div
-      class="filter-message"
-      hidden$="[[!_filterActive]]">
-      <iron-icon
-        icon="filter-list">
-      </iron-icon>
-      <span>Filter sind aktiv. Es werden nicht alle Kurse angezeigt.</span>
-      <paper-button
-        on-tap="_resetFilter">
-        Zur&uuml;cksetzen
-      </paper-button>
-    </div>
-    <div class="wrapper">
-      <header
-        hidden$="[[!filter.semester.enabled]]">
-        <x-semester-picker
-          value="{{filter.semester.value}}">
-        </x-semester-picker>
-      </header>
-      <main>
-        <x-stats
-          courses="[[result]]"
-          mode="{{_sortMode}}">
-        </x-stats>
-        <template
-          id="list"
-          is="dom-repeat"
-          items="{{courses}}"
-          filter="_filter"
-          sort="_sort"
-          observe="type title credits">
-          <x-course-list-item
-            course="[[item]]">
-          </x-course-list-item>
-        </template>
-        <div
-          class="placeholder"
-          hidden$="[[!empty]]">
-          Keine Kurse gefunden
-        </div>
-      </main>
-    </div>
+    <header
+      hidden$="[[!filter.semester.enabled]]">
+      <x-semester-picker
+        value="{{filter.semester.value}}">
+      </x-semester-picker>
+    </header>
+    <main>
+      <x-stats
+        courses="[[result]]"
+        mode="{{_sortMode}}">
+      </x-stats>
+      <template
+        id="list"
+        is="dom-repeat"
+        items="{{courses}}"
+        filter="_filter"
+        sort="_sort"
+        observe="type title credits">
+        <x-course-list-item
+          course="[[item]]">
+        </x-course-list-item>
+      </template>
+      <div
+        class="placeholder"
+        hidden$="[[!empty]]">
+        Keine Kurse gefunden
+      </div>
+    </main>
   </template>
 
   <script>

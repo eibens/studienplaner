@@ -12,34 +12,26 @@
 <link rel="import" href="x-attendance-inspector.html">
 <link rel="import" href="x-toolbar.html">
 <link rel="import" href="x-organizer/x-organizer.html">
+<link rel="import" href="x-layout/x-layout.html">
+<link rel="import" href="x-save-indicator.html">
 
 <dom-module id="x-main">
   <style>
     :host {
       @apply(--layout-fit);
-      @apply(--layout-vertical);
-    }
-    main {
-      @apply(--layout-flex);
-      @apply(--layout-horizontal);
-    }
-    main > x-browser {
-      @apply(--layout-flex);
     }
     aside {
+      @apply(--layout-fit);
       position: relative;
-      width: 320px;
+    }
+    x-toolbar {
+      margin-right: -16px;
     }
     x-course-inspector {
       @apply(--layout-fit);
     }
     x-attendance-inspector {
       @apply(--layout-fit);
-    }
-    paper-fab {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
     }
   </style>
 
@@ -61,14 +53,19 @@
       selected="{{attendance}}">
     </array-selector>
 
-    <x-toolbar
-      name="{{profile.name}}"
-      saving="[[_storageDirty]]"
-      cleared="[[_profileEmpty]]">
-    </x-toolbar>
+    <x-layout
+      on-action="_handleAddButtonTap"
+      right-open="[[!_areEmpty(course, attendance)]]">
 
-    <main>
+      <x-toolbar
+        class="toolbar"
+        name="{{profile.name}}"
+        saving="[[_storageDirty]]"
+        cleared="[[_profileEmpty]]">
+      </x-toolbar>
+
       <x-organizer
+        left
         courses="[[profile.courses]]"
         query="{{filter.query}}"
         selected-types="{{filter.types.allowed}}"
@@ -77,12 +74,15 @@
         forbidden-tags="{{filter.tags.forbidden}}"
         semester-active="{{filter.semester.enabled}}">
       </x-organizer>
+
       <x-browser
+        center
         class="main"
         courses="{{profile.courses}}"
         filter="{{filter}}">
       </x-browser>
-      <aside hidden$="[[_areEmpty(course, attendance)]]">
+
+      <aside right>
         <x-course-inspector
           hidden$="[[_isEmpty(course)]]"
           course="{{course}}">
@@ -92,12 +92,7 @@
           attendance="{{attendance}}">
         </x-attendance-inspector>
       </aside>
-    </main>
-
-    <paper-fab
-      icon="add"
-      on-tap="_handleAddButtonTap">
-    </paper-fab>
+    </x-layout>
   </template>
 
   <script>
