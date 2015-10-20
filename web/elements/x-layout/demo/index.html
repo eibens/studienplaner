@@ -16,6 +16,7 @@
       id="template">
       <style is="custom-style">
         :root {
+          --disabled-text-color: rgba(0, 0, 0, 0.38);
           --primary-background-color: #f8f8f8;
           --secondary-background-color: #e8e8e8;
           --divider-color: rgba(0, 0, 0, 0.12);
@@ -39,11 +40,6 @@
         }
       </style>
       <x-layout id="layout">
-        <paper-icon-button
-          class="toolbar"
-          id="toggle-right"
-          icon="create">
-        </paper-icon-button>
         <div class="left">
           <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
             nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
@@ -172,9 +168,8 @@
       var template = document.getElementById("template");
       template.addEventListener("dom-change", function() {
         var layout = document.getElementById("layout");
-        var toggleRight = document.getElementById("toggle-right");
-        toggleRight.addEventListener("tap", function() {
-          layout.toggleRight();
+        layout.addEventListener("action", function() {
+          layout.openRight();
         });
         var closeRight = document.getElementById("close-right");
         closeRight.addEventListener("tap", function () {
