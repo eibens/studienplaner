@@ -1,225 +1,187 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <dom-module id="x-layout">
   <style>
-    ::-webkit-scrollbar {
-      width: 8px;  /* for vertical scrollbars */
-      height: 8px; /* for horizontal scrollbars */
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--divider-color);
+    :root {
+      --speed: 0.3s;
     }
 
-    :host {
-      @apply(--layout-fit);
-      @apply(--layout-vertical);
+    @media (min-width: 1581px) {
+      :host([right-open]) #center {
+        margin: 0 340px;
+        transition: none;
+      }
     }
 
-    .container {
-      position: relative;
-      overflow-y: hidden;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-    .container:hover {
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
+    @media (min-width: 768px) and (max-width: 1580px) {
+      :host([right-open]) #center {
+        margin-right: 340px;
+        transition: none;
+      }
+      :host([left-open]) #center {
+        margin-left: 240px;
+        transition: none;
+      }
     }
 
-    .body {
-      @apply(--layout-fit);
-      @apply(--layout-horizontal);
-      background: var(--primary-background-color);
-    }
-    paper-fab {
+    #fab {
       position: absolute;
       bottom: 16px;
       right: 16px;
-      transition: transform 0.2s 0.2s;
+      transition: transform var(--speed) var(--speed);
     }
-
-    :host ::content > * {
-      @apply(--layout-flex);
-      @apply(--layout-self-stretch);
+    :host([right-open]) #fab {
+      /* hide FAB when right is open */
+      transform: scale(0);
+      transition: transform var(--speed);
     }
-
-    /* As long as there is enough space left and right the center area should
-       not be affected by the drawers. Once the drawers would start overlaying
-       the center area switch from absolute positioned drawers to a flex model.
-       Here the center area will adjust to the space left empty by the drawers. */
-    .drawer {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-    }
-    #left {
-      left: -240px;
-      width: 240px;
-      transition: left 0.2s, box-shadow 0.2s;
-      order: 0;
-    }
-    #left[open] {
-      left: 0;
-    }
-    #right {
-      right: -340px;
-      width: 340px;
-      transition: right 0.2s, box-shadow 0.2s;
-      order: 2;
-    }
-    #right[open] {
-      right: 0;
-    }
-    #center {
-      width: 900px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      order: 1;
-    }
-    /* 900 + 2 * 340 */
-    @media screen and (max-width: 1580px) {
-      #center {
-        @apply(--layout-flex);
-        position: static;
-      }
-      .drawer {
-        position: relative;
-      }
-      #right {
-        margin-right: -340px;
-        transition: margin 0.2s, box-shadow 0.2s;
-      }
-      #right[open] {
-        margin-right: 0;
-      }
-      #left {
-        margin-left: -240px;
-        transition: margin 0.2s, box-shadow 0.2s;
-      }
-      #left[open] {
-        margin-left: 0;
-      }
-    }
-
-    #right {
-      background: var(--secondary-background-color);
-    }
-    #right[open] {
-      @apply(--shadow-elevation-4dp);
-    }
-
-    paper-toolbar .menu-button {
-      margin-right: 16px;
-    }
-    .title {
-      @apply(--paper-font-title);
-    }
-
-    @media screen and (max-width: 970px) {
-      #center {
-        left: 32px;
-        right: 32px;
-      }
-    }
-
-    /* mobile behaviour */
-    @media screen and (max-width: 767px) {
-
-      /* Right panel should look as if it was an overlay over the whole app.
-         This is accomplished by moving it upwards out of the visible area
-         when the right panel is opened. */
-      paper-toolbar {
-        transition: margin 0.2s 0.2s;
-      }
-      :host([right-open]) paper-toolbar {
-        position: relative;
-        transition: margin 0.2s;
-        margin-top: -64px;
-      }
-
-      :host([right-open]) paper-fab {
+    @media (max-width: 767px) {
+      :host([left-open]) #fab {
+        /* hide FAB when left is open */
         transform: scale(0);
-        transition: transform 0.2s;
+        transition: transform var(--speed);
       }
-      :host([left-open]) paper-fab {
-        transform: scale(0);
-        transition: transform 0.2s;
-      }
+    }
 
-      /* overlay for the left drawer */
-      .body-overlay {
-        content: "";
+    @media (min-width: 768px) {
+      #left .content, #right .content {
         @apply(--layout-fit);
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.2s;
-        background: var(--primary-text-color);
-      }
-      :host([left-open]) .body-overlay {
-        display: block;
-        pointer-events: all;
-        opacity: 0.5;
+        overflow-y: auto;
       }
 
-      .drawer {
-        position: absolute;
-        background: white;
+      #center {
+        @apply(--layout-fit);
+        transition: margin 0s var(--speed);
+        overflow-y: auto;
+        position: relative;
       }
-      #left {
-        /* Bit of the overlay should always be visible. */
-        max-width: 90%;
-        background: var(--secondary-background-color);
-        margin: 0;
-        transition: left 0.2s;
-      }
-      #left[open] {
-        /* box-shadow should not be visible when drawer is closed.
-           Otherwise it would be visible on the left edge. */
-        @apply(--shadow-elevation-4dp);
+      #center .content {
+        margin: auto;
+        max-width: 900px;
       }
 
-      #right {
+      #left, #right {
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 100%;
-        right: -100%;
-        margin: 0;
-        transition: right 0.2s;
-      }
-      #right[open] {
-        right: 0;
-        transition: right 0.2s 0.2s;
+        /* don't let column scroll directly since it may cause display problems
+           of scroll-bars in combination with flex layout */
+        overflow: hidden;
       }
 
-      #center {
-        width: 100%;
-        position: static;
+      #left {
+        left: 0;
+        width: 240px;
+        transform: translateX(-240px);
+        transition: transform var(--speed);
+      }
+      #left[open] {
+        transform: translateX(0);
+      }
+
+      #right {
+        right: 0;
+        width: 340px;
+        transform: translateX(340px);
+        transition: transform var(--speed);
+      }
+      #right[open] {
+        transform: translateX(0);
       }
     }
 
-    /* x-toolbar's media-query breakpoint that reduces it's height to 56px */
-    @media screen and (max-width: 639px) {
-      :host([right-open]) paper-toolbar {
-        margin-top: -56px;
+    @media (max-width: 767px) {
+      :host {
+        /* otherwise #right is visible below #center */
+        overflow: hidden;
+      }
+
+      #center {
+        /* allows hiding the scroll-bar with overflow:hidden */
+        @apply(--layout-fit);
+      }
+      :host([left-open]) #center {
+        /* only #left scroll-bar should be visible */
+        overflow: hidden;
+      }
+
+      #left {
+        /* #left needs space for an overlay and has to cover whole screen */
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        /* ignore input while it's not open */
+        pointer-events: none;
+      }
+      #left[open] {
+        pointer-events: all;
+      }
+      #left:before {
+        /* use :before as overlay so we can animate opacity instead of background */
+        @apply(--layout-fit);
+        content: "";
+        background: var(--disabled-text-color);
+        opacity: 0;
+        transition: opacity var(--speed);
+      }
+      #left[open]:before {
+        opacity: 1;
+      }
+      #left .content {
+        overflow-y: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        max-width: 240px;
+        background: var(--secondary-background-color);
+        /* move in from left */
+        transform: translateX(-240px);
+        transition: transform var(--speed);
+      }
+      #left[open] .content {
+        transform: translateX(0);
+        transition: transform var(--speed) var(--speed);
+      }
+
+      #right {
+        overflow-y: auto;
+        position: absolute;
+        width: 100%;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--secondary-background-color);
+        /* move in from bottom */
+        transform: translateY(100%);
+        transition: transform var(--speed);
+      }
+      #right[open] {
+        transform: translateY(0);
+        transition: transform var(--speed);
       }
     }
   </style>
 
   <template>
-    <paper-header-panel>
+    <iron-media-query
+      query="(max-width: 767px)"
+      query-matches="{{_narrow}}">
+    </iron-media-query>
+    <paper-header-panel
+      id="panel"
+      mode="seamed">
       <paper-toolbar>
         <paper-icon-button
           class="menu-button"
@@ -229,34 +191,40 @@
         <h1 class="title">Studienplaner</h1>
         <content select="[toolbar], .toolbar"></content>
       </paper-toolbar>
-      <div class="body">
+      <div id="body">
         <div
           id="center"
           class="container">
-          <content select="[center], .center"></content>
-        </div>
-        <div
-          class="body-overlay"
-          on-tap="closeLeft">
+          <div class="content">
+            <content select="[center], .center"></content>
+          </div>
         </div>
         <div
           id="left"
           class="drawer container"
-          open$="[[leftOpen]]">
-          <content select="[left], .left"></content>
+          open$="[[leftOpen]]"
+          on-tap="_handleCloseLeft">
+          <div
+            class="content"
+            on-tap="_stopPropagation">
+            <content select="[left], .left"></content>
+          </div>
         </div>
         <div
           id="right"
           class="drawer container"
           open$="[[rightOpen]]">
-          <content select="[right], .right"></content>
+          <div class="content">
+            <content select="[right], .right"></content>
+          </div>
         </div>
-        <paper-fab
-          icon="add"
-          on-tap="_handleAction">
-        </paper-fab>
       </div>
     </paper-header-panel>
+    <paper-fab
+      id="fab"
+      icon="add"
+      on-tap="_handleAction">
+    </paper-fab>
   </template>
 
   <script>
@@ -274,6 +242,17 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+
+        _narrow: {
+          type: Boolean,
+          value: false,
+          observer: "_narrowChanged"
+        },
+
+        _ready: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -301,10 +280,41 @@
         this.rightOpen = !this.rightOpen;
       },
 
+      ready: function () {
+        this._ready = true;
+
+        // Initialize the DOM to the current screen configuration.
+        this._narrowChanged(this._narrow);
+      },
+
+      _narrowChanged: function (narrow) {
+        // Make sure all elements are loaded before modifying the DOM.
+        if (!this._ready) return;
+
+        // NOTE: In narrow mode the right drawer should cover the whole screen,
+        // including the toolbar. So when the screen is narrow simply move the
+        // drawer outside #panel. Once the screen becomes wide again, move
+        // #right back to its original location inside #body.
+        if (narrow) {
+          this.$.fab.parentNode.insertBefore(this.$.right, this.$.fab);
+        } else {
+          this.$.body.appendChild(this.$.right);
+        }
+      },
+
       _handleAction: function () {
         this.fire("action", {
           bubbles: true
         });
+      },
+
+      _handleCloseLeft: function (event) {
+        event.stopPropagation();
+        this.closeLeft();
+      },
+
+      _stopPropagation: function (event) {
+        event.stopPropagation();
       }
     });
   </script>
