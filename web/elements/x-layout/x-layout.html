@@ -65,21 +65,14 @@
         background: var(--divider-color);
       }
 
-      #center,
-      #left .content,
-      #right .content {
-        @apply(--layout-fit);
-        overflow: hidden;
-        overflow-y: auto;
-      }
-
       #center {
-        transition: margin 0s var(--speed);
-        position: relative;
+        @apply(--layout-fit);
+        overflow-y: auto;
       }
       #center .content {
         margin: auto;
         max-width: 900px;
+        padding: 16px;
       }
 
       #left, #right {
@@ -96,9 +89,18 @@
         width: 240px;
         transform: translateX(-240px);
         transition: transform var(--speed);
+        /* that way #center does not shine through when left is sliding out */
+        background: var(--secondary-background-color);
       }
       #left[open] {
         transform: translateX(0);
+      }
+      #left .content {
+        @apply(--layout-fit);
+        overflow: hidden;
+      }
+      #left .content:hover {
+        overflow-y: auto;
       }
 
       #right {
@@ -111,6 +113,10 @@
       }
       #right[open] {
         transform: translateX(0);
+      }
+      #right .content {
+        @apply(--layout-fit);
+        overflow-y: auto;
       }
     }
 
