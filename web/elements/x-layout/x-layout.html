@@ -52,15 +52,29 @@
     }
 
     @media (min-width: 768px) {
-      #left .content, #right .content {
+
+      /* on mobile normal scroll-bars should be used */
+      ::-webkit-scrollbar {
+        width: 8px;  /* for vertical scrollbars */
+        height: 8px; /* for horizontal scrollbars */
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--divider-color);
+      }
+
+      #center,
+      #left .content,
+      #right .content {
         @apply(--layout-fit);
+        overflow: hidden;
         overflow-y: auto;
       }
 
       #center {
-        @apply(--layout-fit);
         transition: margin 0s var(--speed);
-        overflow-y: auto;
         position: relative;
       }
       #center .content {
