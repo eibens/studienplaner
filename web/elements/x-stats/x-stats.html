@@ -1,13 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 
 <dom-module id="x-stats">
   <style>
     header {
-      font-size: 14px;
-      font-weight: 200;
-      color: rgba(0, 0, 0, 0.5);
+      @apply(--paper-font-body1);
+      color: var(--primary-text-color);
     }
     header iron-selector {
       @apply(--layout-horizontal);
@@ -19,28 +19,41 @@
       @apply(--layout-flex);
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
-      padding-top: 3px;
-      border-bottom: 3px solid transparent;
+      padding-top: 4px;
+      border-bottom: 4px solid transparent;
       cursor: pointer;
     }
     header .iron-selected {
-      border-color: rgba(0, 0, 0, 0.1);
+      border-color: var(--default-primary-color);
     }
     header label {
-      font-size: 14px;
-      font-weight: bold;
-      margin-right: 4px;
       cursor: pointer;
+      color: var(--secondary-text-color);
     }
-    header label:after {
-      content: ":";
-    }
-    header output {
-      margin-right: 4px;
-    }
-    header output.total:before {
+    header output .total:before {
       content: "/";
       margin-right: 4px;
+    }
+
+    @media (min-width: 768px) {
+      header label {
+        margin-right: 4px;
+      }
+      header label:after {
+        content: ":";
+      }
+    }
+
+    @media (max-width: 767px) {
+      header iron-selector {
+        height: 56px;
+      }
+      header div {
+        @apply(--layout-vertical);
+      }
+      header label {
+        @apply(--paper-font-caption);
+      }
     }
   </style>
 
@@ -50,17 +63,23 @@
         selected="{{_modeIndex}}">
         <div>
           <label>Kurse</label>
-          <output>[[_computeCount(_passed.*)]]</output>
-          <output class="total">[[_computeCount(courses.*)]]</output>
+          <output>
+            <span>[[_computeCount(_passed.*)]]</span>
+            <span class="total">[[_computeCount(courses.*)]]</span>
+          </output>
         </div>
         <div>
           <label>ECTS</label>
-          <output>[[_computeCredits(_passed.*)]]</output>
-          <output class="total">[[_computeCredits(courses.*)]]</output>
+          <output>
+            <span>[[_computeCredits(_passed.*)]]</span>
+            <span class="total">[[_computeCredits(courses.*)]]</span>
+          </output>
         </div>
         <div>
           <label>Note</label>
-          <output>[[_computeGrade(_passed.*)]]</output>
+          <output>
+            <span>[[_computeGrade(_passed.*)]]</span>
+          </output>
         </div>
       </iron-selector>
     </header>
