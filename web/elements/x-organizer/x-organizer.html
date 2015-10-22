@@ -61,7 +61,13 @@
     x-organizer-item:last-of-type {
       margin-bottom: 0;
     }
-    input:hover, input:focus {
+    /* hover effects not needed on mobile */
+    @media (min-width: 768px) {
+      input:hover {
+        background: var(--selection-color);
+      }
+    }
+    input:focus {
       background: var(--selection-color);
     }
     input::-webkit-input-placeholder {

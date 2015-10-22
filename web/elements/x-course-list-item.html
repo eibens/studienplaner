@@ -17,9 +17,14 @@
       padding: 8px 16px;
       transition: background 0.2s;
     }
-    :host(:hover) {
-      background: rgba(0, 0, 0, 0.05);
+
+    /* hover effects not needed on mobile */
+    @media (min-width: 768px) {
+      :host(:hover) {
+        background: rgba(0, 0, 0, 0.05);
+      }
     }
+
     x-drop-target {
       @apply(--layout-fit);
       @apply(--layout-horizontal);

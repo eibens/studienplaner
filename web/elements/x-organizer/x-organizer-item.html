@@ -16,9 +16,14 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    :host(:hover) {
-      background: var(--highlight-color);
+
+    /* hover effects not needed on mobile */
+    @media (min-width: 768px) {
+      :host(:hover) {
+        background: var(--highlight-color);
+      }
     }
+
     :host label {
       @apply(--layout-flex);
       @apply(--font-body-1);
