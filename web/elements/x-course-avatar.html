@@ -12,6 +12,10 @@
       box-sizing: border-box;
       border-radius: 9999px;
       position: relative;
+      cursor: default;
+    }
+    :host([interactive]) {
+      cursor: pointer;
     }
     :host([empty]) {
       border: 3px solid var(--disabled-text-color);
@@ -21,7 +25,6 @@
     }
     :host([interactive]) paper-ripple {
       visibility: visible;
-      cursor: pointer;
     }
     :host([size="3"]) {
       width: 24px;
