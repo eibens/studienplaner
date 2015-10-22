@@ -9,14 +9,7 @@
   <style>
     :host {
       @apply(--layout-horizontal);
-      @apply(--layout-justified);
-      height: 100%;
-      background: var(--default-primary-color);
-      color: white;
-    }
-    :host > * {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
+      @apply(--layout-center-center);
       height: 100%;
     }
     input {
@@ -50,44 +43,41 @@
     }
 
     @media screen and (max-width: 767px) {
+      :host {
+        width: 100%;
+      }
       x-save-indicator {
         display: none;
       }
       input {
-        display: none;
+        @apply(--layout-flex);
+        width: auto;
+        text-align: left;
       }
     }
   </style>
 
   <template>
-    <div
-      class="left">
-    </div>
-    <div
-      class="center">
-    </div>
-    <div class="right">
-      <input
-        placeholder="Unbenannt"
-        value="{{name::input}}">
+    <input
+      placeholder="Unbenannt"
+      value="{{name::input}}">
 
-      <paper-menu-button
-        horizontal-align="right">
-        <paper-icon-button
-          icon="more-vert"
-          class="dropdown-trigger">
-        </paper-icon-button>
-        <x-profile-menu
-          class="dropdown-content"
-          export-disabled="[[cleared]]"
-          clear-disabled="[[cleared]]">
-        </x-profile-menu>
-      </paper-menu-button>
+    <paper-menu-button
+      horizontal-align="right">
+      <paper-icon-button
+        icon="more-vert"
+        class="dropdown-trigger">
+      </paper-icon-button>
+      <x-profile-menu
+        class="dropdown-content"
+        export-disabled="[[cleared]]"
+        clear-disabled="[[cleared]]">
+      </x-profile-menu>
+    </paper-menu-button>
 
-      <x-save-indicator
-        active="{{saving}}">
-      </x-save-indicator>
-    </div>
+    <x-save-indicator
+      active="{{saving}}">
+    </x-save-indicator>
   </template>
 
   <script>
