@@ -107,11 +107,11 @@
         right: 0;
         width: 340px;
         transform: translateX(340px);
-        transition: transform var(--speed);
+        transition: transform var(--speed), box-shadow var(--speed);
         background: var(--primary-background-color);
-        @apply(--shadow-elevation-8dp);
       }
       #right[open] {
+        @apply(--shadow-elevation-8dp);
         transform: translateX(0);
       }
       #right .content {
