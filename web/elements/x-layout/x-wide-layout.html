@@ -1,0 +1,219 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="x-layout-behavior.html">
+
+<dom-module id="x-wide-layout">
+  <style>
+    :root {
+      --speed: 0.3s;
+      --left-width: 240px;
+      --right-width: 340px;
+      --content-min-width: 400px;
+      --content-max-width: 900px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;  /* for vertical scrollbars */
+      height: 8px; /* for horizontal scrollbars */
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--divider-color);
+    }
+
+    main {
+      @apply(--layout-fit);
+      position: relative;
+      overflow: hidden;
+      background: var(--secondary-background-color);
+    }
+
+    #wrapper {
+      @apply(--layout-fit);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    /* var(--content-max-width) + 2 * var(--right-width) */
+    @media (min-width: 1580px) {
+      :host([right-open]) #wrapper {
+        /* scroll-bar of #wrapper must not be covered by #right */
+        left: var(--right-width);
+        right: var(--right-width);
+      }
+    }
+    /* var(--content-max-width) + 2 * var(--right-width) - 1 */
+    @media (max-width: 1579px) {
+      :host([left-open]) #wrapper {
+        left: var(--left-width);
+      }
+      :host([right-open]) #wrapper {
+        right: var(--right-width);
+      }
+    }
+    /* var(--content-min-width) + var(--right-width) + var(--left-width) */
+    @media (max-width: 980px) {
+      :host([left-open]) #wrapper {
+        right: 0 !important;
+      }
+    }
+    /* var(--content-min-width) + var(--left-width) */
+    @media (max-width: 640px) {
+      :host([left-open]) #wrapper {
+        left: 0 !important;
+      }
+      :host #left {
+        left: 0 !important;
+        background: var(--primary-background-color);
+      }
+      :host([left-open]) #left {
+        left: 0 !important;
+        @apply(--shadow-elevation-4dp);
+      }
+    }
+    /* var(--content-min-width) + var(--right-width) */
+    @media (max-width: 740px) {
+      :host([right-open]) #wrapper {
+        right: 0 !important;
+      }
+    }
+
+    #placeholder {
+      @apply(--layout-fit);
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      overflow: hidden;
+    }
+
+    #content {
+      margin: auto;
+      padding: 16px;
+      box-sizing: border-box;
+      max-width: var(--content-max-width);
+    }
+
+    #left {
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      left: 0;
+      width: var(--left-width);
+      transform: translateX(-100%);
+      transition: transform var(--speed);
+      background: var(--secondary-background-color);
+      overflow: hidden;
+    }
+    #left:hover {
+      overflow-y: auto;
+    }
+    :host([left-open]) #left {
+      transform: translateX(0);
+    }
+    /* var(--left-width) */
+    @media (max-width: 240px) {
+      #left {
+        width: 100% !important;
+      }
+    }
+
+    #right {
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      right: 0;
+      width: var(--right-width);
+      transform: translateX(100%);
+      transition: transform var(--speed);
+      background: var(--primary-background-color);
+      overflow-y: auto;
+    }
+    :host([right-open]) #right {
+      transform: translateX(0);
+      @apply(--shadow-elevation-4dp);
+    }
+    /* var(--right-width) */
+    @media (max-width: 340px) {
+      #right {
+        width: 100% !important;
+      }
+    }
+
+    #fab {
+      position: absolute;
+      right: 32px;
+      bottom: 24px;
+      transition: transform var(--speed) var(--speed);
+    }
+    :host([right-open]) #fab {
+      /* hide FAB when right is open */
+      transform: scale(0);
+      transition: transform var(--speed);
+    }
+  </style>
+
+  <template>
+    <paper-header-panel class="content">
+      <paper-toolbar>
+        <paper-icon-button
+          class="menu-button"
+          icon="menu"
+          on-tap="toggleLeft">
+        </paper-icon-button>
+        <h1 class="title">Studienplaner</h1>
+        <content select="[toolbar], .toolbar"></content>
+      </paper-toolbar>
+      <main>
+        <section id="wrapper">
+          <div
+            id="placeholder"
+            hidden$="[[!placeholder]]">
+            <content select="[placeholder], .placeholder"></content>
+          </div>
+          <div
+            id="content"
+            hidden$="[[placeholder]]">
+            <content select="[content], .content"></content>
+          </div>
+        </section>
+        <section id="left">
+          <content select="[left], .left"></content>
+        </section>
+        <section id="right">
+          <content select="[right], .right"></content>
+        </section>
+      </main>
+    </paper-header-panel>
+
+    <paper-fab
+      id="fab"
+      icon="add"
+      on-tap="_handleFabTap">
+    </paper-fab>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-wide-layout",
+
+      behaviors: [
+        App.LayoutBehavior
+      ],
+
+      _handleFabTap: function () {
+        this.fire("action", {
+          bubbles: true
+        });
+      }
+    });
+  </script>
+</dom-module>
