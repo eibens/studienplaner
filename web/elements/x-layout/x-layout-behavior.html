@@ -49,6 +49,12 @@
 
     toggleRight: function () {
       this.rightOpen = !this.rightOpen;
+    },
+
+    fireActionEvent: function () {
+      this.fire("action", {
+        bubbles: false
+      });
     }
   };
 </script>

@@ -98,7 +98,7 @@
     <paper-fab
       id="fab"
       icon="add"
-      on-tap="_handleFabTap">
+      on-tap="fireActionEvent">
     </paper-fab>
   </template>
 
@@ -140,12 +140,6 @@
 
       _rightSelectedChanged: function (selected) {
         this.rightOpen = selected == "drawer";
-      },
-
-      _handleFabTap: function () {
-        this.fire("action", {
-          bubbles: true
-        });
       }
     });
   </script>
