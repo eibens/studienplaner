@@ -27,6 +27,20 @@
     x-toolbar {
       margin-right: -16px;
     }
+    .placeholder {
+      @apply(--layout-fit);
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+    }
+    .placeholder img {
+      max-width: 50%;
+      max-height: 50%;
+      opacity: 0.7;
+    }
+    .placeholder p {
+      @apply(--paper-font-title);
+      color: var(--disabled-text-color);
+    }
   </style>
 
   <template>
@@ -50,6 +64,8 @@
     <x-layout
       on-action="_handleAddButtonTap"
       right-open="[[!_areEmpty(course, attendance)]]">
+      right-open="[[!_areEmpty(course, attendance)]]"
+      placeholder="[[_coursesEmpty]]">
 
       <x-toolbar
         class="toolbar"
@@ -86,6 +102,11 @@
           attendance="{{attendance}}">
         </x-attendance-inspector>
       </aside>
+      <div class="placeholder">
+        <img src="../placeholder.png" alt=""/>
+        <p>Noch keine Kurse hinzugefügt</p>
+      </div>
+
     </x-layout>
   </template>
 
@@ -114,6 +135,10 @@
         },
         _profileEmpty: {
           type: Boolean
+        },
+        _coursesEmpty: {
+          type: Boolean,
+          computed: "_computeCoursesEmpty(profile.courses.*)"
         }
       },
 
@@ -222,6 +247,11 @@
 
       _isEmpty: function (object) {
         return !object;
+      },
+      _computeCoursesEmpty: function (change) {
+        var array = change.base;
+        if (!(array instanceof Array)) return true;
+        return array.length == 0;
       },
       _areEmpty: function () {
         for (var i = 0; i < arguments.length; i++) {
