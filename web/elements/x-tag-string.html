@@ -15,14 +15,7 @@
       display: none;
     }
     label {
-      font-size: 12px;
-      margin-right: 4px;
-    }
-    label:after {
-      content: " - ";
-    }
-    label:last-of-type:after {
-      content: "";
+      @apply(--paper-font-caption);
     }
     iron-icon {
       width: 14px;
@@ -36,11 +29,7 @@
     <iron-icon
       icon="label-outline">
     </iron-icon>
-    <template
-      is="dom-repeat"
-      items="[[tags]]">
-      <label>[[item]]</label>
-    </template>
+    <label>[[_computeString(tags.*)]]</label>
   </template>
 
   <script>
@@ -63,6 +52,10 @@
       _computeEmpty: function (tagsChange) {
         var tags = tagsChange.base;
         return !tags || !tags.length;
+      },
+
+      _computeString: function (tagsChange) {
+        return tagsChange.base.join(" - ");
       }
     });
   </script>
