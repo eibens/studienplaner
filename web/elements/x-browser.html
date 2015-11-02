@@ -17,7 +17,6 @@
     }
     main {
       @apply(--layout-vertical);
-      @apply(--shadow-elevation-3dp);
       background: white;
       width: 100%;
     }
@@ -29,6 +28,12 @@
     x-stats {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       margin-bottom: 8px;
+    }
+
+    @media (min-width: 768px) {
+      main {
+        @apply(--shadow-elevation-3dp);
+      }
     }
   </style>
 
