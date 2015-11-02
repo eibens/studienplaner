@@ -6,6 +6,8 @@
     <title>x-layout Demo</title>
     <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html"/>
+    <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html"/>
+    <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html"/>
     <link rel="import" href="../../../bower_components/paper-styles/paper-styles.html"/>
     <link rel="import" href="../x-layout.html">
     <style>
@@ -29,10 +31,22 @@
           padding: 16px;
           box-sizing: border-box;
         }
-        .center {
+        .content {
           padding: 8px 24px;
           box-sizing: border-box;
-          background: #eee;
+        }
+        .placeholder {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+          color: var(--disabled-text-color);
+        }
+        .placeholder iron-icon {
+          --iron-icon-height: 320px;
+          --iron-icon-width: 320px;
+          color: var(--divider-color);
+        }
+        .placeholder h3 {
+          font-weight: normal;
         }
         .right {
           padding: 16px;
@@ -40,6 +54,61 @@
         }
       </style>
       <x-layout id="layout">
+        <div class="toolbar">
+          <paper-icon-button
+            id="content-toggle"
+            icon="visibility"
+            onclick="toggleContent()">
+          </paper-icon-button>
+        </div>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+            takimata sanctus est Lorem ipsum dolor sit amet.
+          </p>
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum dolor sit amet.
+          </p>
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+            takimata sanctus est Lorem ipsum dolor sit amet.
+          </p>
+          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua.
+          </p>
+          <p>At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+            ipsum dolor sit amet.
+          </p>
+        </div>
+        <div class="placeholder">
+          <iron-icon
+            icon="stars">
+          </iron-icon>
+          <h3>No content available</h3>
+        </div>
         <div class="left">
           <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
             nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
@@ -78,52 +147,11 @@
             et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
             takimata sanctus est Lorem ipsum dolor sit amet.</p>
         </div>
-        <div class="center">
-          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-            sed diam voluptua.
-          </p>
-          <p>At vero eos et accusam et justo duo dolores et ea
-            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-            ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-            takimata sanctus est Lorem ipsum dolor sit amet.
-          </p>
-          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-            sed diam voluptua.
-          </p>
-          <p>At vero eos et accusam et justo duo dolores et ea
-            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-            ipsum dolor sit amet.
-          </p>
-          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-            sed diam voluptua.
-          </p>
-          <p>At vero eos et accusam et justo duo dolores et ea
-            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-            ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-            takimata sanctus est Lorem ipsum dolor sit amet.
-          </p>
-          <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-            sed diam voluptua.
-          </p>
-          <p>At vero eos et accusam et justo duo dolores et ea
-            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
-            ipsum dolor sit amet.
-          </p>
-        </div>
         <div class="right">
           <paper-icon-button
             id="close-right"
-            icon="close">
+            icon="close"
+            onclick="closeRight()">
           </paper-icon-button>
           <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
             nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
@@ -165,16 +193,34 @@
       </x-layout>
     </template>
     <script>
+
+      function toggleContent() {
+        var layout = document.getElementById("layout");
+        var contentToggle = document.getElementById("content-toggle");
+        layout.placeholder = !layout.placeholder;
+        contentToggle.icon = layout.placeholder ? "visibility-off" : "visibility";
+      }
+
+      function closeRight() {
+        var layout = document.getElementById("layout");
+        layout.closeRight();
+      }
+
       var template = document.getElementById("template");
       template.addEventListener("dom-change", function() {
         var layout = document.getElementById("layout");
         layout.addEventListener("action", function() {
           layout.openRight();
         });
+        /*var contentToggle = document.getElementById("content-toggle");
+        contentToggle.addEventListener("tap", function () {
+          layout.placeholder = !layout.placeholder;
+          contentToggle.icon = layout.placeholder ? "visibility-off" : "visibility";
+        });
         var closeRight = document.getElementById("close-right");
         closeRight.addEventListener("tap", function () {
           layout.closeRight();
-        });
+        });*/
       });
     </script>
   </body>

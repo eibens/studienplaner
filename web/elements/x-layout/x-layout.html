@@ -2,293 +2,67 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="x-narrow-layout.html">
+<link rel="import" href="x-wide-layout.html">
 
 <dom-module id="x-layout">
   <style>
-    :root {
-      --speed: 0.3s;
-    }
-
-    .menu-button {
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 1581px) /* 900 + 340 + 240 */ {
-      :host([right-open]) #center {
-        margin: 0 340px;
-        transition: none;
-      }
-    }
-
-    @media (min-width: 768px) and (max-width: 1008px) /* 768 + 240 */ {
-      :host([right-open][left-open]) #center {
-        margin-right: 0;
-        transition: none;
-      }
-    }
-
-    @media (min-width: 768px) and (max-width: 1580px) /* 900 + 340 + 240 */ {
-      :host([left-open]) #center {
-        margin-left: 240px;
-        transition: none;
-      }
-      :host([right-open]) #center {
-        margin-right: 340px;
-        transition: none;
-      }
-    }
-
-    #fab {
-      position: absolute;
-      bottom: 24px;
-      right: 32px;
-      transition: transform var(--speed) var(--speed);
-    }
-    :host([right-open]) #fab {
-      /* hide FAB when right is open */
-      transform: scale(0);
-      transition: transform var(--speed);
-    }
-    @media (max-width: 767px) {
-      :host([left-open]) #fab {
-        /* hide FAB when left is open */
-        transform: scale(0);
-        transition: transform var(--speed);
-      }
-    }
-
-    @media (min-width: 768px) {
-
-      /* on mobile normal scroll-bars should be used */
-      ::-webkit-scrollbar {
-        width: 8px;  /* for vertical scrollbars */
-        height: 8px; /* for horizontal scrollbars */
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: var(--divider-color);
-      }
-
-      #center {
-        @apply(--layout-fit);
-        overflow-y: auto;
-        min-width: 428px; /* 768 - 340 */
-      }
-      #center .content {
-        margin: auto;
-        max-width: 900px;
-        padding: 16px;
-        box-sizing: border-box;
-      }
-
-      #left, #right {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        /* don't let column scroll directly since it may cause display problems
-           of scroll-bars in combination with flex layout */
-        overflow: hidden;
-      }
-
-      #left {
-        left: 0;
-        width: 240px;
-        transform: translateX(-240px);
-        transition: transform var(--speed);
-        /* that way #center does not shine through when left is sliding out */
-        background: var(--secondary-background-color);
-      }
-      #left[open] {
-        transform: translateX(0);
-      }
-      #left .content {
-        @apply(--layout-fit);
-        overflow: hidden;
-      }
-      #left .content:hover {
-        overflow-y: auto;
-      }
-
-      #right {
-        right: 0;
-        width: 340px;
-        transform: translateX(340px);
-        transition: transform var(--speed), box-shadow var(--speed);
-        background: var(--primary-background-color);
-      }
-      #right[open] {
-        @apply(--shadow-elevation-8dp);
-        transform: translateX(0);
-      }
-      #right .content {
-        @apply(--layout-fit);
-        overflow-y: auto;
-      }
-    }
-
-    @media (max-width: 767px) {
-      :host {
-        /* otherwise #right is visible below #center */
-        overflow: hidden;
-      }
-
-      #center {
-        /* allows hiding the scroll-bar with overflow:hidden */
-        @apply(--layout-fit);
-      }
-      :host([left-open]) #center {
-        /* only #left scroll-bar should be visible */
-        overflow: hidden;
-      }
-
-      #left {
-        /* #left needs space for an overlay and has to cover whole screen */
-        overflow: hidden;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        /* ignore input while it's not open */
-        pointer-events: none;
-      }
-      #left[open] {
-        pointer-events: all;
-      }
-      #left:before {
-        /* use :before as overlay so we can animate opacity instead of background */
-        @apply(--layout-fit);
-        content: "";
-        background: var(--disabled-text-color);
-        opacity: 0;
-        transition: opacity var(--speed);
-      }
-      #left[open]:before {
-        opacity: 1;
-      }
-      #left .content {
-        overflow-y: auto;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        max-width: 240px;
-        background: var(--primary-background-color);
-        /* move in from left */
-        transform: translateX(-240px);
-        transition: transform var(--speed);
-      }
-      #left[open] .content {
-        transform: translateX(0);
-        transition: transform var(--speed) var(--speed);
-      }
-
-      #right {
-        overflow-y: auto;
-        position: absolute;
-        width: 100%;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--primary-background-color);
-        /* move in from bottom */
-        transform: translateY(100%);
-        transition: transform var(--speed);
-      }
-      #right[open] {
-        transform: translateY(0);
-        transition: transform var(--speed);
-      }
-
-      #fab {
-        right: 16px;
-        bottom: 16px;
-      }
-
-      .title {
-        display: none;
-      }
+    :host {
+      @apply(--layout-fit);
     }
   </style>
-
   <template>
     <iron-media-query
       query="(max-width: 767px)"
-      query-matches="{{_narrow}}">
+      on-query-matches-changed="_narrowMediaQueryChanged">
     </iron-media-query>
-    <paper-header-panel id="panel">
-      <paper-toolbar>
-        <paper-icon-button
-          class="menu-button"
-          icon="menu"
-          on-tap="toggleLeft">
-        </paper-icon-button>
-        <h1 class="title">Studienplaner</h1>
-        <content select="[toolbar], .toolbar"></content>
-      </paper-toolbar>
-      <div id="body">
-        <div
-          id="center"
-          class="container">
-          <div class="content">
-            <content select="[center], .center"></content>
-          </div>
-        </div>
-        <div
-          id="left"
-          class="drawer container"
-          open$="[[leftOpen]]"
-          on-tap="_handleCloseLeft">
-          <div
-            class="content"
-            on-tap="_stopPropagation">
-            <content select="[left], .left"></content>
-          </div>
-        </div>
-        <div
-          id="right"
-          class="drawer container"
-          open$="[[rightOpen]]">
-          <div class="content">
-            <content select="[right], .right"></content>
-          </div>
-        </div>
-      </div>
-    </paper-header-panel>
-    <paper-fab
-      id="fab"
-      icon="add"
-      on-tap="_handleAction">
-    </paper-fab>
+
+    <content id="toolbar" select=".toolbar"></content>
+    <content id="content" select=".content"></content>
+    <content id="placeholder" select=".placeholder"></content>
+    <content id="left" select=".left"></content>
+    <content id="right" select=".right"></content>
+
+    <x-wide-layout
+      id="wide"
+      hidden$="[[narrow]]"
+      left-open="{{leftOpen}}"
+      right-open="{{rightOpen}}"
+      placeholder="{{placeholder}}">
+      <!-- content -->
+    </x-wide-layout>
+
+    <x-narrow-layout
+      id="narrow"
+      hidden$="[[!narrow]]"
+      left-open="{{leftOpen}}"
+      right-open="{{rightOpen}}"
+      placeholder="{{placeholder}}">
+      <!-- content -->
+    </x-narrow-layout>
   </template>
 
   <script>
     Polymer({
       is: "x-layout",
 
+      behaviors: [
+        App.LayoutBehavior
+      ],
+
       properties: {
-        leftOpen: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
-
-        rightOpen: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
-
-        _narrow: {
-          type: Boolean,
-          value: false,
+        narrow: {
+          type: String,
+          value: null,
+          notify: true,
+          readOnly: true,
+          reflectToAttribute: true,
           observer: "_narrowChanged"
         },
 
@@ -298,65 +72,28 @@
         }
       },
 
-      openLeft: function () {
-        this.leftOpen = true;
-      },
-
-      openRight: function () {
-        this.rightOpen = true;
-      },
-
-      closeLeft: function () {
-        this.leftOpen = false;
-      },
-
-      closeRight: function () {
-        this.rightOpen = false;
-      },
-
-      toggleLeft: function () {
-        this.leftOpen = !this.leftOpen;
-      },
-
-      toggleRight: function () {
-        this.rightOpen = !this.rightOpen;
-      },
-
       ready: function () {
         this._ready = true;
 
-        // Initialize the DOM to the current screen configuration.
-        this._narrowChanged(this._narrow);
+        // Distribute the content as soon as the elements are ready.
+        this._narrowChanged(this.narrow);
+      },
+
+      _narrowMediaQueryChanged: function (event) {
+        this._setNarrow(event.detail.value);
       },
 
       _narrowChanged: function (narrow) {
         // Make sure all elements are loaded before modifying the DOM.
         if (!this._ready) return;
 
-        // NOTE: In narrow mode the right drawer should cover the whole screen,
-        // including the toolbar. So when the screen is narrow simply move the
-        // drawer outside #panel. Once the screen becomes wide again, move
-        // #right back to its original location inside #body.
-        if (narrow) {
-          this.$.fab.parentNode.insertBefore(this.$.right, this.$.fab);
-        } else {
-          this.$.body.appendChild(this.$.right);
-        }
-      },
-
-      _handleAction: function () {
-        this.fire("action", {
-          bubbles: true
-        });
-      },
-
-      _handleCloseLeft: function (event) {
-        event.stopPropagation();
-        this.closeLeft();
-      },
-
-      _stopPropagation: function (event) {
-        event.stopPropagation();
+        var layout = narrow ? this.$.narrow : this.$.wide;
+        layout = Polymer.dom(layout);
+        layout.appendChild(this.$.toolbar);
+        layout.appendChild(this.$.content);
+        layout.appendChild(this.$.placeholder);
+        layout.appendChild(this.$.left);
+        layout.appendChild(this.$.right);
       }
     });
   </script>
