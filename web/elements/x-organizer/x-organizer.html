@@ -21,6 +21,11 @@
       background: var(--default-background-color);
       color: var(--primary-text-color);
     }
+    @media (max-width: 768px) {
+      :host {
+        padding-top: 0;
+      }
+    }
     :host(::-webkit-scrollbar-thumb) {
       background: var(--divider-color);
     }
