@@ -22,17 +22,10 @@
       background: var(--secondary-background-color);
     }
     aside {
-      @apply(--layout-fit);
       position: relative;
     }
     x-toolbar {
       margin-right: -16px;
-    }
-    x-course-inspector {
-      @apply(--layout-fit);
-    }
-    x-attendance-inspector {
-      @apply(--layout-fit);
     }
   </style>
 
@@ -66,7 +59,7 @@
       </x-toolbar>
 
       <x-organizer
-        left
+        class="left"
         courses="[[profile.courses]]"
         query="{{filter.query}}"
         selected-types="{{filter.types.allowed}}"
@@ -77,13 +70,13 @@
       </x-organizer>
 
       <x-browser
-        center
+        class="content"
         class="main"
         courses="{{profile.courses}}"
         filter="{{filter}}">
       </x-browser>
 
-      <aside right>
+      <aside class="right">
         <x-course-inspector
           hidden$="[[_isEmpty(course)]]"
           course="{{course}}">
