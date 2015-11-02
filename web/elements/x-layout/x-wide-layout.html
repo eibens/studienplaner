@@ -178,26 +178,26 @@
           on-tap="toggleLeft">
         </paper-icon-button>
         <h1 class="title">Studienplaner</h1>
-        <content select="[toolbar], .toolbar"></content>
+        <content select=".toolbar"></content>
       </paper-toolbar>
       <main>
         <section id="wrapper">
           <div
             id="placeholder"
             hidden$="[[!placeholder]]">
-            <content select="[placeholder], .placeholder"></content>
+            <content select=".placeholder"></content>
           </div>
           <div
             id="content"
             hidden$="[[placeholder]]">
-            <content select="[content], .content"></content>
+            <content select=".content"></content>
           </div>
         </section>
         <section id="left">
-          <content select="[left], .left"></content>
+          <content select=".left"></content>
         </section>
         <section id="right">
-          <content select="[right], .right"></content>
+          <content select=".right"></content>
         </section>
       </main>
     </paper-header-panel>

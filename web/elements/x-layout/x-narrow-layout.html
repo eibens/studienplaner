@@ -61,7 +61,7 @@
       disable-edge-swipe="[[rightOpen]]"
       selected="{{_leftSelected}}">
       <section drawer>
-        <content select="[left], .left"></content>
+        <content select=".left"></content>
       </section>
       <paper-drawer-panel
         main
@@ -80,22 +80,22 @@
               icon="menu"
               on-tap="openLeft">
             </paper-icon-button>
-            <content select="[toolbar], .toolbar"></content>
+            <content select=".toolbar"></content>
           </paper-toolbar>
           <main>
             <section
               id="placeholder"
               hidden$="[[!placeholder]]">
-              <content select="[placeholder], .placeholder"></content>
+              <content select=".placeholder"></content>
             </section>
             <section
               hidden$="[[placeholder]]">
-              <content select="[content], .content"></content>
+              <content select=".content"></content>
             </section>
           </main>
         </paper-header-panel>
         <section drawer>
-          <content select="[right], .right"></content>
+          <content select=".right"></content>
         </section>
       </paper-drawer-panel>
     </paper-drawer-panel>
