@@ -39,7 +39,8 @@
         value="{{filter.semester.value}}">
       </x-semester-picker>
     </header>
-    <main>
+    <main
+      hidden$="[[empty]]">
       <x-stats
         courses="[[result]]"
         mode="{{_sortMode}}">
@@ -55,12 +56,12 @@
           course="[[item]]">
         </x-course-list-item>
       </template>
-      <div
-        class="placeholder"
-        hidden$="[[!empty]]">
-        Keine Kurse gefunden
-      </div>
     </main>
+    <div
+      class="placeholder"
+      hidden$="[[!empty]]">
+      Keine Kurse gefunden
+    </div>
   </template>
 
   <script>
