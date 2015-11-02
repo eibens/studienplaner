@@ -63,7 +63,6 @@
 
     <x-layout
       on-action="_handleAddButtonTap"
-      right-open="[[!_areEmpty(course, attendance)]]">
       right-open="[[!_areEmpty(course, attendance)]]"
       placeholder="[[_coursesEmpty]]">
 
@@ -92,6 +91,11 @@
         filter="{{filter}}">
       </x-browser>
 
+      <div class="placeholder">
+        <img src="../placeholder.png" alt=""/>
+        <p>Noch keine Kurse hinzugefügt</p>
+      </div>
+
       <aside class="right">
         <x-course-inspector
           hidden$="[[_isEmpty(course)]]"
@@ -102,11 +106,6 @@
           attendance="{{attendance}}">
         </x-attendance-inspector>
       </aside>
-      <div class="placeholder">
-        <img src="../placeholder.png" alt=""/>
-        <p>Noch keine Kurse hinzugefügt</p>
-      </div>
-
     </x-layout>
   </template>
 
