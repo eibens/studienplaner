@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
 <link rel="import" href="x-stats/x-stats.html">
@@ -15,6 +16,22 @@
       height: 40px;
       width: 100%;
     }
+    .notice {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      background: var(--light-primary-color);
+      height: 64px;
+      @apply(--paper-font-subhead);
+      padding: 0 8px;
+      color: var(--default-primary-color);
+    }
+    .notice > * {
+      margin: 0 8px;
+    }
+    .notice p {
+      @apply(--layout-flex);
+    }
+
     main {
       @apply(--layout-vertical);
       width: 100%;
@@ -47,6 +64,15 @@
     </header>
     <main
       hidden$="[[empty]]">
+      <div
+        class="notice"
+        hidden="[[!_filterActive]]">
+        <paper-icon-button
+          icon="close"
+          on-tap="_resetFilter">
+        </paper-icon-button>
+        <p>Filter sind aktiv</p>
+      </div>
       <x-stats
         courses="[[result]]"
         mode="{{_sortMode}}">
