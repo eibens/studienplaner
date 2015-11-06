@@ -25,7 +25,7 @@
     },
 
     observers: [
-      "_changed(query, semester, allowedTypes.*, allowedGrades.*, requiredTags.*, forbiddenTags.*)",
+      "_changed(query, allowedTypes.*, allowedGrades.*, requiredTags.*, forbiddenTags.*)",
       "_changed(query)"
     ],
 
@@ -35,7 +35,6 @@
     clear: function () {
       if (this.cleared) return;
       this.query = "";
-      this.semester = null;
       this.allowedTypes = [];
       this.allowedGrades = [];
       this.requiredTags = [];
@@ -49,7 +48,6 @@
 
     _isNotCleared: function () {
       return !!this.query && this.query.length > 0 ||
-        !!this.semester ||
         this._isNonEmptyArray(this.allowedTypes) ||
         this._isNonEmptyArray(this.allowedGrades) ||
         this._isNonEmptyArray(this.requiredTags) ||

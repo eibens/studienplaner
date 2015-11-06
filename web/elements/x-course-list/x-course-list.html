@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../x-course-filter/x-course-filter.html">
 <link rel="import" href="../x-course-filter/x-course-filter-parameter-behavior.html">
+<link rel="import" href="../x-course-filter/x-course-semester-filter.html">
 
 <dom-module id="x-course-list">
   <template>
@@ -15,6 +16,11 @@
       forbidden-tags="{{forbiddenTags}}"
       on-change="_filterChanged">
     </x-course-filter>
+
+    <x-course-semester-filter
+      id="semesterFilter"
+      semester="{{semester}}">
+    </x-course-semester-filter>
 
     <template
       id="repeat"
@@ -45,6 +51,13 @@
         courses: {
           type: Array,
           value: null
+        },
+
+        semester: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: "_filterChanged"
         },
 
         /**
@@ -112,7 +125,8 @@
       },
 
       _filter: function (course) {
-        return this.$.filter.test(course);
+        return this.$.filter.test(course) &&
+          this.$.semesterFilter.test(course);
       },
 
       _sort: function (a, b) {

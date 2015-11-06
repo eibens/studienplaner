@@ -137,61 +137,6 @@
               }).should.be.false;
             });
           });
-
-          describe("semester filter", function () {
-            it("accepts any if cleared", function () {
-              filter.test({
-                attendances: [
-                  { semester: Semester.winter(2015) }
-                ]
-              }).should.be.true;
-            });
-            it("handles null as parameter", function () {
-              filter.semester = null;
-              filter.test({
-                attendances: [
-                  { semester: Semester.winter(2015) }
-                ]
-              }).should.be.true;
-            });
-            it("handles course without attendances", function () {
-              filter.semester = Semester.winter(2015);
-              filter.test({ attendances: null }).should.be.false;
-            });
-            it("rejects courses with an incurrect semester", function () {
-              filter.semester = Semester.winter(2015);
-              filter.test({
-                attendances: [
-                  { semester: Semester.summer(2015) },
-                  { semester: Semester.winter(2014) }
-                ]
-              }).should.be.false;
-            });
-            it("also considers other than the most recent attendance", function () {
-              filter.semester = Semester.winter(2015);
-              filter.test({
-                attendances: [
-                  { semester: Semester.summer(2016) },
-                  { semester: Semester.winter(2015) },
-                  { semester: Semester.summer(2015) }
-                ]
-              }).should.be.true;
-            });
-            it("accepts courses with the correct semester", function () {
-              filter.semester = Semester.winter(2015);
-              filter.test({
-                attendances: [
-                  { semester: Semester.winter(2015) }
-                ]
-              }).should.be.true;
-            });
-            it("does not throw if attendances are null", function () {
-              filter.semester = Semester.winter(2015);
-              filter.test({
-                attendances: [ null, null ]
-              }).should.be.false;
-            });
-          });
         });
       });
     </script>

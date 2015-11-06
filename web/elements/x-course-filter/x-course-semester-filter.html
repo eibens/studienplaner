@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="x-course-semester-filter">
+  <script>
+    Polymer({
+      is: "x-course-semester-filter",
+
+      properties: {
+
+        /**
+         * Semester the course was attended.
+         * If this value is empty, all types are allowed.
+         */
+        semester: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+
+        /**
+         * Indicates that the filter parameters are cleared.
+         */
+        cleared: {
+          type: Boolean,
+          computed: "_computeCleared(semester)"
+        }
+      },
+
+      test: function (course) {
+        var semester = this.semester;
+        if (!semester) return true;
+        if (!course) return false;
+        if (!(course.attendances instanceof Array)) return false;
+        var match = false;
+        course.attendances.forEach(function (attendance) {
+          if (match) return;
+          if (!attendance) return;
+          match = semester.equals(attendance.semester);
+        });
+        return match;
+      },
+
+      _computeCleared: function (semester) {
+        return !semester;
+      }
+    });
+  </script>
+</dom-module>

@@ -20,7 +20,6 @@
       test: function (course) {
         if (!course) course = {};
         return this._testQuery(course, this.query) &&
-            this._testSemester(course, this.semester) &&
             this._testWhiteList(course.type, this.allowedTypes) &&
             this._testWhiteList(this._computeGrade(course), this.allowedGrades) &&
             this._testRequiredTags(course.tags, this.requiredTags) &&
@@ -32,19 +31,6 @@
         var title = (course.title ? course.title : "").toLowerCase();
         query = this.query.trim().toLowerCase();
         return title.indexOf(query) >= 0;
-      },
-
-      _testSemester: function (course, semester) {
-        if (!semester) return true;
-        if (!course) return false;
-        if (!(course.attendances instanceof Array)) return false;
-        var match = false;
-        course.attendances.forEach(function (attendance) {
-          if (match) return;
-          if (!attendance) return;
-          match = semester.equals(attendance.semester);
-        });
-        return match;
       },
 
       _testWhiteList: function (value, list) {
