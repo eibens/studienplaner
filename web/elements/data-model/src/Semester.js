@@ -9,6 +9,22 @@ function Semester(year, isWinter) {
 }
 
 /**
+ * @param {Number} year
+ * @returns {Semester}
+ */
+Semester.winter = function (year) {
+  return new Semester(year, true);
+};
+
+/**
+ * @param {Number} year
+ * @returns {Semester}
+ */
+Semester.summer = function (year) {
+  return new Semester(year, false);
+};
+
+/**
  * @returns {Semester}
  */
 Semester.current = function () {
