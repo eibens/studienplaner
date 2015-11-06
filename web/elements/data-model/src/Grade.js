@@ -62,5 +62,9 @@ Grade.prototype = {
   equals: function (other) {
     if (!(other instanceof Grade)) return false;
     return this.value == other.value;
+  },
+
+  toString: function () {
+    return this.value.toString();
   }
 };

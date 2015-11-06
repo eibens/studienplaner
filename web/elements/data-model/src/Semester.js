@@ -105,5 +105,9 @@ Semester.prototype = {
   equals: function (other) {
     if (!(other instanceof Semester)) return false;
     return this.id == other.id;
+  },
+
+  toString: function () {
+    return this.id;
   }
 };
