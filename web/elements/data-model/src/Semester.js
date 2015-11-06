@@ -40,6 +40,11 @@ Semester.fromId = function (id) {
  * @returns {number}
  */
 Semester.compare = function (a, b) {
+  if (!a && !b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  if (!(a instanceof Semester)) throw new Error();
+  if (!(b instanceof Semester)) throw new Error();
   var indexA = a.year + (a.isWinter ? 0.5 : 0.0);
   var indexB = b.year + (b.isWinter ? 0.5 : 0.0);
   return indexA - indexB;
