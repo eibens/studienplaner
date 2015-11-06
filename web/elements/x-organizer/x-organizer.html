@@ -5,6 +5,8 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../x-course-filter/x-course-filter-behavior.html">
+<link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="x-course-type-filter.html">
 <link rel="import" href="x-grade-filter.html">
 <link rel="import" href="x-organizer-item.html">
@@ -89,7 +91,7 @@
       <x-organizer-item
         text="Kurse"
         on-tap="_handleListMode"
-        selected="[[!semesterActive]]">
+        selected="[[_emptyString(semester)]]">
         <iron-icon
           icon="reorder">
         </iron-icon>
@@ -97,7 +99,7 @@
       <x-organizer-item
         text="Semester"
         on-tap="_handleSemesterMode"
-        selected="[[semesterActive]]">
+        selected="[[!_emptyString(semester)]]">
         <iron-icon
           icon="editor:insert-chart">
         </iron-icon>
@@ -118,7 +120,7 @@
       <x-course-type-filter
         hidden$="[[_empty(types.*)]]"
         items="[[types]]"
-        selected="{{selectedTypes}}">
+        selected="{{allowedTypes}}">
       </x-course-type-filter>
     </section>
 
@@ -132,7 +134,7 @@
       <x-grade-filter
         hidden$="[[_empty(grades.*)]]"
         items="[[grades]]"
-        selected="{{selectedGrades}}">
+        selected="{{allowedGrades}}">
       </x-grade-filter>
     </section>
 
@@ -155,6 +157,10 @@
   <script>
     Polymer({
       is: "x-organizer",
+
+      behaviors: [
+        App.CourseFilterBehavior
+      ],
 
       properties: {
 
@@ -188,83 +194,23 @@
         tags: {
           type: Array,
           computed: "_computeTags(courses.*)"
-        },
-
-        /**
-         * Current search query.
-         */
-        query: {
-          type: String,
-          value: "",
-          notify: true
-        },
-
-        /**
-         * Array of selected course types.
-         */
-        selectedTypes: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-
-        /**
-         * Array of selected grades.
-         */
-        selectedGrades: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-
-        /**
-         * Array of required tags.
-         */
-        requiredTags: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-
-        /**
-         * Array of forbidden tags.
-         */
-        forbiddenTags: {
-          type: Array,
-          value: [],
-          notify: true
-        },
-
-        /**
-         * Value indicating that the semester filter is active.
-         */
-        semesterActive: {
-          type: Boolean,
-          value: false,
-          notify: true
         }
       },
 
-      reset: function () {
-        this.set("query", "");
-        this.set("selectedTypes", []);
-        this.set("selectedGrades", []);
-        this.set("requiredTags", []);
-        this.set("forbiddenTags", []);
-        this.set("semesterActive", false);
-      },
-
-
       _handleListMode: function () {
-        this.set("semesterActive", false);
+        this.set("semester", "");
       },
 
       _handleSemesterMode: function () {
-        this.set("semesterActive", true);
+        this.set("semester", Semester.current());
       },
 
       _empty: function (arrayChange) {
         return !arrayChange.base || arrayChange.base.length === 0;
+      },
+
+      _emptyString: function (str) {
+        return !str;
       },
 
       _computeTypes: function (coursesChange) {

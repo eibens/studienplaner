@@ -1,0 +1,174 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../x-course-filter/x-course-filter.html">
+<link rel="import" href="../x-course-filter/x-course-filter-parameter-behavior.html">
+
+<dom-module id="x-course-list">
+  <template>
+    <x-course-filter
+      id="filter"
+      cleared="{{filterCleared}}"
+      query="{{query}}"
+      semester="{{semester}}"
+      allowed-types="{{allowedTypes}}"
+      allowed-grades="{{allowedGrades}}"
+      required-tags="{{requiredTags}}"
+      forbidden-tags="{{forbiddenTags}}"
+      on-change="_filterChanged">
+    </x-course-filter>
+
+    <template
+      id="repeat"
+      is="dom-repeat"
+      items="{{courses}}"
+      filter="_filter"
+      sort="_sort"
+      observe="type title credits attendances.*">
+      <x-course-list-item
+        course="[[item]]">
+      </x-course-list-item>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-course-list",
+
+      behaviors: [
+        App.CourseFilterParameterBehavior
+      ],
+
+      properties: {
+
+        /**
+         * Courses in the list before filtering and sorting.
+         */
+        courses: {
+          type: Array,
+          value: null
+        },
+
+        /**
+         * Token indicating the main sorting attribute.
+         *
+         * Per default it sorts by title, type. There are two other modes:
+         *
+         * - `credits` sorts by credits, grade, title, type
+         * - `grade` sorts by grade, credits, title, type
+         */
+        sortMode: {
+          type: String,
+          value: 'title',
+          observer: "_updateResult"
+        },
+
+        /**
+         * Courses after filtering and sorting.
+         */
+        result: {
+          type: Array,
+          value: [],
+          readOnly: true,
+          notify: true
+        },
+
+        filterCleared: {
+          type: Boolean,
+          value: true,
+          notify: true
+        }
+      },
+
+      observers: [
+        "_render(sortMode)"
+      ],
+
+      clearFilter: function () {
+        this.$.filter.clear();
+      },
+
+      _filterChanged: function () {
+        this._render();
+        this._updateResult();
+      },
+
+      _render: function () {
+        this.$.repeat.render();
+      },
+
+      _updateResult: function () {
+        // FIXME: use dom-repeat result directly
+        // Once https://github.com/Polymer/polymer/issues/2183 is fixed we
+        // hopefully don't have to compute `result` manually.
+        if (!(this.courses instanceof Array)) {
+          this._setResult([]);
+          return;
+        }
+        var self = this;
+        this._setResult(this.courses.filter(function (x) {
+          return self._filter(x);
+        }).sort(function (a, b) {
+          return self._sort(a, b);
+        }));
+      },
+
+      _filter: function (course) {
+        return this.$.filter.test(course);
+      },
+
+      _sort: function (a, b) {
+        switch (this.sortMode) {
+          case "credits":
+            return this._compare(a, b, [
+              this._compareCredits,
+              this._compareGrade,
+              this._compareTitle,
+              this._compareType
+            ]);
+          case "grade":
+            return this._compare(a, b, [
+              this._compareGrade,
+              this._compareCredits,
+              this._compareTitle,
+              this._compareType
+            ]);
+          default:
+            return this._compare(a, b, [
+              this._compareTitle,
+              this._compareType
+            ]);
+        }
+      },
+
+      _compareTitle: function (a, b) {
+        return a.title.localeCompare(b.title);
+      },
+
+      _compareType: function (a, b) {
+        return a.type.localeCompare(b.type);
+      },
+
+      _compareGrade: function (a, b) {
+        if (a.grade == b.grade) return 0;
+        if (a.grade == "none") return 1;
+        if (b.grade == "none") return -1;
+        if (!a.grade) return 1;
+        if (!b.grade) return -1;
+        return a.grade.toString().localeCompare(b.grade.toString());
+      },
+
+      _compareCredits: function (a, b) {
+        return b.credits - a.credits;
+      },
+
+      _compare: function (a, b, comparators) {
+        for (var i = 0; i < comparators.length; i++) {
+          var delta = comparators[i](a, b);
+          if (delta) {
+            return delta;
+          }
+        }
+        return 0;
+      }
+    });
+  </script>
+</dom-module>

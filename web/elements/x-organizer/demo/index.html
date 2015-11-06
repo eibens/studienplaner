@@ -44,11 +44,12 @@
         <x-organizer
           id="light"
           query="{{query}}"
-          selected-types="{{selectedTypes}}"
-          selected-grades="{{selectedGrades}}"
+          semester="{{semester}}"
+          allowed-types="{{allowedTypes}}"
+          allowed-grades="{{allowedGrades}}"
           required-tags="{{requiredTags}}"
           forbidden-tags="{{forbiddenTags}}"
-          semester-active="{{semesterActive}}">
+          cleared="{{cleared}}">
         </x-organizer>
       </section>
       <section>
@@ -57,11 +58,12 @@
           id="dark"
           dark
           query="{{query}}"
-          selected-types="{{selectedTypes}}"
-          selected-grades="{{selectedGrades}}"
+          semester="{{semester}}"
+          allowed-types="{{allowedTypes}}"
+          allowed-grades="{{allowedGrades}}"
           required-tags="{{requiredTags}}"
           forbidden-tags="{{forbiddenTags}}"
-          semester-active="{{semesterActive}}">
+          cleared="{{cleared}}">
         </x-organizer>
       </section>
       <aside>
@@ -71,34 +73,38 @@
           INITIALIZE
         </button>
         <button
-          onclick="reset()">
-          RESET
+          onclick="clearData()">
+          CLEAR
         </button>
         <ul>
           <li>
-            <span>semester-actve:</span>
-            <span>[[semesterActive]]</span>
+            <span>cleared:</span>
+            <span>[[cleared]]</span>
+          </li>
+          <li>
+            <span>semester:</span>
+            <span>[[semester]]</span>
           </li>
           <li>
             <span>query:</span>
             <span>[[query]]</span>
           </li>
           <li>
-            <span>selected-types:</span>
+            <span>allowed-types:</span>
             <ul>
               <template
                 is="dom-repeat"
-                items="[[selectedTypes]]">
+                items="[[allowedTypes]]">
                 <li>[[item]]</li>
               </template>
             </ul>
           </li>
           <li>
-            <span>selected-grades:</span>
+            <span>allowed-grades:</span>
             <ul>
               <template
                 is="dom-repeat"
-                items="[[selectedGrades]]">
+                items="[[allowedGrades]]">
                 <li>
                   <span>[[item]]</span>
                 </li>
@@ -157,8 +163,13 @@
         }, {
         }];
       }
-      function reset() {
-        document.getElementById("light").reset();
+
+      /**
+       * WTF: naming this function 'clear' does not work
+       * It simply does not get called in the onclick listener.
+       */
+      function clearData() {
+        document.getElementById("light").clear();
       }
     </script>
   </body>

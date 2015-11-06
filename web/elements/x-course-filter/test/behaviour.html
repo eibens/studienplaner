@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../bower_components/web-component-tester/browser.js"></script>
+    <script src="../../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+
+    <link rel="import" href="../../../bower_components/polymer/polymer.html">
+    <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
+    <link rel="import" href="../x-course-filter-behavior.html">
+  </head>
+  <body>
+    <dom-module id="test-course-filter">
+      <script>
+        HTMLImports.whenReady(function() {
+          Polymer({
+            is: "test-course-filter",
+            behaviors: [
+              App.CourseFilterBehavior
+            ]
+          });
+        });
+      </script>
+    </dom-module>
+
+    <test-fixture id="basic">
+      <template>
+        <test-course-filter></test-course-filter>
+      </template>
+    </test-fixture>
+
+    <script>
+      chai.should();
+
+      describe("x-course-filter-behaviour", function () {
+        var filter;
+        beforeEach(function() {
+          filter = fixture('basic');
+        });
+
+        it("defines 'query' property", function () {
+          filter.should.have.property("query").which.is.a("string").and.empty;
+        });
+        it("defines 'semester' property", function () {
+          filter.should.have.property("semester").which.eql(null);
+        });
+        it("defines 'allowedTypes' property", function () {
+          filter.should.have.property("allowedTypes").which.eql([]);
+        });
+        it("defines 'allowedGrades' property", function () {
+          filter.should.have.property("allowedGrades").which.eql([]);
+        });
+        it("defines 'requiredTags' property", function () {
+          filter.should.have.property("requiredTags").which.eql([]);
+        });
+        it("defines 'forbiddenTags' property", function () {
+          filter.should.have.property("forbiddenTags").which.eql([]);
+        });
+
+        describe("'cleared' property", function () {
+          it("is defined", function () {
+            filter.should.have.property("cleared").which.is.true;
+          });
+          it("is false if the query is not empty", function () {
+            filter.query = "test";
+            filter.cleared.should.be.false;
+          });
+          it("is false if there is at least one allowed type", function () {
+            filter.allowedTypes = ["test"];
+            filter.cleared.should.be.false;
+          });
+          it("is false if there is at least one allowed grade", function () {
+            filter.allowedGrades = ["test"];
+            filter.cleared.should.be.false;
+          });
+          it("is false if there is at least one required tag", function () {
+            filter.requiredTags = ["test"];
+            filter.cleared.should.be.false;
+          });
+          it("is false if there is at least one forbidden tag", function () {
+            filter.forbiddenTags = ["test"];
+            filter.cleared.should.be.false;
+          });
+        });
+
+        describe("'change' event", function () {
+          it("fires when changing query", function () {
+            filter.query = "a";
+            filter.addEventListener("change", function () {
+
+            });
+          });
+        });
+
+        describe("'clear' method", function () {
+          it("does not trigger change event when the filter is already cleared", function () {
+            filter.addEventListener("change", function () {
+              throw new Error();
+            });
+            filter.clear();
+          });
+          it("clears the filter", function () {
+            filter.query = "abc";
+            filter.semester = "2015s";
+            filter.allowedTypes = ["a", "b"];
+            filter.allowedGrades = [null, "1", "2"];
+            filter.requiredTags = ["a", "b", "c"];
+            filter.forbiddenGrades = ["d", "e"];
+            filter.clear();
+            filter.cleared.should.be.true;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

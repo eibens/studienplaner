@@ -8,6 +8,7 @@
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="data-manager.html">
 <link rel="import" href="x-browser.html">
+<link rel="import" href="x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
 <link rel="import" href="x-toolbar.html">
@@ -75,20 +76,27 @@
 
       <x-organizer
         class="left"
+        id="organizer"
         courses="[[profile.courses]]"
-        query="{{filter.query}}"
-        selected-types="{{filter.types.allowed}}"
-        selected-grades="{{filter.grades.allowed}}"
-        required-tags="{{filter.tags.required}}"
-        forbidden-tags="{{filter.tags.forbidden}}"
-        semester-active="{{filter.semester.enabled}}">
+        query="{{query}}"
+        semester="{{semester}}"
+        allowed-types="{{allowedTypes}}"
+        allowed-grades="{{allowedGrades}}"
+        required-tags="{{requiredTags}}"
+        forbidden-tags="{{forbiddenTags}}">
       </x-organizer>
 
       <x-browser
         class="content"
         class="main"
         courses="{{profile.courses}}"
-        filter="{{filter}}">
+        query="{{query}}"
+        semester="{{semester}}"
+        allowed-types="{{allowedTypes}}"
+        allowed-grades="{{allowedGrades}}"
+        required-tags="{{requiredTags}}"
+        forbidden-tags="{{forbiddenTags}}"
+        on-reset-filter="_resetFilter">
       </x-browser>
 
       <div class="placeholder">
@@ -113,13 +121,13 @@
     Polymer({
       is: "x-main",
 
+      behaviors: [
+        App.CourseFilterParameterBehavior
+      ],
+
       properties: {
         profile: {
           type: Object
-        },
-        filter: {
-          type: Object,
-          value: new Filter()
         },
         course: {
           type: Object,
@@ -174,6 +182,10 @@
         }
       },
 
+      _resetFilter: function () {
+        this.$.organizer.clear();
+      },
+
       _handleAddButtonTap: function (event) {
         this.fire("add-course");
       },
@@ -182,13 +194,13 @@
         this.$.data.export();
       },
       _handleImportProfile: function () {
-        this.filter = new Filter();
+        this._resetFilter();
         this.$.data.import();
       },
       _handleDeleteProfile: function () {
         var result = window.confirm("Willst du deine Daten wirklich löschen?");
         if (!result) return;
-        this.filter = new Filter();
+        this._resetFilter();
         this.$.data.clear();
       },
 

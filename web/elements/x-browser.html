@@ -2,10 +2,12 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-grade-chart.html">
 <link rel="import" href="x-stats/x-stats.html">
 <link rel="import" href="x-semester-picker.html">
+<link rel="import" href="x-course-list/x-course-list.html">
 
 <dom-module id="x-browser">
   <style>
@@ -57,16 +59,15 @@
 
   <template>
     <header
-      hidden$="[[!filter.semester.enabled]]">
+      hidden$="[[_isEmptyValue(semester)]]">
       <x-semester-picker
-        value="{{filter.semester.value}}">
+        value="{{semester}}">
       </x-semester-picker>
     </header>
-    <main
-      hidden$="[[empty]]">
+    <main>
       <div
         class="notice"
-        hidden="[[!_filterActive]]">
+        hidden$="[[_filterCleared]]">
         <paper-icon-button
           icon="close"
           on-tap="_resetFilter">
@@ -77,21 +78,22 @@
         courses="[[result]]"
         mode="{{_sortMode}}">
       </x-stats>
-      <template
-        id="list"
-        is="dom-repeat"
-        items="{{courses}}"
-        filter="_filter"
-        sort="_sort"
-        observe="type title credits">
-        <x-course-list-item
-          course="[[item]]">
-        </x-course-list-item>
-      </template>
+      <x-course-list
+        courses="[[courses]]"
+        result="{{result}}"
+        filter-cleared="{{_filterCleared}}"
+        sort-mode="[[_sortMode]]"
+        query="{{query}}"
+        semester="{{semester}}"
+        allowed-types="{{allowedTypes}}"
+        allowed-grades="{{allowedGrades}}"
+        required-tags="{{requiredTags}}"
+        forbidden-tags="{{forbiddenTags}}">
+      </x-course-list>
     </main>
     <div
       class="placeholder"
-      hidden$="[[!empty]]">
+      hidden$="[[!_empty]]">
       Keine Kurse gefunden
     </div>
   </template>
@@ -100,123 +102,32 @@
     Polymer({
       is: "x-browser",
 
+      behaviors: [
+        App.CourseFilterParameterBehavior
+      ],
+
       properties: {
         courses: {
           type: Array,
           value: []
         },
 
-        filter: {
-          type: Object,
-          value: null
-        },
-
-        result: {
-          type: Array,
-          computed: "_computeResult(courses.*, filter.*)"
-        },
-
-        empty: {
+        _empty: {
           type: Boolean,
           computed: "_computeEmpty(result)"
-        },
-
-        _sortMode: {
-          type: String,
-          observer: "_render"
-        },
-
-        _filterActive: {
-          type: Boolean,
-          computed: "_computeFilterActive(filter.*)"
         }
       },
 
-      observers: [
-        "_render(filter.*)"
-      ],
-
-      _render: function () {
-        this.$.list.render();
-      },
-
       _resetFilter: function () {
-        this.filter = new Filter();
-      },
-
-      _computeResult: function () {
-        var self = this;
-        return this.courses.filter(function (course) {
-          return self._filter(course);
-        });
-      },
-
-      _computeFilterActive: function (filterChange) {
-        // TODO
-        return false;
+        this.fire("reset-filter");
       },
 
       _computeEmpty: function () {
         return this.result.length === 0;
       },
 
-      _filter: function (course) {
-        return this.filter.test(course);
-      },
-
-      _sort: function (a, b) {
-        switch (this._sortMode) {
-          case "credit":
-            return this._compare(a, b, [
-              this._compareCredits,
-              this._compareGrade,
-              this._compareTitle,
-              this._compareType
-            ]);
-          case "grade":
-            return this._compare(a, b, [
-              this._compareGrade,
-              this._compareCredits,
-              this._compareTitle,
-              this._compareType
-            ]);
-          default:
-            return this._compare(a, b, [
-              this._compareTitle,
-              this._compareType
-            ]);
-        }
-      },
-
-      _compareTitle: function (a, b) {
-        return a.title.localeCompare(b.title);
-      },
-
-      _compareType: function (a, b) {
-        return a.type.localeCompare(b.type);
-      },
-
-      _compareGrade: function (a, b) {
-        if (a.grade == b.grade) return 0;
-        if (a.grade == "none") return 1;
-        if (b.grade == "none") return -1;
-        if (!a.grade) return 1;
-        if (!b.grade) return -1;
-        return a.grade.toString().localeCompare(b.grade.toString());
-      },
-
-      _compareCredits: function (a, b) {
-        return b.credits - a.credits;
-      },
-
-      _compare: function (a, b, comparators) {
-        for (var i = 0; i < comparators.length; i++) {
-          var delta = comparators[i](a, b);
-          if (delta) {
-            return delta;
-          }
-        }
-        return 0;
+      _isEmptyValue: function (value) {
+        return !value;
       }
     });
   </script>
