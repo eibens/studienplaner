@@ -27,7 +27,8 @@
     },
 
     observers: [
-      "_handleItemsChange(items.*)"
+      "_handleItemsChange(items.*)",
+      "_handleSelectedChange(selected.*)"
     ],
 
     select: function (item) {
@@ -64,6 +65,8 @@
 
     _handleItemsChange: function (itemsChange) {
       var path = itemsChange.path;
+
+      // Make sure to selected newly added items by default.
       if (path == "items") {
         this.selectAll();
       } else if (path == "items.splices") {
@@ -74,6 +77,25 @@
           this.select(item);
         }
       }
+    },
+
+    _handleSelectedChange: function () {
+      var self = this;
+      this.debounce("clean", function () {
+        if (!this.selected) return;
+        if (this.selected.length == 0) return;
+        var allSelected = true;
+        var self = this;
+        this.items.forEach(function (item) {
+          allSelected = allSelected && self.isSelected(item);
+        });
+        if (allSelected) {
+          this.set("selected", []);
+        }
+      }, 100);
+    },
+
+    _clearSelectedIfAllSelected: function () {
     },
 
     _computeOptions: function (itemsChange) {
