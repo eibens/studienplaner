@@ -105,7 +105,10 @@
       },
 
       _render: function () {
-        this.$.repeat.render();
+        var self = this;
+        this.debounce("render", function () {
+          self.$.repeat.render();
+        }, 100);
       },
 
       _updateResult: function () {
