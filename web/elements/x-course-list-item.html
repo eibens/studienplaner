@@ -2,9 +2,9 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="x-course-avatar.html">
-<link rel="import" href="x-course-grade.html">
 <link rel="import" href="x-course-title.html">
 <link rel="import" href="x-drop-target.html">
+<link rel="import" href="x-grade-avatar/x-grade-avatar.html">
 <link rel="import" href="x-tag-string.html">
 
 <dom-module id="x-course-list-item">
@@ -85,9 +85,11 @@
       <span>[[_formatCredits(course.credits)]]</span>
       <span class="unit">ECTS</span>
     </div>
-    <x-course-grade
-      course="[[course]]">
-    </x-course-grade>
+    <x-grade-avatar
+      grade="[[_computeGrade(course.attendances.*)]]"
+      size="small"
+      mode="[[_computeGradeMode(course.attendances.*)]]">
+    </x-grade-avatar>
     <x-drop-target
       type="application/x-tag"
       on-receive="_handleTagReceive">
@@ -128,6 +130,34 @@
       _formatCredits: function (value) {
         var number = parseFloat(value);
         return !isNaN(number) ? number.toFixed(1) : "0.0";
+      },
+
+      _computeGrade: function (change) {
+        var attendances = change.base;
+        if (!(attendances instanceof Array)) return null;
+        var latest = this._getLatestAttendance(attendances);
+        if (!latest) return null;
+        if (!latest.grade) return null;
+        return latest.grade.value.toString();
+      },
+
+      _computeGradeMode: function (change) {
+        var attendances = change.base;
+        if (!(attendances instanceof Array)) return "placeholder";
+        if (attendances.length == 0) return "placeholder";
+        if (attendances.length > 1) return "multi";
+        return null;
+      },
+
+      _getLatestAttendance: function (attendances) {
+        if (!attendances || attendances.length == 0) {
+          return null;
+        }
+        return attendances.sort(function (a, b) {
+          a = a || {};
+          b = b || {};
+          return -Semester.compare(a.semester, b.semester);
+        })[0];
       }
     });
   </script>
