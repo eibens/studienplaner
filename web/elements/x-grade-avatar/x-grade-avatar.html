@@ -42,16 +42,6 @@
       border-radius: 9px;
     }
 
-    /* mode */
-    :host([mode="placeholder"]) {
-      /* shadow only for multiple grades */
-      box-shadow: none !important;
-      border: 1px dashed var(--secondary-text-color);
-    }
-    :host(:not([mode="multi"])) {
-      box-shadow: none !important;
-    }
-
     /* grades */
     :host {
       border: 3px solid var(--secondary-text-color);
@@ -75,6 +65,17 @@
     :host([grade="5"]) {
       border: none !important;
       background: rgb(242, 150, 75);
+    }
+
+    /* mode */
+    :host([mode="placeholder"]) {
+      /* shadow only for multiple grades */
+      box-shadow: none !important;
+      border: 1px dashed var(--secondary-text-color);
+      background: transparent;
+    }
+    :host(:not([mode="multi"])) {
+      box-shadow: none !important;
     }
 
     /* interactivity */
