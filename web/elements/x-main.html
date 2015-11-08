@@ -171,6 +171,10 @@
         "add-course-tag": "_handleAddCourseTag"
       },
 
+      ready: function () {
+        this.$.layout.placeholder = true;
+      },
+
       selectCourse: function (course) {
         if (!course) return;
         if (this.profile.courses.indexOf(course) < 0) {
