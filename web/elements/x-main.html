@@ -63,6 +63,7 @@
     </array-selector>
 
     <x-layout
+      id="layout"
       on-action="_handleAddButtonTap"
       right-open="[[!_areEmpty(course, attendance)]]"
       placeholder="[[_coursesEmpty]]">
@@ -106,12 +107,14 @@
 
       <aside class="right">
         <x-course-inspector
-          hidden$="[[_isEmpty(course)]]"
-          course="{{course}}">
+          id="courseInspector"
+          course="{{course}}"
+          on-close="_handleCloseInspector">
         </x-course-inspector>
         <x-attendance-inspector
-          hidden$="[[_isEmpty(attendance)]]"
-          attendance="{{attendance}}">
+          id="attendanceInspector"
+          attendance="{{attendance}}"
+          on-close="_handleCloseInspector">
         </x-attendance-inspector>
       </aside>
     </x-layout>
@@ -168,23 +171,28 @@
       },
 
       selectCourse: function (course) {
-        if (course != null && this.profile.courses.indexOf(course) < 0) {
+        if (!course) return;
+        if (this.profile.courses.indexOf(course) < 0) {
           throw new Error("Cannot select unknown course.");
         }
-        this.selectAttendance(null);
         this.$.course.select(course);
+        this.$.courseInspector.hidden = false;
+        this.$.attendanceInspector.hidden = true;
+        this.$.layout.openRight();
       },
 
       selectAttendance: function (attendance) {
-        if (attendance) {
-          this.selectCourse(attendance.course);
-          if (this.course.attendances.indexOf(attendance) < 0) {
-            throw new Error("Cannot select unknown attendance.");
-          }
+        if (!attendance) return;
+        this.selectCourse(attendance.course);
+        if (this.course.attendances.indexOf(attendance) < 0) {
+          throw new Error("Cannot select unknown attendance.");
         }
         if (this.course) {
           this.$.attendance.select(attendance);
         }
+        this.$.attendanceInspector.hidden = false;
+        this.$.courseInspector.hidden = true;
+        this.$.layout.openRight();
       },
 
       _resetFilter: function () {
@@ -193,6 +201,10 @@
 
       _handleAddButtonTap: function (event) {
         this.fire("add-course");
+      },
+
+      _handleCloseInspector: function () {
+        this.$.layout.closeRight();
       },
 
       _handleExportProfile: function () {
@@ -223,6 +235,7 @@
         this.selectCourse(null);
         this.selectAttendance(null);
         this._remove("profile.courses", course);
+        this.$.layout.closeRight();
       },
 
       _handleAddAttendance: function () {
@@ -241,7 +254,6 @@
         var attendance = event.detail.data;
         if (attendance == null) throw new Error("Cannot delete null attendance.");
         this.selectCourse(attendance.course);
-        this.selectAttendance(null);
         this._remove("course.attendances", attendance);
       },
 
