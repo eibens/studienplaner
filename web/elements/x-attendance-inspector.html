@@ -47,11 +47,11 @@
       <x-inspector-link
         on-tap="_handleBack">
         <x-course-avatar
-          label="[[attendance.course.type]]"
+          label="[[course.type]]"
           size="4">
         </x-course-avatar>
         <x-course-title
-          text="[[attendance.course.title]]"
+          text="[[course.title]]"
           placeholder="Unbenannt">
         </x-course-title>
       </x-inspector-link>
@@ -81,6 +81,11 @@
       is: "x-attendance-inspector",
 
       properties: {
+        course: {
+          type: Object,
+          value: null
+        },
+
         attendance: {
           type: Object,
           value: null
