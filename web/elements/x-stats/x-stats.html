@@ -133,14 +133,20 @@
 
       _computeCredits: function (change) {
         return change.base.reduce(function (sum, course) {
-          return sum + parseFloat(course.credits);
+          var credits = parseFloat(course.credits);
+          if (isNaN(credits)) return sum;
+          return sum + credits;
         }, 0.0).toFixed(1);
       },
 
       _computeGrade: function (change) {
         var weightedSum = change.base.reduce(function (sum, course) {
           if (!course.hasGrade) return sum;
-          return sum + parseFloat(course.credits) * course.latestGrade.value;
+          var credits = parseFloat(course.credits);
+          var grade = parseFloat(course.latestGrade.value);
+          if (isNaN(credits)) return sum;
+          if (isNaN(grade)) return sum;
+          return sum + credits * grade;
         }, 0.0);
         var credits = this._computeCredits(change);
         if (credits == 0) return "Keine";
