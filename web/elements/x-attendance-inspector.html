@@ -4,11 +4,11 @@
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="x-course-avatar.html">
 <link rel="import" href="x-course-title.html">
-<link rel="import" href="x-grade-icon/x-grade-icon.html">
 <link rel="import" href="x-grade-picker.html">
 <link rel="import" href="x-inspector.html">
 <link rel="import" href="x-inspector-link.html">
 <link rel="import" href="x-semester-picker.html">
+<link rel="import" href="x-grade-avatar/x-grade-avatar.html">
 
 <dom-module id="x-attendance-inspector">
   <style>
@@ -57,10 +57,10 @@
       </x-inspector-link>
 
       <header>
-        <x-grade-icon
-          grade="[[attendance.grade]]"
-          size="9">
-        </x-grade-icon>
+        <x-grade-avatar
+          grade="[[_computeGrade(attendance.grade)]]"
+          size="large">
+        </x-grade-avatar>
         <div class="year">[[attendance.semester.year]]</div>
         <div class="season">[[_formatSeason(attendance.semester.isWinter)]]</div>
       </header>
@@ -108,6 +108,11 @@
 
       _handleDelete: function () {
         this.fire("delete-attendance", { data: this.attendance });
+      },
+
+      _computeGrade: function (grade) {
+        if (!grade) return null;
+        return grade.value.toString();
       }
     });
   </script>
