@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <dom-module id="x-stats">
   <style>
@@ -75,7 +76,8 @@
             <span class="total">[[_computeCredits(courses.*)]]</span>
           </output>
         </div>
-        <div>
+        <div id="grade">
+          <paper-tooltip for="grade">Nach ECTS gewichteter Notendurchschnitt aller bestandenen Kurse</paper-tooltip>
           <label>Note</label>
           <output>
             <span>[[_computeGrade(_passed.*)]]</span>
