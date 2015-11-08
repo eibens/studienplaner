@@ -92,7 +92,8 @@
       },
 
       observers: [
-        "_render(sortMode)"
+        "_render(sortMode)",
+        "_handleCoursesChanged(courses.*)"
       ],
 
       clearFilter: function () {
@@ -109,6 +110,10 @@
         this.debounce("render", function () {
           self.$.repeat.render();
         }, 100);
+      },
+
+      _handleCoursesChanged: function () {
+        this._updateResult();
       },
 
       _updateResult: function () {
