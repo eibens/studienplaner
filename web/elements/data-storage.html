@@ -45,14 +45,20 @@
       ],
 
       save: function () {
-        if (!this.dirty) return;
-        this._setDirty(false);
-        this._skipLoad = true;
-        this.rawData = this._serialize(this.profile);
+        var self = this;
+        this.debounce("save", function () {
+          if (!self.dirty) return;
+          self._setDirty(false);
+          self._skipRawDataChange = true;
+          self.rawData = this._serialize(self.profile);
+        }, 500);
       },
 
       load: function () {
-        this.profile = this._deserialize(this.rawData);
+        var self = this;
+        this.debounce("load", function () {
+          self.profile = self._deserialize(self.rawData);
+        }, 500);
       },
 
       _handleStorageLoadEmpty: function (event) {
@@ -65,8 +71,8 @@
 
       _handleRawDataChanged: function () {
         // Do not load the changed data.
-        if (this._skipLoad) {
-          this._skipLoad = false;
+        if (this._skipRawDataChange) {
+          this._skipRawDataChange = false;
           return;
         }
         this.load();
@@ -74,10 +80,7 @@
 
       _handleProfileChanged: function (event) {
         this._setDirty(true);
-        var self = this;
-        this.debounce("save", function () {
-          self.save();
-        }, 500);
+        this.save();
       },
 
       _serialize: function (profile) {
