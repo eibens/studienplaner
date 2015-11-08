@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="data-model/data-model.html">
-<link rel="import" href="x-grade-icon/x-grade-icon.html">
+<link rel="import" href="x-grade-avatar/x-grade-avatar.html">
 <link rel="import" href="x-inspector-link.html">
 
 <dom-module id="x-course-attendances">
@@ -34,10 +34,10 @@
       observe="time grade">
       <x-inspector-link
         on-tap="_handleSelect">
-        <x-grade-icon
-          size="3"
-          grade="[[item.grade]]">
-        </x-grade-icon>
+        <x-grade-avatar
+          size="small"
+          grade="[[_formatGrade(item.grade)]]">
+        </x-grade-avatar>
         <div class="semester">{{_formatSemester(item.semester)}}</div>
       </x-inspector-link>
     </template>
@@ -64,6 +64,11 @@
 
       _formatSemester: function (semester) {
         return semester.year + " " + (semester.isWinter ? "Winter" : "Sommer");
+      },
+
+      _formatGrade: function (grade) {
+        if (!grade) return null;
+        return grade.value.toString();
       },
 
       _handleSelect: function (event) {
