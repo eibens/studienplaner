@@ -4,7 +4,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/shadow.html">
 <link rel="import" href="data-model/data-model.html">
-<link rel="import" href="x-grade-icon/x-grade-icon.html">
+<link rel="import" href="x-grade-avatar/x-grade-avatar.html">
 
 <dom-module id="x-grade-picker">
   <style>
@@ -16,15 +16,15 @@
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
     }
-    x-grade-icon {
+    x-grade-avatar {
       opacity: 0.5;
       transition: opacity 0.2s;
       margin-right: 4px;
     }
-    x-grade-icon:last-of-type {
+    x-grade-avatar:last-of-type {
       margin-right: 0;
     }
-    x-grade-icon.iron-selected {
+    x-grade-avatar.iron-selected {
       opacity: 1;
     }
   </style>
@@ -36,11 +36,11 @@
       <template
         is="dom-repeat"
         items="[[_grades]]">
-        <x-grade-icon
-          grade="[[item]]"
-          size="5"
+        <x-grade-avatar
+          grade="[[_formatGrade(item)]]"
+          size="medium"
           interactive="true">
-        </x-grade-icon>
+        </x-grade-avatar>
       </template>
     </iron-selector>
   </template>
@@ -93,6 +93,11 @@
         } else if (!grade.equals(this.value)) {
           this.value = grade;
         }
+      },
+
+      _formatGrade: function (grade) {
+        if (!grade) return null;
+        return grade.value.toString();
       }
     });
   </script>
