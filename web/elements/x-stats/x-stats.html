@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
@@ -34,6 +36,17 @@
     header output .total:before {
       content: "/";
       margin-right: 4px;
+    }
+    header output iron-icon {
+      --iron-icon-width: 16px;
+      --iron-icon-height: 16px;
+      --iron-icon-fill-color: var(--disabled-text-color);
+      margin-top: -2px;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    header output iron-icon:hover {
+      opacity: 1;
     }
 
     @media (min-width: 768px) {
@@ -76,11 +89,15 @@
             <span class="total">[[_computeCredits(courses.*)]]</span>
           </output>
         </div>
-        <div id="grade">
-          <paper-tooltip for="grade">Nach ECTS gewichteter Notendurchschnitt aller bestandenen Kurse</paper-tooltip>
+        <div>
           <label>Note</label>
           <output>
             <span>[[_computeGrade(_passed.*)]]</span>
+            <iron-icon
+              id="grade-help"
+              icon="help">
+            </iron-icon>
+            <paper-tooltip for="grade-help">Nach ECTS gewichteter Notendurchschnitt aller bestandenen Kurse</paper-tooltip>
           </output>
         </div>
       </iron-selector>
