@@ -65,7 +65,6 @@
     <x-layout
       id="layout"
       on-action="_handleAddButtonTap"
-      right-open="[[!_areEmpty(course, attendance)]]"
       placeholder="[[_coursesEmpty]]">
 
       <x-toolbar
@@ -278,19 +277,10 @@
         this.splice(path, index, 1);
       },
 
-      _isEmpty: function (object) {
-        return !object;
-      },
       _computeCoursesEmpty: function (change) {
         var array = change.base;
         if (!(array instanceof Array)) return true;
         return array.length == 0;
-      },
-      _areEmpty: function () {
-        for (var i = 0; i < arguments.length; i++) {
-          if (arguments[i]) return false;
-        }
-        return true;
       }
     });
   </script>
