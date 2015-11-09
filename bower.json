@@ -1,5 +1,5 @@
 {
-  "name": "lychee",
+  "name": "studienplaner",
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#1.2.1",
