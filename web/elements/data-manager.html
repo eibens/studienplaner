@@ -22,7 +22,7 @@
     </data-downloader>
     <data-uploader
       id="uploader"
-      data="{{_rawData}}">
+      on-upload="_handleUpload">
     </data-uploader>
   </template>
 
@@ -61,6 +61,10 @@
 
       import: function () {
         this.$.uploader.upload();
+      },
+
+      _handleUpload: function (event) {
+        this._rawData = event.detail.data;
       },
 
       _computeEmpty: function () {
