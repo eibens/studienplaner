@@ -57,6 +57,7 @@
       load: function () {
         var self = this;
         this.debounce("load", function () {
+          self._skipProfileChange = true;
           self.profile = self._deserialize(self.rawData);
         }, 500);
       },
@@ -70,7 +71,6 @@
       },
 
       _handleRawDataChanged: function () {
-        // Do not load the changed data.
         if (this._skipRawDataChange) {
           this._skipRawDataChange = false;
           return;
@@ -79,6 +79,10 @@
       },
 
       _handleProfileChanged: function (event) {
+        if (this._skipProfileChange) {
+          this._skipProfileChange = false;
+          return;
+        }
         this._setDirty(true);
         this.save();
       },
