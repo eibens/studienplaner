@@ -47,7 +47,6 @@
       save: function () {
         var self = this;
         this.debounce("save", function () {
-          if (!self.dirty) return;
           self._setDirty(false);
           self._skipRawDataChange = true;
           self.rawData = this._serialize(self.profile);
