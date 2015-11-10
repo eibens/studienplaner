@@ -134,7 +134,8 @@
         },
         course: {
           type: Object,
-          value: null
+          value: null,
+          observer: "_courseChanged"
         },
         attendance: {
           type: Object,
@@ -201,6 +202,12 @@
 
       _resetFilter: function () {
         this.$.organizer.clear();
+      },
+
+      _courseChanged: function (course) {
+        if (!course) {
+          this.$.layout.closeRight();
+        }
       },
 
       _handleAddButtonTap: function (event) {
