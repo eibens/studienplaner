@@ -41,7 +41,9 @@
     .placeholder {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
-      margin: 2em;
+      margin: 3em 0;
+      color: var(--disabled-text-color);
+      @apply(--paper-font-title);
     }
     x-stats {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -73,11 +75,18 @@
         </paper-icon-button>
         <p>Filter sind aktiv</p>
       </div>
+      <div
+        class="placeholder"
+        hidden$="[[!_empty]]">
+        Keine Kurse gefunden
+      </div>
       <x-stats
+        hidden$="[[_empty]]"
         courses="[[result]]"
         mode="{{_sortMode}}">
       </x-stats>
       <x-course-list
+        hidden$="[[_empty]]"
         courses="[[courses]]"
         result="{{result}}"
         filter-cleared="{{_filterCleared}}"
@@ -90,11 +99,6 @@
         forbidden-tags="{{forbiddenTags}}">
       </x-course-list>
     </main>
-    <div
-      class="placeholder"
-      hidden$="[[!_empty]]">
-      Keine Kurse gefunden
-    </div>
   </template>
 
   <script>
