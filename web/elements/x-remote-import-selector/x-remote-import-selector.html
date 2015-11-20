@@ -1,11 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../x-import-selector/x-import-selector.html">
 <link rel="import" href="../x-remote-file/x-remote-file.html">
+<link rel="import" href="../x-remote-content/x-remote-content.html">
 
 <dom-module id="x-remote-import-selector">
   <style>
@@ -13,34 +10,6 @@
       @apply(--layout-vertical);
       -webkit-user-select: none;
       user-select: none;
-    }
-
-    .message {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-      background: var(--divider-color);
-      color: var(--secondary-text-color);
-      padding: 0 8px;
-      height: 56px;
-      margin: 2px 0;
-      border-radius: 3px;
-    }
-    .message span {
-      @apply(--layout-flex);
-      margin: 0 8px;
-    }
-
-    .loader {
-      @apply(--layout);
-      @apply(--layout-center-center);
-      height: 60px;
-    }
-    .loader paper-spinner {
-      --paper-spinner-layer-1-color: var(--default-primary-color);
-      --paper-spinner-layer-2-color: var(--default-primary-color);
-      --paper-spinner-layer-3-color: var(--default-primary-color);
-      --paper-spinner-layer-4-color: var(--default-primary-color);
-      margin: 0 8px;
     }
   </style>
 
@@ -53,39 +22,16 @@
       status="{{_status}}">
     </x-remote-file>
 
-    <x-import-selector
-      id="selector"
-      hidden
-      label="[[_computeLabel(_data.type)]]"
-      options="[[_computeOptions(_data.options.*)]]"
-      selected="{{selected}}">
-    </x-import-selector>
-
-    <section
-      id="loading"
-      class="loader">
-      <paper-spinner
-        active>
-      </paper-spinner>
-    </section>
-
-    <section
-      id="unavailable"
-      class="message"
-      hidden>
-      <span>Auswahl leider noch nicht verfügbar.</span>
-    </section>
-
-    <section
-      id="inaccessible"
-      class="message"
-      hidden>
-      <span>Keine Verbindung möglich.</span>
-      <paper-icon-button
-        icon="refresh"
-        on-tap="reload">
-      </paper-icon-button>
-    </section>
+    <x-remote-content
+      status="[[_status]]"
+      unavailable-message="Auswahl noch nicht verfügbar."
+      on-reload="reload">
+      <x-import-selector
+        label="[[_computeLabel(_data.type)]]"
+        options="[[_computeOptions(_data.options.*)]]"
+        selected="{{selected}}">
+      </x-import-selector>
+    </x-remote-content>
   </template>
 
   <script>
@@ -104,10 +50,7 @@
 
         _data: Object,
 
-        _status: {
-          type: String,
-          observer: "_statusChanged"
-        }
+        _status: String
       },
 
       reload: function () {
@@ -124,13 +67,6 @@
           this._status = "unavailable";
         }
         return options;
-      },
-
-      _statusChanged: function (status) {
-        this.$.loading.hidden = status != "loading";
-        this.$.unavailable.hidden = status != "unavailable";
-        this.$.inaccessible.hidden = status != "inaccessible";
-        this.$.selector.hidden = !!status;
       }
     });
   </script>
