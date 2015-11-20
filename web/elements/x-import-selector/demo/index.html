@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>x-import-selector Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-import-selector.html">
+  </head>
+  <body style="font-family: Roboto, Noto, sans-serif">
+    <template is="dom-bind">
+      <h3>Multiple options</h3>
+      <p>Selected: <em>[[country]]</em></p>
+      <x-import-selector
+        id="country"
+        label="Country"
+        selected="{{country}}"
+        options='{ "at": "Österreich", "de": "Deutschland", "us": "USA" }'>
+      </x-import-selector>
+
+      <h3>Single option</h3>
+      <p>Selected: <em>[[color]]</em></p>
+      <x-import-selector
+        id="color"
+        label="Color"
+        selected="{{color}}"
+        options='{ "blue": "Blau" }'>
+      </x-import-selector>
+
+      <h3>No options</h3>
+      <p>Selected: <em>[[animal]]</em></p>
+      <x-import-selector
+        label="Animal"
+        selected="{{animal}}">
+      </x-import-selector>
+    </template>
+  </body>
+</html>
