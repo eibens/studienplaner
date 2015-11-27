@@ -18,10 +18,14 @@
       transition: background 0.2s;
     }
 
+    paper-ripple {
+      color: var(--default-primary-color);
+    }
+
     /* hover effects not needed on mobile */
     @media (min-width: 768px) {
       :host(:hover) {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--highlight-color);
       }
     }
 
@@ -32,7 +36,7 @@
       transition: background 0.2s;
     }
     x-drop-target[dropping] {
-      background: rgba(0, 0, 0, 0.2);
+      background: var(--selection-color);
     }
     x-course-avatar {
       width: 40px;
