@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>x-import-browser Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../x-import-browser.html">
+  </head>
+  <body style="font-family: Roboto, Noto, sans-serif">
+    <template is="dom-bind" id="scope">
+      <p on-tap="open">OPEN</p>
+      <x-import-browser
+        id="dialog"
+        url="data"
+        pingUrl="ping">
+      </x-import-browser>
+    </template>
+    <script>
+      var scope = document.getElementById("scope");
+      scope.open = function () {
+        document.getElementById("dialog").opened = true;
+      }
+    </script>
+  </body>
+</html>

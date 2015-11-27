@@ -1,0 +1,286 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../x-remote-import-selector/x-remote-import-selector.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+
+<dom-module id="x-import-browser">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    x-remote-import-selector {
+      margin: 4px 0;
+    }
+
+    .text {
+      margin: 0;
+    }
+
+    a {
+      color: var(--default-primary-color);
+      text-decoration: none;
+    }
+
+    .disclaimer {
+      color: var(--accent-color);
+      cursor: pointer;
+    }
+    #disclaimer {
+      max-width: 400px;
+    }
+
+    .notice {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      color: var(--default-primary-color);
+      cursor: pointer;
+      padding: 8px;
+      border: 1px solid var(--light-primary-color);
+      margin-top: 20px;
+    }
+    .notice span {
+      @apply(--layout-flex);
+      padding: 0 4px;
+    }
+  </style>
+
+  <template>
+    <x-remote-file
+      url="[[_profileUrl]]"
+      ping-url="[[pingUrl]]"
+      data="{{_profileData}}"
+      status="{{_profileStatus}}">
+    </x-remote-file>
+    
+    <paper-dialog
+      id="dialog"
+      modal
+      opened="{{opened}}">
+      <h2>Studienplan importieren</h2>
+
+      <paper-dialog-scrollable>
+        <p class="text">
+          Einige Studienpläne sind bereits online verfügbar. Wähle dein Studium
+          aus um es zu importieren.<br/>
+          <span on-tap="_openDisclaimer" class="disclaimer">ACHTUNG: Alle Informationen ohne Gewähr!</span>
+        </p>
+
+        <template
+          is="dom-repeat"
+          items="[[_items]]">
+          <x-remote-import-selector
+            url="[[item]]"
+            ping-url="[[pingUrl]]"
+            selected=""
+            on-selected-changed="_handleSelect">
+          </x-remote-import-selector>
+        </template>
+
+        <div hidden$="[[!_profileError]]">
+          <x-remote-content
+            status="[[_profileStatus]]"
+            unavailable-message="Studium noch nicht verfügbar.">
+          </x-remote-content>
+        </div>
+
+        <div hidden$="[[_profileLoaded]]">
+          <section
+            class="notice"
+            on-tap="">
+            <span>Dein Studium ist nicht verfügbar?</span>
+            <iron-icon
+              icon="arrow-forward">
+            </iron-icon>
+          </section>
+        </div>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button
+          dialog-dismiss>
+          Abbrechen
+        </paper-button>
+        <paper-button
+          dialog-confirm
+          hidden$="[[!_profileLoaded]]">
+          Importieren
+        </paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="disclaimer">
+      <h2>Keine Garantie</h2>
+      <main>
+        Die hier angebotenen Studienpläne wurden von deinen Mitstudenten
+        freiwillig zusammengestellt. Verlasse dich deswegen nicht auf die
+        Informationen, denn sie könnten inkorrekt, unvollständig, oder
+        veraltet sein. Falls du einen Fehler findest,
+        <a href="http://info.studienplaner.at/feedback" target="_blank">lass es uns bitte wissen</a>.
+      </main>
+      <div class="buttons">
+        <paper-button
+          dialog-confirm>
+          Ok
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-import-browser",
+
+      properties: {
+        url: {
+          type: String,
+          observer: "_urlChanged"
+        },
+
+        pingUrl: {
+          type: String
+        },
+
+        opened: {
+          type: Boolean,
+          notify: true,
+          observer: "_openedChanged"
+        },
+
+        _path: {
+          type: Array,
+          value: []
+        },
+
+        _items: {
+          type: Array,
+          value: []
+        },
+
+        _profileUrl: {
+          type: String,
+          value: null
+        },
+
+        _profileStatus: {
+          type: String,
+          value: "unavailable"
+        },
+
+        _profileData: {
+          type: Object
+        },
+
+        _profileLoaded: {
+          type: Boolean,
+          computed: "_computeProfileLoaded(_profileStatus)"
+        },
+
+        _profileError: {
+          type: Boolean,
+          computed: "_computeProfileError(_profileUrl, _profileLoaded)"
+        }
+      },
+
+      listeners: {
+        "dom-change": "_refit"
+      },
+
+      observers: [
+        "_refit(_items.*, _profileUrl, _profileStatus)"
+      ],
+
+      open: function () {
+        this.opened = true;
+      },
+
+      clear: function () {
+        this._profileUrl = null;7
+
+        // NOTE: Reset items asynchronously so that dom-repeat is actually
+        // cleared completely.
+        this._items = [];
+        var self = this;
+        this.async(function () {
+          self._urlChanged(this.url);
+        });
+      },
+
+      _urlChanged: function (url) {
+        this._path = [ url ];
+        this._items = [ this._buildIndexUrl() ];
+      },
+
+      _openedChanged: function (opened) {
+        if (opened) {
+          this.clear();
+        } else {
+          if (this.$.dialog.closingReason.confirmed) {
+            this.fire("")
+          }
+        }
+      },
+
+      _refit: function () {
+        var self = this;
+        this.debounce("refit", function () {
+          self.$.dialog.fit();
+        }, 100);
+      },
+
+      _handleSelect: function (event) {
+        var index = event.model.index;
+        var selected = event.detail.value;
+        if (!selected) return;
+
+        var deleteStart = index + 1;
+        if (!selected || deleteStart < this._items.length) {
+          var deleteCount = this._items.length - deleteStart;
+          this.splice("_items", deleteStart, deleteCount);
+          this.splice("_path", deleteStart, deleteCount);
+        }
+
+        var lastChar = selected.slice(-1);
+        var isDirectory = lastChar == "/";
+        this._profileUrl = null;
+        if (isDirectory) {
+          var directory = selected.slice(0, -1);
+          this.push("_path", directory);
+          this.push("_items", this._buildIndexUrl());
+        } else {
+          this._profileUrl = this._buildProfileUrl(selected);
+        }
+        this._refit();
+      },
+
+      _openDisclaimer: function () {
+        this.$.disclaimer.opened = true;;
+      },
+
+      _buildIndexUrl: function () {
+        return this._path.join("/") + "/index.json";
+      },
+
+      _buildProfileUrl: function (name) {
+        return this._path.join("/") + "/" + name + ".json";
+      },
+
+      _computeProfileLoaded: function (status) {
+        this._refit();
+        return !status;
+      },
+
+      _computeProfileError: function (url, loaded) {
+        this._refit();
+        return !!url && !loaded;
+      }
+    });
+  </script>
+</dom-module>
