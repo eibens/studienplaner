@@ -59,6 +59,14 @@
           readOnly: true
         },
 
+        /**
+         * Automatically select the value if there is only one option.
+         */
+        autoSelect: {
+          type: Boolean,
+          value: false
+        },
+
         _items: {
           type: Array,
           value: []
@@ -89,9 +97,11 @@
 
         // Pre-select for the user, if there is only one option.
         this.$.input.disabled = false;
-        if (items.length == 1) {
-          this.$.menu.select(0);
-          this.$.input.disabled = true;
+        if (this.autoSelect) {
+          if (items.length == 1) {
+            this.$.menu.select(0);
+            this.$.input.disabled = true;
+          }
         }
       },
 
