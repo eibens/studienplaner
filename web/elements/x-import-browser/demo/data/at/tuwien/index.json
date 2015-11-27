@@ -1,0 +1,10 @@
+{
+  "type": "Studienfach",
+  "options": {
+    "mathematik/": "Mathematik",
+    "informatik/": "Informatik",
+    "architektur/": "Architektur",
+    "chemie/": "Chemie",
+    "physik/": "Physik"
+  }
+}
