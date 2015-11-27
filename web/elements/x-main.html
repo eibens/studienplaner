@@ -15,6 +15,7 @@
 <link rel="import" href="x-organizer/x-organizer.html">
 <link rel="import" href="x-layout/x-layout.html">
 <link rel="import" href="x-save-indicator.html">
+<link rel="import" href="x-import-browser/x-import-browser.html">
 
 <dom-module id="x-main">
   <style>
@@ -61,6 +62,12 @@
       items="{{course.attendances}}"
       selected="{{attendance}}">
     </array-selector>
+
+    <x-import-browser
+      id="import"
+      url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/programs"
+      ping-url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/ping">
+    </x-import-browser>
 
     <x-layout
       id="layout"
@@ -159,6 +166,7 @@
       },
 
       listeners: {
+        "browse": "_handleBrowse",
         "import-profile": "_handleImportProfile",
         "export-profile": "_handleExportProfile",
         "delete-profile": "_handleDeleteProfile",
@@ -208,6 +216,10 @@
         if (!course) {
           this.$.layout.closeRight();
         }
+      },
+
+      _handleBrowse: function () {
+        this.$.import.open();
       },
 
       _handleAddButtonTap: function (event) {

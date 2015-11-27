@@ -30,6 +30,13 @@
   <template>
     <paper-menu>
       <paper-icon-item
+        on-tap="_handleBrowse">
+        <paper-ripple></paper-ripple>
+        <iron-icon icon="search" item-icon></iron-icon>
+        Studienplan suchen
+      </paper-icon-item>
+
+      <paper-icon-item
         on-tap="_handleImport"
         disabled$="[[importDisabled]]">
         <paper-ripple></paper-ripple>
@@ -72,6 +79,10 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _handleBrowse: function () {
+        this.fire("browse");
       },
 
       _handleImport: function () {
