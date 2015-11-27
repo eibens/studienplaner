@@ -43,6 +43,7 @@
 
         data: {
           type: Object,
+          readOnly: true,
           notify: true
         },
 
@@ -65,10 +66,11 @@
 
       _handleFileResponse: function (event) {
         this._setStatus(null);
-        this.data = event.detail.response;
+        this._setData(event.detail.response);
       },
 
       _handleFileError: function () {
+        this._setData(null);
         if (this.pingUrl) {
           // Check whether user is connected at all.
           var self = this;
