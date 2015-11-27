@@ -54,6 +54,11 @@
       },
 
       reload: function () {
+        if (!this.url) {
+          this._setStatus("unavailable");
+          this._setData(null);
+          return;
+        }
         this._setStatus("loading");
         var self = this;
         this.debounce("request-file", function () {
