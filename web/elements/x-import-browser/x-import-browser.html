@@ -2,11 +2,12 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../x-remote-import-selector/x-remote-import-selector.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../x-remote-import-selector/x-remote-import-selector.html">
 
 <dom-module id="x-import-browser">
   <style>
@@ -63,7 +64,9 @@
     <paper-dialog
       id="dialog"
       modal
-      opened="{{opened}}">
+      opened="{{opened}}"
+      entry-animation="fade-in-animation"
+      exit-animation="fade-out-animation">
       <h2>Studienplan importieren</h2>
 
       <paper-dialog-scrollable>
@@ -116,7 +119,10 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog id="disclaimer">
+    <paper-dialog
+      id="disclaimer"
+      entry-animation="fade-in-animation"
+      exit-animation="fade-out-animation">
       <h2>Keine Garantie</h2>
       <main>
         Die hier angebotenen Studienpläne wurden von deinen Mitstudenten
