@@ -1,0 +1,174 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="x-segmented-bar">
+  <style>
+    /* layout direction of segments */
+    :host {
+      @apply(--layout-horizontal);
+    }
+    :host([vertical]) {
+      @apply(--layout-vertical);
+    }
+    :host([reversed]) {
+      @apply(--layout-horizontal-reverse);
+    }
+    :host([reversed][vertical]) {
+      @apply(--layout-vertical-reverse);
+    }
+
+    /* spacing between segments */
+    :host .segment {
+      padding-left: 1px;
+    }
+    :host([vertical]) .segment {
+      padding-left: 0;
+      padding-top: 1px;
+    }
+    :host([reversed]) .segment:last-of-type {
+      /* :last-of-type selector only works if segment and spacer have different HTML tag */
+      padding: 0;
+    }
+    :host(:not([reversed])) .segment:first-of-type {
+      padding: 0;
+    }
+
+    /* segments and background */
+    .segment, #spacer {
+      @apply(--layout-self-stretch);
+      @apply(--layout);
+    }
+    .segment .background {
+      @apply(--layout-self-stretch);
+      @apply(--layout-flex);
+      position: relative;
+      color: white;
+      transition: opacity 0.2s;
+    }
+    .segment:hover .background {
+      opacity: 0.9;
+    }
+  </style>
+
+  <template>
+    <template
+      is="dom-repeat"
+      items="[[_items]]"
+      observe="percent color">
+      <section
+        class="segment"
+        style$="[[item.style]]">
+        <div
+          class="background"
+          style$="[[item.background]]">
+        </div>
+      </section>
+    </template>
+    <div id="spacer"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-segmented-bar",
+
+      properties: {
+
+        /**
+         * Array of column segments that make up the filled part of the column.
+         * The segments will be displayed bottom to top.
+         *
+         * Each segment is an object that has a `value` property containing the
+         * segments magnitude and a `color` property that contains the CSS color
+         * of the segment.
+         */
+        segments: {
+          type: Array
+        },
+
+        /**
+         * Maximum value that defines the total height of the bar.
+         *
+         * If the maximum is negative or zero, the bar will be empty.
+         */
+        maximum: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * Indicates that the segments should be stacked vertically.
+         */
+        vertical: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Indicates that the whole bar is reversed.
+         */
+        reversed: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        _items: {
+          type: Array,
+          computed: "_computeItems(segments.*, maximum)"
+        }
+      },
+
+      _computeItems: function (segmentChange, maximum) {
+        if (!segmentChange.base) return [];
+
+        // Only display segments with positive value.
+        var segments = segmentChange.base.filter(function (segment) {
+          return segment.value > 0;
+        });
+
+        // If maximum is invalid use the sum of the all segment values.
+        var hasMaximum = maximum > 0;
+        if (!hasMaximum) {
+          maximum = segments.reduce(function (sum, segment) {
+            return sum + segment.value;
+          }, 0);
+        }
+
+        // Calculate percentages.
+        var remainder = 100;
+        var items = segments.map(function (segment, i) {
+          // No more space.
+          if (remainder <= 0) return null;
+
+          var fraction = segment.value / maximum;
+          var percent = Math.round(100 * fraction);
+          var noMoreSpace = remainder <= percent;
+          var isLast = i === segments.length - 1;
+          if (isLast && !hasMaximum || noMoreSpace) {
+            percent = remainder;
+          }
+
+          // Update remainder.
+          remainder -= percent;
+
+          // Build item.
+          var style = "flex:" + percent.toString();
+          var background = "";
+          if (segment.color) {
+            background = "background:" + segment.color;
+          }
+          return {
+            style: style,
+            background: background
+          };
+        }).filter(function (item) {
+          // Cull items that did not have enough space.
+          return !!item;
+        });
+
+        // Resize the spacer.
+        this.$.spacer.style.flex = remainder.toString();
+        return items;
+      }
+    });
+  </script>
+</dom-module>
