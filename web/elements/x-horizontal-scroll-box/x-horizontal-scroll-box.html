@@ -168,6 +168,8 @@
       },
 
       _handleScroll: function (event) {
+        // NOTE: Never scroll vertically.
+        event.preventDefault();
         var delta = -event.wheelDelta;
         switch (event.deltaMode) {
           case 1: // lines
