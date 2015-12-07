@@ -1,0 +1,135 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../data-model/data-model.html">
+<link rel="import" href="../x-horizontal-scroll-box/x-horizontal-scroll-box.html">
+<link rel="import" href="../x-segmented-bar/x-segmented-bar.html">
+<link rel="import" href="x-semester-chart-column.html">
+<link rel="import" href="../x-semester-picker/x-semester-picker-behavior.html">
+
+<dom-module id="x-semester-chart">
+  <style>
+    :host {
+      @apply(--layout);
+    }
+    x-horizontal-scroll-box {
+      @apply(--layout-flex);
+    }
+  </style>
+
+  <template>
+    <x-horizontal-scroll-box
+      id="container"
+      max-speed="40"
+      smooth>
+      <template
+        is="dom-repeat"
+        items="[[_items]]">
+        <x-semester-chart-column
+          semester="[[item.semester]]"
+          selected="[[item.selected]]"
+          width="[[item.width]]"
+          on-tap="_handleColumnTap">
+          <x-segmented-bar
+        </x-semester-chart-column>
+      </template>
+    </x-horizontal-scroll-box>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-semester-chart",
+
+      behaviors: [
+        Polymer.IronResizableBehavior,
+        App.SemesterPickerBehavior
+      ],
+
+      properties: {
+
+        columnWidth: {
+          type: Number,
+          value: 104
+        },
+
+        _items: {
+          type: Array
+        }
+      },
+
+      observers: [
+        "scrollToSemester(selectedSemester)",
+        "_refreshItems(selectedSemester, currentSemester, semesterCount, columnWidth)"
+      ],
+
+      listeners: {
+        "iron-resize": "_handleResize"
+      },
+
+      attached: function () {
+        // Allow using left and right arrow for navigation.
+        var self = this;
+        document.addEventListener("keydown", function (event) {
+          var key = event.keyCode;
+          if (key == 37) {
+            self.selectPreviousSemester();
+          }
+          if (key == 39) {
+            self.selectNextSemester();
+          }
+        });
+      },
+
+      scrollToSemester: function (semester) {
+        if (!semester) throw new Error();
+        this.$.container.scrollTo(this._calculateSemesterOffset(semester));
+      },
+
+      scrollToSelectedSemester: function () {
+        var semester = this.selectedSemester;
+        if (!semester) semester = Semester.current();
+        this.scrollToSemester(semester);
+      },
+
+      _calculateSemesterOffset: function (semester) {
+        if (!this.startSemester) return 0;
+        var semesterOffset = this.startSemester.distanceTo(semester) * this.columnWidth;
+        var halfHostWidth = Math.round(this.offsetWidth / 2);
+        var halfColumnWidth = Math.round(this.columnWidth / 2);
+        return semesterOffset - halfHostWidth + halfColumnWidth;
+      },
+
+      _handleColumnTap: function (event) {
+        this.selectedSemester = event.model.item.semester;
+      },
+
+      _handleResize: function () {
+        var self = this;
+        this.debounce("resize", function () {
+          self.scrollToSelectedSemester();
+        }, 100);
+      },
+
+      _refreshItems: function (selectedSemester, currentSemester, semesterCount, columnWidth) {
+        if (!currentSemester) currentSemester = Semester.current();
+        if (!selectedSemester) selectedSemester = currentSemester;
+        if (!semesterCount) semesterCount = 1;
+        if (!columnWidth) columnWidth = 80;
+
+        var items = [];
+        var semester = this.startSemester;
+        for (var i = 0; i < semesterCount; i++) {
+          items.push({
+            index: i,
+            semester: semester,
+            selected: semester.equals(selectedSemester),
+            width: columnWidth
+          });
+          semester = semester.next;
+        }
+        this._items = items;
+      }
+    });
+  </script>
+</dom-module>
