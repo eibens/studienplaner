@@ -59,7 +59,7 @@
       },
 
       observers: [
-        "scrollToSemester(selectedSemester)",
+        "_selectedSemesterChanged(selectedSemester)",
         "_refreshItems(selectedSemester, currentSemester, semesterCount, columnWidth)"
       ],
 
@@ -98,6 +98,10 @@
         var halfHostWidth = Math.round(this.offsetWidth / 2);
         var halfColumnWidth = Math.round(this.columnWidth / 2);
         return semesterOffset - halfHostWidth + halfColumnWidth;
+      },
+
+      _selectedSemesterChanged: function () {
+        this.scrollToSelectedSemester();
       },
 
       _handleColumnTap: function (event) {
