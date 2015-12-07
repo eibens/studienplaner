@@ -4,9 +4,8 @@
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="../x-horizontal-scroll-box/x-horizontal-scroll-box.html">
-<link rel="import" href="../x-segmented-bar/x-segmented-bar.html">
-<link rel="import" href="x-semester-chart-column.html">
 <link rel="import" href="../x-semester-picker/x-semester-picker-behavior.html">
+<link rel="import" href="x-semester-chart-column.html">
 
 <dom-module id="x-semester-chart">
   <style>
@@ -31,7 +30,6 @@
           selected="[[item.selected]]"
           width="[[item.width]]"
           on-tap="_handleColumnTap">
-          <x-segmented-bar
         </x-semester-chart-column>
       </template>
     </x-horizontal-scroll-box>
