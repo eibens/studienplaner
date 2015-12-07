@@ -7,15 +7,15 @@
 <link rel="import" href="x-stats/x-stats.html">
 <link rel="import" href="x-semester-picker.html">
 <link rel="import" href="x-course-list/x-course-list.html">
+<link rel="import" href="x-semester-graph/x-semester-chart.html">
 
 <dom-module id="x-browser">
   <style>
     :host {
       @apply(--layout-vertical);
     }
-    header {
-      height: 40px;
-      width: 100%;
+    x-semester-chart {
+      height: 208px;
     }
     .notice {
       @apply(--layout-horizontal);
@@ -55,16 +55,25 @@
         @apply(--shadow-elevation-3dp);
         background: var(--primary-background-color);
       }
+      x-semester-chart {
+        margin-bottom: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      x-semester-chart {
+        box-sizing: border-box;
+        height: 216px;
+        background: var(--secondary-background-color);
+      }
     }
   </style>
 
   <template>
-    <header
-      hidden$="[[_isEmptyValue(semester)]]">
-      <x-semester-picker
-        value="{{semester}}">
-      </x-semester-picker>
-    </header>
+    <x-semester-chart
+      hidden$="[[_isEmptyValue(semester)]]"
+      selected-semester="{{semester}}">
+    </x-semester-chart>
     <main>
       <div
         class="notice"
