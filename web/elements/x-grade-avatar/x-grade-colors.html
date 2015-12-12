@@ -1,0 +1,28 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="x-grade-colors">
+  <script>
+    Polymer({
+      is: "x-grade-colors",
+
+      getColor: function (grade) {
+        if (grade) {
+          grade = grade.toString();
+        }
+        switch (grade) {
+          case "1":
+            return "rgb(118, 168, 63)";
+          case "2":
+            return "rgb(169, 197, 58)";
+          case "3":
+            return "rgb(213, 208, 43)";
+          case "4":
+            return "rgb(225, 186, 30)";
+          case "5":
+            return "rgb(242, 150, 75)";
+        }
+        return null;
+      }
+    });
+  </script>
+</dom-module>
