@@ -17,6 +17,9 @@
     }
     section {
       @apply(--layout-flex);
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      padding-top: 16px;
     }
     footer {
       @apply(--layout-horizontal);
@@ -73,7 +76,7 @@
 
         width: {
           type: Number,
-          value: 104,
+          value: 64,
           observer: "_widthChanged"
         }
       },
@@ -83,8 +86,8 @@
       },
 
       _formatLabel: function (semester) {
-        var year = semester.year.toString();
-        var prefix = semester.isWinter ? " W" : " S";
+        var year = semester.year.toString().substr(2);
+        var prefix = semester.isWinter ? "W" : "S";
         return year + prefix;
       }
     });
