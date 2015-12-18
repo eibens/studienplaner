@@ -11,6 +11,13 @@
         App.CourseFilterBehavior
       ],
 
+      properties: {
+        semester: {
+          type: Object,
+          value: null
+        }
+      },
+
       /**
        * Tests whether the course passes the filter using the current parameters.
        *
@@ -21,7 +28,7 @@
         if (!course) course = {};
         return this._testQuery(course, this.query) &&
             this._testWhiteList(course.type, this.allowedTypes) &&
-            this._testWhiteList(this._computeGrade(course), this.allowedGrades) &&
+            this._testWhiteList(this._computeGrade(course, this.semester), this.allowedGrades) &&
             this._testRequiredTags(course.tags, this.requiredTags) &&
             this._testForbiddenTags(course.tags, this.forbiddenTags);
       },
@@ -59,20 +66,23 @@
         return match;
       },
 
-      _computeGrade: function (course) {
+      _computeGrade: function (course, semester) {
         if (!course.attendances || course.attendances.length == 0) {
           return "none";
         }
-        var latestAttendance = this._getLatestAttendance(course) || {};
+        var latestAttendance = this._getLatestAttendance(course, semester) || {};
         var grade = latestAttendance.grade || null;
         return grade ? grade.toString() : null;
       },
 
-      _getLatestAttendance: function (course) {
+      _getLatestAttendance: function (course, semester) {
         if (!course.attendances || course.attendances.length == 0) {
           return null;
         }
-        return course.attendances.sort(function (a, b) {
+        return course.attendances.filter(function (item) {
+          if (!semester) return true;
+          return Semester.compare(item.semester, semester) <= 0;
+        }).sort(function (a, b) {
           a = a || {};
           b = b || {};
           return -Semester.compare(a.semester, b.semester);
