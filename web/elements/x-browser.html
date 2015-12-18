@@ -71,7 +71,10 @@
   <template>
     <x-semester-chart
       hidden$="[[_isEmptyValue(semester)]]"
-      selected-semester="{{semester}}">
+      courses="[[courses]]"
+      selected-semester="{{semester}}"
+      sort-mode="[[_sortMode]]"
+      filter="[[filter]]">
     </x-semester-chart>
     <main>
       <div

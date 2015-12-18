@@ -3,8 +3,11 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../data-model/data-model.html">
+<link rel="import" href="../x-course-filter/x-attendance-filter.html">
+<link rel="import" href="../x-course-filter/x-attendance-sort.html">
 <link rel="import" href="../x-horizontal-scroll-box/x-horizontal-scroll-box.html">
 <link rel="import" href="../x-semester-picker/x-semester-picker-behavior.html">
+<link rel="import" href="x-attendance-bar.html">
 <link rel="import" href="x-semester-chart-column.html">
 
 <dom-module id="x-semester-chart">
@@ -15,9 +18,24 @@
     x-horizontal-scroll-box {
       @apply(--layout-flex);
     }
+    x-attendance-bar {
+      @apply(--layout-flex);
+      width: 24px;
+      overflow: hidden;
+    }
   </style>
 
   <template>
+    <x-attendance-filter
+      id="filter"
+      parameters="[[filter]]">
+    </x-attendance-filter>
+
+    <x-attendance-sort
+      id="sort"
+      mode="[[sortMode]]">
+    </x-attendance-sort>
+
     <x-horizontal-scroll-box
       id="container"
       max-speed="40"
@@ -30,6 +48,10 @@
           selected="[[item.selected]]"
           width="[[item.width]]"
           on-tap="_handleColumnTap">
+          <x-attendance-bar
+            attendances="[[item.attendances]]"
+            maximum="[[_maximum]]">
+          </x-attendance-bar>
         </x-semester-chart-column>
       </template>
     </x-horizontal-scroll-box>
@@ -48,17 +70,36 @@
 
         columnWidth: {
           type: Number,
-          value: 104
+          value: 56
+        },
+
+        courses: {
+          type: Array,
+          value: []
+        },
+
+        filter: {
+          type: Object,
+          value: null
+        },
+
+        sortMode: {
+          type: String,
+          value: null
         },
 
         _items: {
           type: Array
+        },
+
+        _maximum: {
+          type: Number
         }
       },
 
       observers: [
         "_selectedSemesterChanged(selectedSemester)",
-        "_refreshItems(selectedSemester, currentSemester, semesterCount, columnWidth)"
+        "_refreshItems(selectedSemester, currentSemester, semesterCount, columnWidth, courses.*, filter.*, sortMode)"
       ],
 
       listeners: {
@@ -69,13 +110,19 @@
         // Allow using left and right arrow for navigation.
         var self = this;
         document.addEventListener("keydown", function (event) {
-          var key = event.keyCode;
-          if (key == 37) {
-            self.selectPreviousSemester();
-          }
-          if (key == 39) {
-            self.selectNextSemester();
-          }
+          // FIXME: Get rid of debounce.
+          // When embedded into the main app the keydown event will sometimes
+          // be fired multiple times. Number of times varies greatly. For now
+          // we use debounce as an easy fix.
+          self.debounce("arrow-key", function () {
+            var key = event.keyCode;
+            if (key == 37) {
+              self.selectPreviousSemester();
+            }
+            if (key == 39) {
+              self.selectNextSemester();
+            }
+          });
         });
       },
 
@@ -113,24 +160,50 @@
         }, 100);
       },
 
-      _refreshItems: function (selectedSemester, currentSemester, semesterCount, columnWidth) {
+      _refreshItems: function (selectedSemester, currentSemester, semesterCount, columnWidth, coursesChange) {
+        var courses = coursesChange.base;
+        if (!courses) courses = [];
         if (!currentSemester) currentSemester = Semester.current();
         if (!selectedSemester) selectedSemester = currentSemester;
         if (!semesterCount) semesterCount = 1;
         if (!columnWidth) columnWidth = 80;
 
+        var self = this;
+        var attendances = courses.reduce(function (array, course) {
+          return array.concat(course.attendances);
+        }, []).filter(function (item) {
+          return self.$.filter.test(item);
+        }).sort(function (a, b) {
+          return self.$.sort.compare(a, b);
+        });
+
+        var creditMaximum = 0;
+
         var items = [];
         var semester = this.startSemester;
         for (var i = 0; i < semesterCount; i++) {
+
+          var semesterAttendances = attendances.filter(function (attendance) {
+            return attendance.semester.equals(semester);
+          });
+
+          var credits = semesterAttendances.reduce(function (value, item) {
+            return value + parseFloat(item.course.credits);
+          }, 0);
+
+          creditMaximum = Math.max(creditMaximum, credits);
+
           items.push({
             index: i,
             semester: semester,
             selected: semester.equals(selectedSemester),
-            width: columnWidth
+            width: columnWidth,
+            attendances: semesterAttendances
           });
           semester = semester.next;
         }
         this._items = items;
+        this._maximum = creditMaximum;
       }
     });
   </script>
