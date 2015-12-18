@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../data-model/data-model.html">
+
+<script>
+  var App = App || {};
+  App.SortBehaviour = {
+
+    properties: {
+
+      /**
+       * Value indicating the main sorting attribute.
+       *
+       * Per default it sorts by title, type. There are two other modes:
+       *
+       * - `credits` sorts by credits, grade, title, type
+       * - `grade` sorts by grade, credits, title, type
+       */
+      mode: {
+        type: String
+      }
+    },
+
+    chainComparators: function (comparators) {
+      var self = this;
+      return function (a, b) {
+        for (var i = 0; i < comparators.length; i++) {
+          var delta = comparators[i].call(self, a, b);
+          if (delta) {
+            return delta;
+          }
+        }
+        return 0;
+      };
+    }
+  };
+</script>

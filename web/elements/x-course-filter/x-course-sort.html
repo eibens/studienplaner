@@ -1,23 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="x-sort-behaviour.html">
 
 <dom-module id="x-course-sort">
   <script>
     Polymer({
       is: "x-course-sort",
 
-      properties: {
+      behaviors: [
+        App.SortBehaviour
+      ],
 
-        /**
-         * Value indicating the main sorting attribute.
-         *
-         * Per default it sorts by title, type. There are two other modes:
-         *
-         * - `credits` sorts by credits, grade, title, type
-         * - `grade` sorts by grade, credits, title, type
-         */
-        mode: {
-          type: String
-        },
+      properties: {
 
         semester: {
           type: Object,
@@ -28,24 +21,24 @@
       compare: function (a, b) {
         switch (this.mode) {
           case "credits":
-            return this._compare(a, b, [
+            return this.chainComparators([
               this._compareCredits,
               this._compareGrade,
               this._compareTitle,
               this._compareType
-            ]);
+            ])(a, b);
           case "grade":
-            return this._compare(a, b, [
+            return this.chainComparators([
               this._compareGrade,
               this._compareCredits,
               this._compareTitle,
               this._compareType
-            ]);
+            ])(a, b);
           default:
-            return this._compare(a, b, [
+            return this.chainComparators([
               this._compareTitle,
               this._compareType
-            ]);
+            ])(a, b);
         }
       },
 
@@ -63,6 +56,7 @@
         if (!latestA && !latestB) return 0;
         if (!latestA) return 1;
         if (!latestB) return -1;
+        if (!latestA.grade && !latestB.grade) return 0;
         if (!latestA.grade) return 1;
         if (!latestB.grade) return -1;
         return latestA.grade.value - latestB.grade.value;
@@ -70,16 +64,6 @@
 
       _compareCredits: function (a, b) {
         return b.credits - a.credits;
-      },
-
-      _compare: function (a, b, comparators) {
-        for (var i = 0; i < comparators.length; i++) {
-          var delta = comparators[i].call(this, a, b);
-          if (delta) {
-            return delta;
-          }
-        }
-        return 0;
       },
 
       _getLatestAttendance: function (attendances, semester) {

@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="x-sort-behaviour.html">
+
+<dom-module id="x-attendance-sort">
+  <script>
+    Polymer({
+      is: "x-attendance-sort",
+
+      behaviors: [
+        App.SortBehaviour
+      ],
+
+      compare: function (a, b) {
+        switch (this.mode) {
+          case "credits":
+            return this.chainComparators([
+              this._compareCredits,
+              this._compareGrade,
+              this._compareTitle,
+              this._compareType
+            ])(a, b);
+          case "grade":
+            return this.chainComparators([
+              this._compareGrade,
+              this._compareCredits,
+              this._compareTitle,
+              this._compareType
+            ])(a, b);
+          default:
+            return this.chainComparators([
+              this._compareTitle,
+              this._compareType
+            ])(a, b);
+        }
+      },
+
+      _compareTitle: function (a, b) {
+        return a.course.title.localeCompare(b.course.title);
+      },
+
+      _compareType: function (a, b) {
+        return a.course.type.localeCompare(b.course.type);
+      },
+
+      _compareGrade: function (a, b) {
+        if (!a.grade && !b.grade) return 0;
+        if (!a.grade) return 1;
+        if (!b.grade) return -1;
+        return a.grade.value - b.grade.value;
+      },
+
+      _compareCredits: function (a, b) {
+        return b.course.credits - a.course.credits;
+      }
+    });
+  </script>
+</dom-module>
