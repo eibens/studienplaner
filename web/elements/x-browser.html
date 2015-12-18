@@ -70,7 +70,8 @@
 
   <template>
     <x-semester-chart
-      hidden$="[[_isEmptyValue(semester)]]"
+      id="chart"
+      hidden$="[[!_semesterSelected]]"
       courses="[[courses]]"
       selected-semester="{{semester}}"
       sort-mode="[[_sortMode]]"
@@ -132,7 +133,22 @@
         _empty: {
           type: Boolean,
           computed: "_computeEmpty(result)"
+        },
+
+        _semesterSelected: {
+          type: Boolean,
+          computed: "_computeSemesterSelected(semester)",
+          observer: "_semesterSelectedChanged"
         }
+      },
+
+      _computeSemesterSelected: function (semester) {
+        return !!semester;
+      },
+
+      _semesterSelectedChanged: function (selected) {
+        if (!selected) return;
+        this.$.chart.jumpToSelectedSemester();
       },
 
       _resetFilter: function () {
@@ -141,10 +157,6 @@
 
       _computeEmpty: function () {
         return this.result.length === 0;
-      },
-
-      _isEmptyValue: function (value) {
-        return !value;
       }
     });
   </script>

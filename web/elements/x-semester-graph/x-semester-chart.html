@@ -126,6 +126,17 @@
         });
       },
 
+      jumpToSemester: function (semester) {
+        if (!semester) throw new Error();
+        this.$.container.jumpTo(this._calculateSemesterOffset(semester));
+      },
+
+      jumpToSelectedSemester: function () {
+        var semester = this.selectedSemester;
+        if (!semester) semester = Semester.current();
+        this.jumpToSemester(semester);
+      },
+
       scrollToSemester: function (semester) {
         if (!semester) throw new Error();
         this.$.container.scrollTo(this._calculateSemesterOffset(semester));
