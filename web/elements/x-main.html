@@ -14,6 +14,7 @@
 <link rel="import" href="x-organizer/x-organizer.html">
 <link rel="import" href="x-layout/x-layout.html">
 <link rel="import" href="x-save-indicator.html">
+<link rel="import" href="x-history/x-history.html">
 
 <dom-module id="x-main">
   <style>
@@ -44,6 +45,11 @@
   </style>
 
   <template>
+    <x-history
+      id="history"
+      courses="[[profile.courses]]">
+    </x-history>
+
     <data-manager
       id="data"
       profile="{{profile}}"
@@ -64,7 +70,8 @@
     <x-layout
       id="layout"
       on-action="_handleAddButtonTap"
-      placeholder="[[_coursesEmpty]]">
+      placeholder="[[_coursesEmpty]]"
+      on-left-open-changed="_handleLeftOpenChanged">
 
       <x-toolbar
         class="toolbar"
@@ -158,7 +165,9 @@
         "add-attendance": "_handleAddAttendance",
         "select-attendance": "_handleSelectAttendance",
         "delete-attendance": "_handleDeleteAttendance",
-        "add-course-tag": "_handleAddCourseTag"
+        "add-course-tag": "_handleAddCourseTag",
+        "close-inspector": "_handleCloseInspector",
+        "close-organizer": "_handleCloseOrganizer"
       },
 
       ready: function () {
@@ -200,8 +209,18 @@
         }
       },
 
+      _handleLeftOpenChanged: function (event) {
+        if (event.detail.value) {
+          this.$.history.openOrganizer();
+        }
+      },
+
       _handleAddButtonTap: function (event) {
         this.fire("add-course");
+      },
+
+      _handleCloseOrganizer: function () {
+        this.$.layout.closeLeft();
       },
 
       _handleCloseInspector: function () {
@@ -229,6 +248,9 @@
       },
       _handleSelectCourse: function (event) {
         this.selectCourse(event.detail.data);
+        if (!event.detail.history) {
+          this.$.history.selectCourse(event.detail.data);
+        }
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
@@ -250,6 +272,9 @@
       },
       _handleSelectAttendance: function (event) {
         this.selectAttendance(event.detail.data);
+        if (!event.detail.history) {
+          this.$.history.selectAttendance(event.detail.data);
+        }
       },
       _handleDeleteAttendance: function (event) {
         var attendance = event.detail.data;
