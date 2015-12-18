@@ -39,20 +39,8 @@
           filter = fixture('basic');
         });
 
-        it("defines 'query' property", function () {
-          filter.should.have.property("query").which.is.a("string").and.empty;
-        });
-        it("defines 'allowedTypes' property", function () {
-          filter.should.have.property("allowedTypes").which.eql([]);
-        });
-        it("defines 'allowedGrades' property", function () {
-          filter.should.have.property("allowedGrades").which.eql([]);
-        });
-        it("defines 'requiredTags' property", function () {
-          filter.should.have.property("requiredTags").which.eql([]);
-        });
-        it("defines 'forbiddenTags' property", function () {
-          filter.should.have.property("forbiddenTags").which.eql([]);
+        it("defines 'parameters' property", function () {
+          filter.should.have.property("parameters");
         });
 
         describe("'cleared' property", function () {
@@ -60,50 +48,40 @@
             filter.should.have.property("cleared").which.is.true;
           });
           it("is false if the query is not empty", function () {
-            filter.query = "test";
+            filter.set("parameters.query", "test");
             filter.cleared.should.be.false;
           });
           it("is false if there is at least one allowed type", function () {
-            filter.allowedTypes = ["test"];
+            filter.push("parameters.allowedTypes", "test");
             filter.cleared.should.be.false;
           });
           it("is false if there is at least one allowed grade", function () {
-            filter.allowedGrades = ["test"];
+            filter.push("parameters.allowedGrades", "test");
             filter.cleared.should.be.false;
           });
           it("is false if there is at least one required tag", function () {
-            filter.requiredTags = ["test"];
+            filter.push("parameters.requiredTags", "test");
             filter.cleared.should.be.false;
           });
           it("is false if there is at least one forbidden tag", function () {
-            filter.forbiddenTags = ["test"];
+            filter.push("parameters.forbiddenTags", "test");
             filter.cleared.should.be.false;
-          });
-        });
-
-        describe("'change' event", function () {
-          it("fires when changing query", function () {
-            filter.query = "a";
-            filter.addEventListener("change", function () {
-
-            });
           });
         });
 
         describe("'clear' method", function () {
           it("does not trigger change event when the filter is already cleared", function () {
             filter.addEventListener("change", function () {
-              throw new Error();
+              assert.fail();
             });
             filter.clear();
           });
           it("clears the filter", function () {
-            filter.query = "abc";
-            filter.semester = "2015s";
-            filter.allowedTypes = ["a", "b"];
-            filter.allowedGrades = [null, "1", "2"];
-            filter.requiredTags = ["a", "b", "c"];
-            filter.forbiddenGrades = ["d", "e"];
+            filter.parameters.query = "abc";
+            filter.parameters.allowedTypes = ["a", "b"];
+            filter.parameters.allowedGrades = [null, "1", "2"];
+            filter.parameters.requiredTags = ["a", "b", "c"];
+            filter.parameters.forbiddenGrades = ["d", "e"];
             filter.clear();
             filter.cleared.should.be.true;
           });

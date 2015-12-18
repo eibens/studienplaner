@@ -1,21 +1,18 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="x-course-filter-parameter-behavior.html">
+<link rel="import" href="../data-model/data-model.html">
 
 <script>
   var App = App || {};
-  App.CourseFilterBehaviorImpl = {
-
-    /**
-     * Fired when any filter parameter changes.
-     *
-     * @event changed
-     */
+  App.CourseFilterBehavior = {
 
     properties: {
 
-      /**
-       * Indicates that all filter parameters are cleared.
-       */
+      parameters: {
+        type: Object,
+        value: new CourseCriteria(),
+        notify: true
+      },
+
       cleared: {
         type: Boolean,
         readOnly: true,
@@ -25,42 +22,31 @@
     },
 
     observers: [
-      "_changed(query, allowedTypes.*, allowedGrades.*, requiredTags.*, forbiddenTags.*)",
-      "_changed(query)"
+      "_changed(parameters.*)"
     ],
 
-    /**
-     * Clears all parameters.
-     */
     clear: function () {
       if (this.cleared) return;
-      this.query = "";
-      this.allowedTypes = [];
-      this.allowedGrades = [];
-      this.requiredTags = [];
-      this.forbiddenTags = [];
+      this.parameters = new CourseCriteria();
     },
 
-    _changed: function () {
-      this._setCleared(!this._isNotCleared());
-      this.fire("change");
+    _changed: function (parametersChange) {
+      var cleared = this._isCleared(parametersChange.base);
+      if (this.cleared && cleared) return;
+      this._setCleared(cleared);
     },
 
-    _isNotCleared: function () {
-      return !!this.query && this.query.length > 0 ||
-        this._isNonEmptyArray(this.allowedTypes) ||
-        this._isNonEmptyArray(this.allowedGrades) ||
-        this._isNonEmptyArray(this.requiredTags) ||
-        this._isNonEmptyArray(this.forbiddenTags);
+    _isCleared: function (params) {
+      return !params ||
+        params.query.length == 0 &&
+        params.allowedTypes.length == 0 &&
+        params.allowedGrades.length == 0 &&
+        params.requiredTags.length == 0 &&
+        params.forbiddenTags.length == 0;
     },
 
     _isNonEmptyArray: function (object) {
       return (object instanceof Array) && object.length > 0;
     }
   };
-
-  App.CourseFilterBehavior = [
-    App.CourseFilterBehaviorImpl,
-    App.CourseFilterParameterBehavior
-  ];
 </script>

@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="x-course-filter-behavior.html">
-<link rel="import" href="../data-model/data-model.html">
 
 <dom-module id="x-course-filter">
   <script>
@@ -26,17 +25,20 @@
        */
       test: function (course) {
         if (!course) course = {};
-        return this._testQuery(course, this.query) &&
-            this._testWhiteList(course.type, this.allowedTypes) &&
-            this._testWhiteList(this._computeGrade(course, this.semester), this.allowedGrades) &&
-            this._testRequiredTags(course.tags, this.requiredTags) &&
-            this._testForbiddenTags(course.tags, this.forbiddenTags);
+        var params = this.parameters;
+        if (!params) return true;
+        return this._testQuery(course.title, params.query) &&
+            this._testWhiteList(course.type, params.allowedTypes) &&
+            this._testWhiteList(this._computeGrade(course, this.semester), params.allowedGrades) &&
+            this._testRequiredTags(course.tags, params.requiredTags) &&
+            this._testForbiddenTags(course.tags, params.forbiddenTags);
       },
 
-      _testQuery: function (course, query) {
+      _testQuery: function (title, query) {
         if (!query) return true;
-        var title = (course.title ? course.title : "").toLowerCase();
-        query = this.query.trim().toLowerCase();
+        if (!title) title = "";
+        title = title.toLowerCase();
+        query = query.trim().toLowerCase();
         return title.indexOf(query) >= 0;
       },
 
