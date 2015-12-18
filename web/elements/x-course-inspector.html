@@ -47,36 +47,34 @@
         attendances="[[course.attendances]]">
       </x-course-attendances>
 
-      <main>
-        <paper-button
-          class="add"
-          on-tap="_handleAddAttendance">
-          + Note hinzuf&uuml;gen
-        </paper-button>
-        <paper-input
-          label="Kurstyp"
-          value="{{course.type}}"
-          maxlength="2"
-          char-counter>
-        </paper-input>
-        <paper-textarea
-          label="Kurstitel"
-          value="{{course.title}}"
-          maxlength="80"
-          char-counter>
-        </paper-textarea>
-        <paper-input
-          label="ECTS"
-          value="{{course.credits}}"
-          type="number"
-          min="0.0"
-          max="30.0"
-          step="0.1">
-        </paper-input>
-        <x-tags
-          tags="{{course.tags}}">
-        </x-tags>
-      </main>
+      <paper-button
+        class="add"
+        on-tap="_handleAddAttendance">
+        + Note hinzuf&uuml;gen
+      </paper-button>
+      <paper-input
+        label="Kurstyp"
+        value="{{course.type}}"
+        maxlength="2"
+        char-counter>
+      </paper-input>
+      <paper-textarea
+        label="Kurstitel"
+        value="{{course.title}}"
+        maxlength="80"
+        char-counter>
+      </paper-textarea>
+      <paper-input
+        label="ECTS"
+        value="{{course.credits}}"
+        type="number"
+        min="0.0"
+        max="30.0"
+        step="0.1">
+      </paper-input>
+      <x-tags
+        tags="{{course.tags}}">
+      </x-tags>
     </x-inspector>
 
   </template>
