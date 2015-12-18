@@ -8,7 +8,7 @@
 
     <link rel="import" href="../../../bower_components/polymer/polymer.html">
     <link rel="import" href="../../../bower_components/test-fixture/test-fixture.html">
-    <link rel="import" href="../x-course-filter-behavior.html">
+    <link rel="import" href="../x-filter-behavior.html">
   </head>
   <body>
     <dom-module id="test-course-filter">
@@ -17,7 +17,7 @@
           Polymer({
             is: "test-course-filter",
             behaviors: [
-              App.CourseFilterBehavior
+              App.FilterBehavior
             ]
           });
         });
@@ -33,7 +33,7 @@
     <script>
       chai.should();
 
-      describe("x-course-filter-behaviour", function () {
+      describe("x-filter-behaviour", function () {
         var filter;
         beforeEach(function() {
           filter = fixture('basic');
