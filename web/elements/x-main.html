@@ -8,7 +8,6 @@
 <link rel="import" href="data-model/data-model.html">
 <link rel="import" href="data-manager.html">
 <link rel="import" href="x-browser.html">
-<link rel="import" href="x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="x-course-inspector.html">
 <link rel="import" href="x-attendance-inspector.html">
 <link rel="import" href="x-toolbar.html">
@@ -78,24 +77,16 @@
         class="left"
         id="organizer"
         courses="[[profile.courses]]"
-        query="{{query}}"
         semester="{{semester}}"
-        allowed-types="{{allowedTypes}}"
-        allowed-grades="{{allowedGrades}}"
-        required-tags="{{requiredTags}}"
-        forbidden-tags="{{forbiddenTags}}">
+        parameters="{{filter}}">
       </x-organizer>
 
       <x-browser
         class="content"
         class="main"
         courses="{{profile.courses}}"
-        query="{{query}}"
         semester="{{semester}}"
-        allowed-types="{{allowedTypes}}"
-        allowed-grades="{{allowedGrades}}"
-        required-tags="{{requiredTags}}"
-        forbidden-tags="{{forbiddenTags}}"
+        filter="{{filter}}"
         on-reset-filter="_resetFilter">
       </x-browser>
 
@@ -124,10 +115,6 @@
     Polymer({
       is: "x-main",
 
-      behaviors: [
-        App.CourseFilterParameterBehavior
-      ],
-
       properties: {
         profile: {
           type: Object
@@ -145,6 +132,9 @@
           type: Object,
           value: null,
           notify: true
+        },
+        filter: {
+          type: Object
         },
         _storageDirty: {
           type: Boolean

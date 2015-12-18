@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="x-course-list-item.html">
 <link rel="import" href="x-stats/x-stats.html">
 <link rel="import" href="x-semester-picker.html">
@@ -98,14 +97,10 @@
         hidden$="[[_empty]]"
         courses="[[courses]]"
         result="{{result}}"
+        filter="[[filter]]"
         filter-cleared="{{_filterCleared}}"
         sort-mode="[[_sortMode]]"
-        query="{{query}}"
-        semester="{{semester}}"
-        allowed-types="{{allowedTypes}}"
-        allowed-grades="{{allowedGrades}}"
-        required-tags="{{requiredTags}}"
-        forbidden-tags="{{forbiddenTags}}">
+        semester="{{semester}}">
       </x-course-list>
     </main>
   </template>
@@ -113,10 +108,6 @@
   <script>
     Polymer({
       is: "x-browser",
-
-      behaviors: [
-        App.CourseFilterParameterBehavior
-      ],
 
       properties: {
         courses: {
@@ -127,6 +118,11 @@
         semester: {
           type: Object,
           value: null,
+          notify: true
+        },
+
+        filter: {
+          type: Object,
           notify: true
         },
 

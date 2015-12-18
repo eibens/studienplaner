@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../x-course-filter/x-course-filter.html">
-<link rel="import" href="../x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="../x-course-filter/x-course-semester-filter.html">
 <link rel="import" href="../x-course-filter/x-course-sort.html">
 
@@ -11,11 +10,7 @@
       cleared="{{filterCleared}}"
       query="{{query}}"
       semester="{{semester}}"
-      allowed-types="{{allowedTypes}}"
-      allowed-grades="{{allowedGrades}}"
-      required-tags="{{requiredTags}}"
-      forbidden-tags="{{forbiddenTags}}"
-      on-change="_filterChanged">
+      parameters="[[filter]]">
     </x-course-filter>
 
     <x-course-semester-filter
@@ -47,10 +42,6 @@
     Polymer({
       is: "x-course-list",
 
-      behaviors: [
-        App.CourseFilterParameterBehavior
-      ],
-
       properties: {
 
         /**
@@ -66,6 +57,10 @@
           value: null,
           notify: true,
           observer: "_filterChanged"
+        },
+
+        filter: {
+          type: Object
         },
 
         sortMode: {
@@ -93,6 +88,7 @@
 
       observers: [
         "_render(sortMode)",
+        "_filterChanged(filter.*)",
         "_handleCoursesChanged(courses.*)"
       ],
 
