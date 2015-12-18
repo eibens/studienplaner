@@ -17,6 +17,11 @@
          */
         mode: {
           type: String
+        },
+
+        semester: {
+          type: Object,
+          value: null
         }
       },
 
@@ -53,12 +58,14 @@
       },
 
       _compareGrade: function (a, b) {
-        if (a.grade == b.grade) return 0;
-        if (a.grade == "none") return 1;
-        if (b.grade == "none") return -1;
-        if (!a.grade) return 1;
-        if (!b.grade) return -1;
-        return a.grade.toString().localeCompare(b.grade.toString());
+        var latestA = this._getLatestAttendance(a.attendances, this.semester);
+        var latestB = this._getLatestAttendance(b.attendances, this.semester);
+        if (!latestA && !latestB) return 0;
+        if (!latestA) return 1;
+        if (!latestB) return -1;
+        if (!latestA.grade) return 1;
+        if (!latestB.grade) return -1;
+        return latestA.grade.value - latestB.grade.value;
       },
 
       _compareCredits: function (a, b) {
@@ -67,12 +74,26 @@
 
       _compare: function (a, b, comparators) {
         for (var i = 0; i < comparators.length; i++) {
-          var delta = comparators[i](a, b);
+          var delta = comparators[i].call(this, a, b);
           if (delta) {
             return delta;
           }
         }
         return 0;
+      },
+
+      _getLatestAttendance: function (attendances, semester) {
+        if (!attendances || attendances.length == 0) {
+          return null;
+        }
+        return attendances.filter(function (item) {
+          if (!semester) return true;
+          return Semester.compare(item.semester, semester) <= 0;
+        }).sort(function (a, b) {
+          a = a || {};
+          b = b || {};
+          return -Semester.compare(a.semester, b.semester);
+        })[0];
       }
     });
   </script>
