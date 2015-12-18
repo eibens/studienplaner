@@ -107,7 +107,7 @@
     </section>
 
     <section>
-      <input value="{{query::input}}" placeholder="Suchtext"/>
+      <input value="{{parameters.query::input}}" placeholder="Suchtext"/>
     </section>
 
     <section>
@@ -120,7 +120,7 @@
       <x-course-type-filter
         hidden$="[[_empty(types.*)]]"
         items="[[types]]"
-        selected="{{allowedTypes}}">
+        selected="{{parameters.allowedTypes}}">
       </x-course-type-filter>
     </section>
 
@@ -134,7 +134,7 @@
       <x-grade-filter
         hidden$="[[_empty(grades.*)]]"
         items="[[grades]]"
-        selected="{{allowedGrades}}">
+        selected="{{parameters.allowedGrades}}">
       </x-grade-filter>
     </section>
 
@@ -148,8 +148,8 @@
       <x-tag-filter
         hidden$="[[_empty(tags.*)]]"
         items="[[tags]]"
-        required="{{requiredTags}}"
-        forbidden="{{forbiddenTags}}">
+        required="{{parameters.requiredTags}}"
+        forbidden="{{parameters.forbiddenTags}}">
       </x-tag-filter>
     </section>
   </template>
