@@ -160,6 +160,11 @@
           observer: "_openedChanged"
         },
 
+        profile: {
+          type: Object,
+          readOnly: true
+        },
+
         _path: {
           type: Array,
           value: []
@@ -181,7 +186,8 @@
         },
 
         _profileData: {
-          type: Object
+          type: String,
+          observer: "_profileDataChanged"
         },
 
         _profileLoaded: {
@@ -229,8 +235,21 @@
           this.clear();
         } else {
           if (this.$.dialog.closingReason.confirmed) {
-            this.fire("")
+            this.fire("confirm", {
+              bubbles: false
+            });
           }
+        }
+      },
+
+      _profileDataChanged: function (data) {
+        var deserializer = new Deserializer();
+        try {
+          var profile = deserializer.deserialize(data);
+          this._setProfile(profile);
+          console.log(profile);
+        } catch (error) {
+          window.alert("Ein Fehler ist aufgetreten: " + error.description);
         }
       },
 

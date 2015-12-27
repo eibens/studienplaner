@@ -71,7 +71,8 @@
     <x-import-browser
       id="import"
       url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/programs"
-      ping-url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/ping">
+      ping-url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/ping"
+      on-confirm="_handleRemoteImport">
     </x-import-browser>
 
     <x-layout
@@ -219,6 +220,14 @@
 
       _handleBrowse: function () {
         this.$.import.open();
+      },
+
+      _handleRemoteImport: function () {
+        if (!this._profileEmpty) {
+          var confirm = window.confirm("Willst du dein derzeitiges Profil wirklich überschreiben?");
+          if (!confirm) return;
+        }
+        this.profile = this.$.import.profile;
       },
 
       _handleLeftOpenChanged: function (event) {
