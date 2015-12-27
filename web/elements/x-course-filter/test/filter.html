@@ -23,6 +23,7 @@
         var filter;
         beforeEach(function() {
           filter = fixture('basic');
+          filter.clear();
         });
 
         describe("'test' method", function () {
@@ -38,27 +39,27 @@
               filter.test({ title: "Computer Graphics" }).should.be.true;
             });
             it("handles null as parameter", function () {
-              filter.query = null;
+              filter.parameters.query = null;
               filter.test({ title: "Computer Graphics" }).should.be.true;
             });
             it("handles null as input", function () {
-              filter.query = "Math";
+              filter.parameters.query = "Math";
               filter.test({ title: null }).should.be.false;
             });
             it("rejects course titles that don't contain the query", function () {
-              filter.query = "Math";
+              filter.parameters.query = "Math";
               filter.test({ title: "Visual Computing" }).should.be.false;
             });
             it("accepts course titles that contain the query", function () {
-              filter.query = "Math";
+              filter.parameters.query = "Math";
               filter.test({ title: "Discrete Mathematics" }).should.be.true;
             });
             it("ignores letter case of query and course title", function () {
-              filter.query = "mATH";
+              filter.parameters.query = "mATH";
               filter.test({ title: "Discrete Mathematics" }).should.be.true;
             });
             it("trims whitespace from query", function () {
-              filter.query = "\n math \t";
+              filter.parameters.query = "\n math \t";
               filter.test({ title: "Mathematics" }).should.be.true;
             });
           });
@@ -68,19 +69,19 @@
               filter.test({ type: "VO" }).should.be.true;
             });
             it("handles null as parameter", function () {
-              filter.allowedTypes = null;
+              filter.parameters.allowedTypes = null;
               filter.test({ type: "VO" }).should.be.true;
             });
             it("handles null as input", function () {
-              filter.allowedTypes = [ "VU" ];
+              filter.parameters.allowedTypes = [ "VU" ];
               filter.test({ type: null }).should.be.false;
             });
             it("rejects course types that are not allowed", function () {
-              filter.allowedTypes = [ "VU" ];
+              filter.parameters.allowedTypes = [ "VU" ];
               filter.test({ type: "UE" }).should.be.false;
             });
             it("accepts course types that are allowed", function () {
-              filter.allowedTypes = [ "VU" ];
+              filter.parameters.allowedTypes = [ "VU" ];
               filter.test({ type: "VU" }).should.be.true;
             });
           });
@@ -94,7 +95,7 @@
               }).should.be.true;
             });
             it("handles null as parameter", function () {
-              filter.allowedGrades = null;
+              filter.parameters.allowedGrades = null;
               filter.test({
                 attendances: [
                   { semester: Semester.summer(2015), grade: "3" }
@@ -102,11 +103,11 @@
               }).should.be.true;
             });
             it("handles course without attendances", function () {
-              filter.allowedGrades = [ "1", "2" ];
+              filter.parameters.allowedGrades = [ "1", "2" ];
               filter.test({ attendances: null }).should.be.false;
             });
             it("rejects courses with grades that are not allowed", function () {
-              filter.allowedGrades = [ "1", "2" ];
+              filter.parameters.allowedGrades = [ "1", "2" ];
               filter.test({
                 attendances: [
                   { semester: Semester.summer(2015), grade: "3" }
@@ -114,7 +115,7 @@
               }).should.be.false;
             });
             it("only accepts if grade of most recent attendance", function () {
-              filter.allowedGrades = [ "5" ];
+              filter.parameters.allowedGrades = [ "5" ];
               filter.test({
                 attendances: [
                   { semester: Semester.summer(2014), grade: "5" },
@@ -123,7 +124,7 @@
               }).should.be.false;
             });
             it("accepts courses with grades that are allowed", function () {
-              filter.allowedGrades = [ "1", "2" ];
+              filter.parameters.allowedGrades = [ "1", "2" ];
               filter.test({
                 attendances: [
                   { semester: Semester.summer(2015), grade: "2" }
@@ -131,7 +132,7 @@
               }).should.be.true;
             });
             it("does not throw if attendances are null", function () {
-              filter.allowedGrades = [ "1", "2" ];
+              filter.parameters.allowedGrades = [ "1", "2" ];
               filter.test({
                 attendances: [ null, null ]
               }).should.be.false;

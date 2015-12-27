@@ -18,10 +18,14 @@
       transition: background 0.2s;
     }
 
+    paper-ripple {
+      color: var(--default-primary-color);
+    }
+
     /* hover effects not needed on mobile */
     @media (min-width: 768px) {
       :host(:hover) {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--highlight-color);
       }
     }
 
@@ -32,7 +36,7 @@
       transition: background 0.2s;
     }
     x-drop-target[dropping] {
-      background: rgba(0, 0, 0, 0.2);
+      background: var(--selection-color);
     }
     x-course-avatar {
       width: 40px;
@@ -86,9 +90,9 @@
       <span class="unit">ECTS</span>
     </div>
     <x-grade-avatar
-      grade="[[_computeGrade(course.attendances.*)]]"
+      grade="[[_computeGrade(course.attendances.*, semester)]]"
       size="small"
-      mode="[[_computeGradeMode(course.attendances.*)]]">
+      mode="[[_computeGradeMode(course.attendances.*, semester)]]">
     </x-grade-avatar>
     <x-drop-target
       type="application/x-tag"
@@ -102,6 +106,11 @@
 
       properties: {
         course: {
+          type: Object,
+          value: null
+        },
+
+        semester: {
           type: Object,
           value: null
         }
@@ -132,21 +141,31 @@
         return !isNaN(number) ? number.toFixed(1) : "0.0";
       },
 
-      _computeGrade: function (change) {
-        var attendances = change.base;
+      _computeGrade: function (attendancesChange, semester) {
+        var attendances = attendancesChange.base;
         if (!(attendances instanceof Array)) return null;
-        var latest = this._getLatestAttendance(attendances);
+        var filtered = this._getAttendancesUpToSemester(attendances, semester);
+        var latest = this._getLatestAttendance(filtered);
         if (!latest) return null;
         if (!latest.grade) return null;
         return latest.grade.value.toString();
       },
 
-      _computeGradeMode: function (change) {
-        var attendances = change.base;
+      _computeGradeMode: function (attendancesChange, semester) {
+        var attendances = attendancesChange.base;
         if (!(attendances instanceof Array)) return "placeholder";
-        if (attendances.length == 0) return "placeholder";
-        if (attendances.length > 1) return "multi";
+        var filtered = this._getAttendancesUpToSemester(attendances, semester);
+        if (filtered.length == 0) return "placeholder";
+        if (filtered.length > 1) return "multi";
         return null;
+      },
+
+      _getAttendancesUpToSemester: function (attendances, semester) {
+        if (!attendances) return [];
+        return attendances.filter(function (item) {
+          if (!semester) return true;
+          return Semester.compare(item.semester, semester) <= 0;
+        });
       },
 
       _getLatestAttendance: function (attendances) {

@@ -115,6 +115,27 @@ Semester.prototype = {
   },
 
   /**
+   * @returns {number}
+   */
+  get integerId() {
+    return this.year * 2 + (this.isWinter ? 1 : 0);
+  },
+
+  /**
+   * Calculates the number of semesters between this semester to another.
+   *
+   * Returns 0 if the other semester is equal to this. Returns a negative number
+   * if this semester is after the other.
+   *
+   * @param {Semester} other
+   * @returns {number}
+   */
+  distanceTo: function (other) {
+    if (!(other instanceof Semester)) throw new Error();
+    return other.integerId - this.integerId;
+  },
+
+  /**
    * @param {Semester|null} other
    * @returns {boolean}
    */

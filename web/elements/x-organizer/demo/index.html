@@ -43,12 +43,8 @@
         <h1>Light Theme</h1>
         <x-organizer
           id="light"
-          query="{{query}}"
           semester="{{semester}}"
-          allowed-types="{{allowedTypes}}"
-          allowed-grades="{{allowedGrades}}"
-          required-tags="{{requiredTags}}"
-          forbidden-tags="{{forbiddenTags}}"
+          parameters="{{parameters}}"
           cleared="{{cleared}}">
         </x-organizer>
       </section>
@@ -57,12 +53,8 @@
         <x-organizer
           id="dark"
           dark
-          query="{{query}}"
           semester="{{semester}}"
-          allowed-types="{{allowedTypes}}"
-          allowed-grades="{{allowedGrades}}"
-          required-tags="{{requiredTags}}"
-          forbidden-tags="{{forbiddenTags}}"
+          parameters="{{parameters}}"
           cleared="{{cleared}}">
         </x-organizer>
       </section>
@@ -87,14 +79,14 @@
           </li>
           <li>
             <span>query:</span>
-            <span>[[query]]</span>
+            <span>[[parameters.query]]</span>
           </li>
           <li>
             <span>allowed-types:</span>
             <ul>
               <template
                 is="dom-repeat"
-                items="[[allowedTypes]]">
+                items="[[parameters.allowedTypes]]">
                 <li>[[item]]</li>
               </template>
             </ul>
@@ -104,7 +96,7 @@
             <ul>
               <template
                 is="dom-repeat"
-                items="[[allowedGrades]]">
+                items="[[parameters.allowedGrades]]">
                 <li>
                   <span>[[item]]</span>
                 </li>
@@ -116,7 +108,7 @@
             <ul>
               <template
                 is="dom-repeat"
-                items="[[requiredTags]]">
+                items="[[parameters.requiredTags]]">
                 <li>[[item]]</li>
               </template>
             </ul>
@@ -126,7 +118,7 @@
             <ul>
               <template
                 is="dom-repeat"
-                items="[[forbiddenTags]]">
+                items="[[parameters.forbiddenTags]]">
                 <li>[[item]]</li>
               </template>
             </ul>
@@ -140,7 +132,6 @@
         setup(document.getElementById("dark"));
       }
       function setup(element) {
-
         element.courses = [{
           "type": "VO",
           "tags": ["Red"]

@@ -35,8 +35,11 @@
       @apply(--paper-font-subhead);
       color: var(--secondary-text-color);
     }
-    main > * {
-      height: 64px;
+    x-grade-picker {
+      margin: 8px 0;
+    }
+    x-semester-picker {
+      margin: 8px 0;
     }
   </style>
 
@@ -65,14 +68,12 @@
         <div class="season">[[_formatSeason(attendance.semester.isWinter)]]</div>
       </header>
 
-      <main>
-        <x-grade-picker
-          value="{{attendance.grade}}">
-        </x-grade-picker>
-        <x-semester-picker
-          value="{{attendance.semester}}">
-        </x-semester-picker>
-      </main>
+      <x-grade-picker
+        value="{{attendance.grade}}">
+      </x-grade-picker>
+      <x-semester-picker
+        value="{{attendance.semester}}">
+      </x-semester-picker>
     </x-inspector>
   </template>
 

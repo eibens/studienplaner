@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="x-course-filter-behavior.html">
-<link rel="import" href="../data-model/data-model.html">
+<link rel="import" href="x-filter-behavior.html">
 
 <dom-module id="x-course-filter">
   <script>
@@ -8,71 +7,43 @@
       is: "x-course-filter",
 
       behaviors: [
-        App.CourseFilterBehavior
+        App.FilterBehavior
       ],
 
-      /**
-       * Tests whether the course passes the filter using the current parameters.
-       *
-       * @param course
-       * @returns boolean
-       */
+      properties: {
+        semester: {
+          type: Object,
+          value: null
+        }
+      },
+
       test: function (course) {
         if (!course) course = {};
-        return this._testQuery(course, this.query) &&
-            this._testWhiteList(course.type, this.allowedTypes) &&
-            this._testWhiteList(this._computeGrade(course), this.allowedGrades) &&
-            this._testRequiredTags(course.tags, this.requiredTags) &&
-            this._testForbiddenTags(course.tags, this.forbiddenTags);
+        var params = this.parameters;
+        if (!params) return true;
+        return this.testTitle(course.title) &&
+            this.testType(course.type) &&
+            this.testGrade(this._computeGrade(course, this.semester)) &&
+            this.testTags(course.tags);
       },
 
-      _testQuery: function (course, query) {
-        if (!query) return true;
-        var title = (course.title ? course.title : "").toLowerCase();
-        query = this.query.trim().toLowerCase();
-        return title.indexOf(query) >= 0;
-      },
-
-      _testWhiteList: function (value, list) {
-        var active = list instanceof Array && list.length > 0;
-        if (!active) return true;
-        return list.indexOf(value) >= 0;
-      },
-
-      _testRequiredTags: function (tags, required) {
-        tags = tags || [];
-        required = required || [];
-        var match = true;
-        required.forEach(function (required) {
-          match = match && tags.indexOf(required) >= 0;
-        });
-        return match;
-      },
-
-      _testForbiddenTags: function (tags, forbidden) {
-        tags = tags || [];
-        forbidden = forbidden || [];
-        var match = true;
-        tags.forEach(function (tag) {
-          match = match && forbidden.indexOf(tag) < 0;
-        });
-        return match;
-      },
-
-      _computeGrade: function (course) {
+      _computeGrade: function (course, semester) {
         if (!course.attendances || course.attendances.length == 0) {
           return "none";
         }
-        var latestAttendance = this._getLatestAttendance(course) || {};
+        var latestAttendance = this._getLatestAttendance(course, semester) || {};
         var grade = latestAttendance.grade || null;
         return grade ? grade.toString() : null;
       },
 
-      _getLatestAttendance: function (course) {
+      _getLatestAttendance: function (course, semester) {
         if (!course.attendances || course.attendances.length == 0) {
           return null;
         }
-        return course.attendances.sort(function (a, b) {
+        return course.attendances.filter(function (item) {
+          if (!semester) return true;
+          return Semester.compare(item.semester, semester) <= 0;
+        }).sort(function (a, b) {
           a = a || {};
           b = b || {};
           return -Semester.compare(a.semester, b.semester);

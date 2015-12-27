@@ -1,0 +1,103 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../data-model/data-model.html">
+
+<!-- FIXME: Vulcanized app does not find CourseCriteria if we don't include it here directly -->
+<script src="../data-model/src/CourseCriteria.js"></script>
+
+<script>
+  var App = App || {};
+  App.FilterBehavior = {
+
+    properties: {
+
+      parameters: {
+        type: Object,
+        value: new CourseCriteria(),
+        notify: true
+      },
+
+      cleared: {
+        type: Boolean,
+        readOnly: true,
+        value: true,
+        notify: true
+      }
+    },
+
+    observers: [
+      "_changed(parameters.*)"
+    ],
+
+    clear: function () {
+      if (this.cleared) return;
+      this.parameters = new CourseCriteria();
+    },
+
+    testTitle: function (title) {
+      var query = this.parameters.query;
+      if (!query) return true;
+      if (!title) title = "";
+      title = title.toLowerCase();
+      query = query.trim().toLowerCase();
+      return title.indexOf(query) >= 0;
+    },
+
+    testType: function (type) {
+      return this._testWhiteList(type, this.parameters.allowedTypes);
+    },
+
+    testGrade: function (grade) {
+      return this._testWhiteList(grade, this.parameters.allowedGrades);
+    },
+
+    testTags: function (tags) {
+      return this._testRequiredTags(tags, this.parameters.requiredTags) &&
+          this._testForbiddenTags(tags, this.parameters.forbiddenTags);
+    },
+
+    _testWhiteList: function (value, list) {
+      var active = list instanceof Array && list.length > 0;
+      if (!active) return true;
+      return list.indexOf(value) >= 0;
+    },
+
+    _testRequiredTags: function (tags, required) {
+      tags = tags || [];
+      required = required || [];
+      var match = true;
+      required.forEach(function (required) {
+        match = match && tags.indexOf(required) >= 0;
+      });
+      return match;
+    },
+
+    _testForbiddenTags: function (tags, forbidden) {
+      tags = tags || [];
+      forbidden = forbidden || [];
+      var match = true;
+      tags.forEach(function (tag) {
+        match = match && forbidden.indexOf(tag) < 0;
+      });
+      return match;
+    },
+
+    _changed: function (parametersChange) {
+      var cleared = this._isCleared(parametersChange.base);
+      if (this.cleared && cleared) return;
+      this._setCleared(cleared);
+    },
+
+    _isCleared: function (params) {
+      return !params ||
+        params.query.length == 0 &&
+        params.allowedTypes.length == 0 &&
+        params.allowedGrades.length == 0 &&
+        params.requiredTags.length == 0 &&
+        params.forbiddenTags.length == 0;
+    },
+
+    _isNonEmptyArray: function (object) {
+      return (object instanceof Array) && object.length > 0;
+    }
+  };
+</script>

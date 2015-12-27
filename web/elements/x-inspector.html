@@ -40,11 +40,14 @@
     :host ::content nav {
       @apply(--layout-vertical);
     }
-    :host ::content main {
+    section {
       @apply(--layout-vertical);
       @apply(--layout-flex);
       box-sizing: border-box;
       padding: 16px;
+    }
+    section ::content > * {
+      flex-shrink: 0;
     }
   </style>
 
@@ -69,9 +72,9 @@
         select=".nav, x-inspector-link">
       </content>
     </nav>
-    <content
-      select="main">
-    </content>
+    <section>
+      <content></content>
+    </section>
   </template>
 
   <script>

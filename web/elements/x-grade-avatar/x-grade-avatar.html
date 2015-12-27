@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="x-grade-colors.html">
 
 <dom-module id="x-grade-avatar">
   <style>
@@ -46,25 +47,12 @@
     :host {
       border: 3px solid var(--disabled-text-color);
     }
-    :host([grade="1"]) {
-      border: none !important;
-      background: rgb(118, 168, 63);
-    }
-    :host([grade="2"]) {
-      border: none !important;
-      background: rgb(169, 197, 58);
-    }
-    :host([grade="3"]) {
-      border: none !important;
-      background: rgb(213, 208, 43);
-    }
-    :host([grade="4"]) {
-      border: none !important;
-      background: rgb(225, 186, 30);
-    }
+    :host([grade="1"]),
+    :host([grade="2"]),
+    :host([grade="3"]),
+    :host([grade="4"]),
     :host([grade="5"]) {
       border: none !important;
-      background: rgb(242, 150, 75);
     }
 
     /* mode */
@@ -95,6 +83,9 @@
   </style>
 
   <template>
+    <x-grade-colors
+      id="colors">
+    </x-grade-colors>
     <paper-ripple></paper-ripple>
     <span>[[_computeText(grade, mode)]]</span>
   </template>
@@ -114,7 +105,8 @@
         grade: {
           type: String,
           value: null,
-          reflectToAttribute: true
+          reflectToAttribute: true,
+          observer: "_gradeChanged"
         },
 
         /**
@@ -162,6 +154,10 @@
           return "";
         }
         return grade;
+      },
+
+      _gradeChanged: function (grade) {
+        this.style.background = this.$.colors.getColor(grade);
       }
     });
   </script>

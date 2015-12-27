@@ -5,7 +5,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
-<link rel="import" href="../x-course-filter/x-course-filter-behavior.html">
+<link rel="import" href="../x-course-filter/x-filter-behavior.html">
 <link rel="import" href="../data-model/data-model.html">
 <link rel="import" href="x-course-type-filter.html">
 <link rel="import" href="x-grade-filter.html">
@@ -107,7 +107,7 @@
     </section>
 
     <section>
-      <input value="{{query::input}}" placeholder="Suchtext"/>
+      <input value="{{parameters.query::input}}" placeholder="Suchtext"/>
     </section>
 
     <section>
@@ -120,7 +120,7 @@
       <x-course-type-filter
         hidden$="[[_empty(types.*)]]"
         items="[[types]]"
-        selected="{{allowedTypes}}">
+        selected="{{parameters.allowedTypes}}">
       </x-course-type-filter>
     </section>
 
@@ -134,7 +134,7 @@
       <x-grade-filter
         hidden$="[[_empty(grades.*)]]"
         items="[[grades]]"
-        selected="{{allowedGrades}}">
+        selected="{{parameters.allowedGrades}}">
       </x-grade-filter>
     </section>
 
@@ -148,8 +148,8 @@
       <x-tag-filter
         hidden$="[[_empty(tags.*)]]"
         items="[[tags]]"
-        required="{{requiredTags}}"
-        forbidden="{{forbiddenTags}}">
+        required="{{parameters.requiredTags}}"
+        forbidden="{{parameters.forbiddenTags}}">
       </x-tag-filter>
     </section>
   </template>
@@ -159,7 +159,7 @@
       is: "x-organizer",
 
       behaviors: [
-        App.CourseFilterBehavior
+        App.FilterBehavior
       ],
 
       properties: {
@@ -235,19 +235,26 @@
       _computeGrades: function (coursesChange) {
         var courses = coursesChange.base;
         if (!(courses instanceof Array)) return [];
-        var grades = [];
-        courses.map(function (course) {
-          var grade = course.grade !== undefined ? course.grade : "none";
-          if (grade) {
-            if (["1", "2", "3", "4", "5", "none"].indexOf(grade.toString()) < 0) {
-              grade = null;
-            }
+        return courses.reduce(function (grades, course) {
+          if (course.attendances.length == 0) {
+            grades.push("none");
+          } else {
+            course.attendances.forEach(function (attendance) {
+              if (attendance.grade) {
+                grades.push(attendance.grade.value.toString());
+              } else {
+                grades.push(null);
+              }
+            });
           }
+          return grades;
+        }, []).reduce(function (grades, grade) {
+          // Select distinct grades.
           if (grades.indexOf(grade) < 0) {
             grades.push(grade);
           }
-        });
-        return grades;
+          return grades;
+        }, []);
       },
 
       _computeTags: function (coursesChange) {

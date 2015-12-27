@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../x-course-filter/x-course-filter.html">
-<link rel="import" href="../x-course-filter/x-course-filter-parameter-behavior.html">
 <link rel="import" href="../x-course-filter/x-course-semester-filter.html">
+<link rel="import" href="../x-course-filter/x-course-sort.html">
 
 <dom-module id="x-course-list">
   <template>
@@ -10,17 +10,19 @@
       cleared="{{filterCleared}}"
       query="{{query}}"
       semester="{{semester}}"
-      allowed-types="{{allowedTypes}}"
-      allowed-grades="{{allowedGrades}}"
-      required-tags="{{requiredTags}}"
-      forbidden-tags="{{forbiddenTags}}"
-      on-change="_filterChanged">
+      parameters="[[filter]]">
     </x-course-filter>
 
     <x-course-semester-filter
       id="semesterFilter"
       semester="{{semester}}">
     </x-course-semester-filter>
+
+    <x-course-sort
+      id="sort"
+      mode="[[sortMode]]"
+      semester="[[semester]]">
+    </x-course-sort>
 
     <template
       id="repeat"
@@ -30,7 +32,8 @@
       sort="_sort"
       observe="type title credits attendances.*">
       <x-course-list-item
-        course="[[item]]">
+        course="[[item]]"
+        semester="[[semester]]">
       </x-course-list-item>
     </template>
   </template>
@@ -38,10 +41,6 @@
   <script>
     Polymer({
       is: "x-course-list",
-
-      behaviors: [
-        App.CourseFilterParameterBehavior
-      ],
 
       properties: {
 
@@ -60,14 +59,10 @@
           observer: "_filterChanged"
         },
 
-        /**
-         * Token indicating the main sorting attribute.
-         *
-         * Per default it sorts by title, type. There are two other modes:
-         *
-         * - `credits` sorts by credits, grade, title, type
-         * - `grade` sorts by grade, credits, title, type
-         */
+        filter: {
+          type: Object
+        },
+
         sortMode: {
           type: String,
           value: 'title',
@@ -93,6 +88,7 @@
 
       observers: [
         "_render(sortMode)",
+        "_filterChanged(filter.*)",
         "_handleCoursesChanged(courses.*)"
       ],
 
@@ -138,58 +134,7 @@
       },
 
       _sort: function (a, b) {
-        switch (this.sortMode) {
-          case "credits":
-            return this._compare(a, b, [
-              this._compareCredits,
-              this._compareGrade,
-              this._compareTitle,
-              this._compareType
-            ]);
-          case "grade":
-            return this._compare(a, b, [
-              this._compareGrade,
-              this._compareCredits,
-              this._compareTitle,
-              this._compareType
-            ]);
-          default:
-            return this._compare(a, b, [
-              this._compareTitle,
-              this._compareType
-            ]);
-        }
-      },
-
-      _compareTitle: function (a, b) {
-        return a.title.localeCompare(b.title);
-      },
-
-      _compareType: function (a, b) {
-        return a.type.localeCompare(b.type);
-      },
-
-      _compareGrade: function (a, b) {
-        if (a.grade == b.grade) return 0;
-        if (a.grade == "none") return 1;
-        if (b.grade == "none") return -1;
-        if (!a.grade) return 1;
-        if (!b.grade) return -1;
-        return a.grade.toString().localeCompare(b.grade.toString());
-      },
-
-      _compareCredits: function (a, b) {
-        return b.credits - a.credits;
-      },
-
-      _compare: function (a, b, comparators) {
-        for (var i = 0; i < comparators.length; i++) {
-          var delta = comparators[i](a, b);
-          if (delta) {
-            return delta;
-          }
-        }
-        return 0;
+        return this.$.sort.compare(a, b);
       }
     });
   </script>
