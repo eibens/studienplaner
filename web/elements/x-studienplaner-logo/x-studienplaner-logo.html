@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../x-studienplaner-icons/x-studienplaner-icons.html">
+
+<dom-module id="x-studienplaner-logo">
+  <style>
+    :root {
+      --studienplaner-green: #8bc34a;
+      --studienplaner-yellow: #ffeb3b;
+      --studienplaner-orange: #ff9800;
+      --studienplaner-red: #f44336;
+      --studienplaner-purple: #e91e63;
+      --studienplaner-blue: #009688;
+    }
+    iron-icon ::content .top {
+      fill: var(--studienplaner-yellow);
+    }
+    iron-icon ::content .top-right {
+      fill: var(--studienplaner-orange);
+    }
+    iron-icon ::content .bottom-right {
+      fill: var(--studienplaner-red);
+    }
+    iron-icon ::content .bottom {
+      fill: var(--studienplaner-purple);
+    }
+    iron-icon ::content .bottom-left {
+      fill: var(--studienplaner-blue);
+    }
+    iron-icon ::content .top-left {
+      fill: var(--studienplaner-green);
+    }
+  </style>
+
+  <template>
+    <iron-icon
+      icon="studienplaner:logo">
+    </iron-icon>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-studienplaner-logo"
+    });
+  </script>
+</dom-module>
