@@ -11,6 +11,7 @@
 <link rel="import" href="x-grade-filter.html">
 <link rel="import" href="x-organizer-item.html">
 <link rel="import" href="x-tag-filter.html">
+<link rel="import" href="../x-studienplaner-icons/x-studienplaner-icons.html">
 
 <dom-module id="x-organizer">
   <style>
@@ -84,6 +85,10 @@
     x-course-type-filter {
       padding-left: 16px;
     }
+
+    section.links iron-icon {
+      color: var(--secondary-text-color);
+    }
   </style>
 
   <template>
@@ -151,6 +156,30 @@
         required="{{parameters.requiredTags}}"
         forbidden="{{parameters.forbiddenTags}}">
       </x-tag-filter>
+    </section>
+
+    <section class="links">
+      <h1>Links</h1>
+      <x-organizer-item
+        text="Über Studienplaner"
+        url="http://studienplaner.at">
+        <iron-icon icon="studienplaner:logo"></iron-icon>
+      </x-organizer-item>
+      <x-organizer-item
+        text="Hilfe und Support"
+        url="http://studienplaner.at#feedback">
+        <iron-icon icon="help"></iron-icon>
+      </x-organizer-item>
+      <x-organizer-item
+        text="Feedback"
+        url="http://studienplaner.at#feedback">
+        <iron-icon icon="bug-report"></iron-icon>
+      </x-organizer-item>
+      <x-organizer-item
+        text="Source Code"
+        url="https://github.com/lukas-eibensteiner/studienplaner">
+        <iron-icon icon="code"></iron-icon>
+      </x-organizer-item>
     </section>
   </template>
 

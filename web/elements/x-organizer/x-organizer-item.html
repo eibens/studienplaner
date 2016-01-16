@@ -85,6 +85,20 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true
+        },
+
+        url: {
+          type: String
+        }
+      },
+
+      listeners: {
+        "tap": "_handleTap"
+      },
+
+      _handleTap: function () {
+        if (this.url) {
+          window.open(this.url, "_blank");
         }
       }
     });
