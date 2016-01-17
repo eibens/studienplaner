@@ -13,6 +13,10 @@
     </style>
   </head>
   <body unresolved>
+    <button
+      id="reset">
+      RESET
+    </button>
     <template
       is="dom-bind">
       <x-tag-filter
@@ -21,10 +25,6 @@
         required="{{required}}"
         forbidden="{{forbidden}}">
       </x-tag-filter>
-      <button
-        onclick="reset()">
-        RESET
-      </button>
       <p>Required tags:</p>
       <ul>
         <template
@@ -43,9 +43,9 @@
       </ul>
     </template>
     <script>
-      function reset() {
+      document.getElementById("reset").addEventListener("click", function () {
         document.getElementById("filter").clearAll();
-      }
+      });
     </script>
   </body>
 </html>

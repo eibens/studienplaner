@@ -31,7 +31,7 @@
         div:nth-child(7) { background: var(--paper-cyan-300); }
       </style>
 
-      <button onclick="jump()">JUMP</button>
+      <button id="jump">JUMP</button>
 
       <x-horizontal-scroll-box
         id="element"
@@ -47,9 +47,9 @@
       </x-horizontal-scroll-box>
 
       <script>
-        function jump() {
+        document.getElementById("jump").addEventListener("click", function () {
           document.getElementById("element").jumpTo(1000);
-        }
+        });
       </script>
     </template>
   </body>

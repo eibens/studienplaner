@@ -75,7 +75,7 @@ Course.prototype = {
   },
 
   /**
-   * @returns {Attendance}
+   * @returns {Attendance|null}
    */
   get latestAttendance() {
     if (this.attendances.length == 0) return null;
@@ -85,7 +85,7 @@ Course.prototype = {
   },
 
   /**
-   * @returns {Grade}
+   * @returns {Grade|null}
    */
   get latestGrade() {
     if (this.latestAttendance == null) return null;
@@ -102,7 +102,7 @@ Course.prototype = {
   /**
    * Value of latest grade or 'none', if the course has no attendances.
    *
-   * @returns {String}
+   * @returns {String|null}
    */
   get grade() {
     if (this.attendances.length === 0) return "none";

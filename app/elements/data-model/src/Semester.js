@@ -38,7 +38,7 @@ Semester.current = function () {
 /**
  * Named constructor for parsing a semester ID.
  *
- * @param id
+ * @param {string} id
  */
 Semester.fromId = function (id) {
   if (typeof id !== "string") throw new Error("ID must be a string.");

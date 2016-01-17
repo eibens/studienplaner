@@ -1,7 +1,18 @@
 {
   "preset": "google",
-  "disallowSpacesInAnonymousFunctionExpression": null,
   "disallowTrailingWhitespace": null,
   "maximumLineLength": 100,
-  "excludeFiles": ["node_modules/**"]
+  "excludeFiles": ["node_modules/**"],
+  "validateQuoteMarks": "\"",
+  "requireCurlyBraces": [],
+  "disallowSpacesInFunctionExpression": null,
+  "requireSpacesInFunctionExpression": {
+    "beforeOpeningRoundBrace": true,
+    "beforeOpeningCurlyBrace": true
+  },
+  "disallowSpacesInAnonymousFunctionExpression": null,
+  "requireSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningRoundBrace": true,
+    "beforeOpeningCurlyBrace": true
+  }
 }

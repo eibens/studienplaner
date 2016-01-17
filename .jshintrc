@@ -3,13 +3,14 @@
   "browser": true,
   "bitwise": true,
   "camelcase": true,
-  "curly": true,
-  "eqeqeq": true,
+  "curly": false,
+  "eqeqeq": false,
+  "-W041": false,
   "immed": true,
   "indent": 2,
   "latedef": true,
   "noarg": true,
-  "quotmark": "single",
+  "quotmark": "double",
   "undef": true,
   "unused": true,
   "newcap": false,
@@ -19,6 +20,19 @@
     "Polymer": true,
     "Platform": true,
     "page": true,
-    "app": true
+    "app": true,
+
+    "chai": true,
+    "describe": true,
+    "it": true,
+    "App": true,
+    "Attendance": true,
+    "Course": true,
+    "CourseCriteria": true,
+    "Deserializer": true,
+    "Grade": true,
+    "Profile": true,
+    "Semester": true,
+    "Serializer": true
   }
 }

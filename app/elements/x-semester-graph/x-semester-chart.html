@@ -99,7 +99,8 @@
 
       observers: [
         "_selectedSemesterChanged(selectedSemester)",
-        "_refreshItems(selectedSemester, currentSemester, semesterCount, columnWidth, courses.*, filter.*, sortMode)"
+        "_refreshItems(selectedSemester, currentSemester, semesterCount, " +
+          "columnWidth, courses.*, filter.*, sortMode)"
       ],
 
       listeners: {
@@ -171,7 +172,8 @@
         }, 100);
       },
 
-      _refreshItems: function (selectedSemester, currentSemester, semesterCount, columnWidth, coursesChange) {
+      _refreshItems: function (selectedSemester, currentSemester, semesterCount,
+                               columnWidth, coursesChange) {
         var courses = coursesChange.base;
         if (!courses) courses = [];
         if (!currentSemester) currentSemester = Semester.current();
@@ -193,6 +195,7 @@
         var items = [];
         var semester = this.startSemester;
         for (var i = 0; i < semesterCount; i++) {
+          /*jshint -W083 */
 
           var semesterAttendances = attendances.filter(function (attendance) {
             return attendance.semester.equals(semester);

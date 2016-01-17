@@ -22,7 +22,7 @@
   </head>
   <body style="font-family: Roboto, Noto, sans-serif">
     <template is="dom-bind" id="template">
-      <button onclick="reverse()">REVERSE</button>
+      <button id="reverse">REVERSE</button>
 
       <h3>horizontal, horizontal-reversed, vertical, vertical-reversed</h3>
       <x-segmented-bar
@@ -55,24 +55,24 @@
       <script>
         NodeList.prototype.forEach = Array.prototype.forEach;
 
-        window.addEventListener('WebComponentsReady', function () {
+        window.addEventListener("WebComponentsReady", function () {
           document.querySelectorAll("x-segmented-bar").forEach(function (element) {
             element.segments = [
-              { "value": 4, "color": "rgba(0, 128, 256, 0.8)" },
-              { "value": 3, "color": "rgba(0, 128, 256, 0.6)" },
-              { "value": 2, "color": "rgba(0, 128, 256, 0.4)" },
-              { "value": 1, "color": "rgba(0, 128, 256, 0.2)" }
+              {"value": 4, "color": "rgba(0, 128, 256, 0.8)"},
+              {"value": 3, "color": "rgba(0, 128, 256, 0.6)"},
+              {"value": 2, "color": "rgba(0, 128, 256, 0.4)"},
+              {"value": 1, "color": "rgba(0, 128, 256, 0.2)"}
             ];
           });
         });
 
-        function reverse() {
+        document.getElementById("reverse").addEventListener("click", function () {
           document.querySelectorAll("x-segmented-bar").forEach(function (element) {
             var s = element.segments.slice();
             s.reverse();
             element.segments = s;
           });
-        }
+        });
       </script>
     </template>
   </body>

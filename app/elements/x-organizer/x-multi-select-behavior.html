@@ -80,7 +80,6 @@
     },
 
     _handleSelectedChange: function () {
-      var self = this;
       this.debounce("clean", function () {
         if (!this.selected) return;
         if (this.selected.length == 0) return;

@@ -215,7 +215,7 @@
         }
       },
 
-      _handleAddButtonTap: function (event) {
+      _handleAddButtonTap: function () {
         this.fire("add-course");
       },
 
@@ -262,7 +262,7 @@
       },
 
       _handleAddAttendance: function () {
-        if (!this.course) throw new Error("No course selected.")
+        if (!this.course) throw new Error("No course selected.");
         var attendance = new Attendance(
           this.course.generateAttendanceId(),
           this.course

@@ -265,7 +265,7 @@
         var courses = coursesChange.base;
         if (!(courses instanceof Array)) return [];
         return courses.reduce(function (grades, course) {
-          if (course.attendances.length == 0) {
+          if (!course.attendances || course.attendances.length == 0) {
             grades.push("none");
           } else {
             course.attendances.forEach(function (attendance) {

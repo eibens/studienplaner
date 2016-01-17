@@ -60,14 +60,6 @@
       </section>
       <aside>
         <h1>Output</h1>
-        <button
-          onclick="init()">
-          INITIALIZE
-        </button>
-        <button
-          onclick="clearData()">
-          CLEAR
-        </button>
         <ul>
           <li>
             <span>cleared:</span>
@@ -126,11 +118,17 @@
         </ul>
       </aside>
     </template>
+    <div>
+      <button
+        id="init">
+        INITIALIZE
+      </button>
+      <button
+        id="clear">
+        CLEAR
+      </button>
+    </div>
     <script>
-      function init() {
-        setup(document.getElementById("light"));
-        setup(document.getElementById("dark"));
-      }
       function setup(element) {
         element.courses = [{
           "type": "VO",
@@ -154,14 +152,13 @@
         }, {
         }];
       }
-
-      /**
-       * WTF: naming this function 'clear' does not work
-       * It simply does not get called in the onclick listener.
-       */
-      function clearData() {
+      document.getElementById("init").addEventListener("click", function () {
+        setup(document.getElementById("light"));
+        setup(document.getElementById("dark"));
+      });
+      document.getElementById("clear").addEventListener("click", function () {
         document.getElementById("light").clear();
-      }
+      });
     </script>
   </body>
 </html>

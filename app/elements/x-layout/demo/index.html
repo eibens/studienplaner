@@ -193,26 +193,13 @@
       </x-layout>
     </template>
     <script>
-
-      function toggleContent() {
-        var layout = document.getElementById("layout");
-        var contentToggle = document.getElementById("content-toggle");
-        layout.placeholder = !layout.placeholder;
-        contentToggle.icon = layout.placeholder ? "visibility-off" : "visibility";
-      }
-
-      function closeRight() {
-        var layout = document.getElementById("layout");
-        layout.closeRight();
-      }
-
       var template = document.getElementById("template");
-      template.addEventListener("dom-change", function() {
+      template.addEventListener("dom-change", function () {
         var layout = document.getElementById("layout");
-        layout.addEventListener("action", function() {
+        layout.addEventListener("action", function () {
           layout.openRight();
         });
-        /*var contentToggle = document.getElementById("content-toggle");
+        var contentToggle = document.getElementById("content-toggle");
         contentToggle.addEventListener("tap", function () {
           layout.placeholder = !layout.placeholder;
           contentToggle.icon = layout.placeholder ? "visibility-off" : "visibility";
@@ -220,7 +207,7 @@
         var closeRight = document.getElementById("close-right");
         closeRight.addEventListener("tap", function () {
           layout.closeRight();
-        });*/
+        });
       });
     </script>
   </body>

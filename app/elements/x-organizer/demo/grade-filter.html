@@ -13,6 +13,10 @@
     </style>
   </head>
   <body unresolved>
+    <button
+      id="reset">
+      RESET
+    </button>
     <template
       is="dom-bind">
       <x-grade-filter
@@ -20,10 +24,6 @@
         items='[1, 2, 3, 4, 5, null, "none"]'
         selected="{{selected}}">
       </x-grade-filter>
-      <button
-        onclick="reset()">
-        RESET
-      </button>
       <p>Selected grades:</p>
       <ul>
         <template
@@ -37,9 +37,9 @@
       </ul>
     </template>
     <script>
-      function reset() {
+      document.getElementById("reset").addEventListener("click", function () {
         document.getElementById("filter").selectAll();
-      }
+      });
     </script>
   </body>
 </html>

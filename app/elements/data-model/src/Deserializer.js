@@ -15,9 +15,10 @@ Deserializer.prototype = {
   _deserializeProfile: function (object) {
     var profile = new Profile();
     profile.name = object.name ? object.name : null;
-    profile.courses = (object.courses instanceof Array)
-      ? this._deserializeCourses(object.courses)
-      : [];
+    profile.courses = [];
+    if (object.courses instanceof Array) {
+      profile.courses = this._deserializeCourses(object.courses);
+    }
     return profile;
   },
 
@@ -36,9 +37,10 @@ Deserializer.prototype = {
     course.title = this._defined(object.title);
     course.credits = this._defined(object.credits);
     course.tags = object.tags ? object.tags : [];
-    course.attendances = (object.attendances instanceof Array)
-      ? this._deserializeAttendances(object.attendances, course)
-      : [];
+    course.attendances = [];
+    if (object.attendances instanceof Array) {
+      course.attendances = this._deserializeAttendances(object.attendances, course);
+    }
     return course;
   },
 
