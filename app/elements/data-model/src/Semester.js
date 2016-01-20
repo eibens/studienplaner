@@ -31,6 +31,7 @@ Semester.current = function () {
   var today = new Date();
   var year = today.getFullYear();
   var month = today.getMonth();
+  if (month == 0) year--;
   var isWinter = [0, 7, 8, 9, 10, 11].indexOf(month) >= 0;
   return new Semester(year, isWinter);
 };
