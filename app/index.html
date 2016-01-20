@@ -27,30 +27,17 @@
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#8bc34a">
 
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="bower_components/font-roboto/roboto.html">
-    <link rel="import" href="elements/x-styles/x-light-theme.html">
-    <link rel="import" href="elements/x-styles/x-dark-theme.html">
-    <link rel="import" href="elements/x-main.html">
-    <style>
-      * {
-        -webkit-user-select: none;
-      }
-      html {
-        height: 100%;
-        overflow: hidden;
-      }
-      body {
-        margin: 0;
-        min-height: 100%;
-        font-family: 'Roboto', 'Noto', sans-serif;
-        color: #333;
-        position: relative;
-      }
-      * {
-        -webkit-tap-highlight-color: transparent;
-      }
-    </style>
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild-->
+
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+
+    <!-- Because this project uses vulcanize this should be your only html import
+         in this file. All other imports should go in elements.html -->
+    <link rel="import" href="elements/elements.html">
   </head>
   <body unresolved>
     <x-main></x-main>
