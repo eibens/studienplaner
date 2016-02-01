@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>x-remote-import-selector Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../../bower_components/paper-styles/paper-styles.html">
+    <link rel="import" href="../x-remote-import-selector.html">
+  </head>
+  <body style="font-family: Roboto, Noto, sans-serif">
+    <template is="dom-bind">
+      <h3>File exists</h3>
+      <p>Selected: <em>[[selected]]</em></p>
+      <x-remote-import-selector
+        url="data.json"
+        ping-url="ping"
+        selected="{{selected}}">
+      </x-remote-import-selector>
+
+      <h3>File exists but is empty</h3>
+      <x-remote-import-selector
+        url="empty.json"
+        ping-url="ping">
+      </x-remote-import-selector>
+
+      <h3>File does not exist, ping exists</h3>
+      <x-remote-import-selector
+        url="no-data.json"
+        ping-url="ping">
+      </x-remote-import-selector>
+
+      <h3>Neither file nor ping exists</h3>
+      <x-remote-import-selector
+        url="no-data.json"
+        ping-url="no-ping">
+      </x-remote-import-selector>
+    </template>
+  </body>
+</html>

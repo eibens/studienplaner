@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="x-import-selector">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    paper-dropdown-menu {
+      @apply(--layout-flex);
+    }
+  </style>
+
+  <template>
+    <paper-dropdown-menu
+      id="input"
+      label="[[label]]">
+      <paper-menu
+        id="menu"
+        class="dropdown-content"
+        on-selected-changed="_handleSelect">
+        <template
+          is="dom-repeat"
+          items="[[_items]]">
+          <paper-item>[[item.label]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-import-selector",
+
+      properties: {
+        label: {
+          type: String
+        },
+
+        /**
+         * Options as a map from keys to labels.
+         */
+        options: {
+          type: Object
+        },
+
+        /**
+         * Option key that is currently selected.
+         */
+        selected: {
+          type: String,
+          notify: true,
+          readOnly: true
+        },
+
+        /**
+         * Automatically select the value if there is only one option.
+         */
+        autoSelect: {
+          type: Boolean,
+          value: false
+        },
+
+        _items: {
+          type: Array,
+          value: []
+        }
+      },
+
+      observers: [
+        "_optionsChanged(options.*)"
+      ],
+
+      _optionsChanged: function (change) {
+        // Transform options map into an array of pairs for use in dom-repeat.
+        var options = change.base;
+        var items = [];
+        for (var key in options) {
+          if (options.hasOwnProperty(key)) {
+            items.push({
+              key: key,
+              label: options[key]
+            });
+          }
+        }
+
+        // Sort options alphabetically by their label.
+        this._items = items.sort(function (a, b) {
+          return a.label.localeCompare(b.label);
+        });
+
+        // Pre-select for the user, if there is only one option.
+        this.$.input.disabled = false;
+        if (this.autoSelect) {
+          if (items.length == 1) {
+            this.$.menu.select(0);
+            this.$.input.disabled = true;
+          }
+        }
+      },
+
+      _handleSelect: function (event) {
+        var index = event.detail.value;
+        var selected = this._items[index].key;
+        this._setSelected(selected);
+      }
+    });
+  </script>
+</dom-module>
