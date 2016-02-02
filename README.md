@@ -11,6 +11,8 @@ grading system (1 to 5, 1 is best, 5 is failing).*
 
 See Studienplaner in action on the [official website](http://studienplaner.at).
 
+![Screenshot](docs/screenshot-wide.png)
+
 # Features
 
 - Manage courses, attendances, and grades.
