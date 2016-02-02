@@ -14,3 +14,12 @@ body {
   color: #333;
   position: relative;
 }
+noscript {
+  display: block;
+  width: 360px;
+  margin: 2em auto;
+  border-radius: 3px;
+  padding: 16px 0;
+  background: #ddd;
+  text-align: center;
+}
