@@ -235,7 +235,7 @@
         this.$.data.import();
       },
       _handleDeleteProfile: function () {
-        var result = window.confirm("Willst du deine Daten wirklich löschen?");
+        var result = window.confirm("Willst du deine Daten wirklich unwiderruflich löschen?");
         if (!result) return;
         this._resetFilter();
         this.$.data.clear();
