@@ -59,24 +59,53 @@
       ga('send', 'pageview');
     </script>
   </head>
-  <body unresolved>
-    <div class="note" id="js-note">
-      <p>JavaScript ist deaktiviert!</p>
-      <p>Studienplaner nutzt moderne Technologien um ein angenehmes Nutzererlebnis zu bieten.
-        Bitte <a href="http://www.activatejavascript.org/" target="_blank">aktiviere JavaScript</a>
-        um Studienplaner verwenden zu können. Danach <a href="/">lade die Seite neu.</a>
-      </p>
-    </div>
-    <div class="note" id="comp-note">
-      <p>Dein Browser wird leider nicht unterstützt!</p>
-      <p>Studienplaner nutzt moderne Technologien um ein angenehmes Nutzererlebnis zu bieten.
-        Bitte <a href="https://www.browser-update.org/de/update.html" target="_blank">update deinen Browser</a>
-        um Studienplaner verwenden zu können.
-      </p>
-    </div>
+  <body>
     <x-main></x-main>
+    <div id="overlays">
+      <section id="no-script" class="overlay">
+        <p>JavaScript ist deaktiviert!</p>
+        <p>Studienplaner nutzt moderne Technologien um ein angenehmes Nutzererlebnis zu bieten.
+          Bitte <a href="http://www.activatejavascript.org/" target="_blank">aktiviere JavaScript</a>
+          um Studienplaner verwenden zu können. Danach <a href="/">lade die Seite neu.</a>
+        </p>
+      </section>
+      <section id="loader" class="overlay hidden">
+        <img src="images/logo.svg" alt="Studienplaner wird geladen..."/>
+        <p>Studienplaner wird geladen</p>
+        <p id="delay-message" class="hidden">Laden dauert länger als erwartet...</p>
+      </section>
+      <section id="compatibility" class="overlay hidden">
+        <p>Browser möglicherweise nicht unterstützt!</p>
+        <p>
+          Studienplaner nutzt moderne Technologien um ein angenehmes Nutzererlebnis zu bieten.
+          Um Studienplaner verwenden  zu können versuche es stattdessen mit einem
+          <a href="https://www.browser-update.org/de/update.html" target="_blank">dieser Browser</a>.
+          Falls du bereits einen modernen Browser benutzt und dieses Problem trotzdem auftritt,
+          <a href="http://studienplaner.at#feedback" target="_blank">kontaktiere uns</a> bitte.
+        </p>
+      </section>
+    </div>
     <script>
-      document.querySelector("html").classList.remove("no-js");
+      var noScript = document.getElementById("no-script");
+      noScript.classList.add("hidden");
+
+      var loader = document.getElementById("loader");
+      loader.classList.remove("hidden");
+      setTimeout(function () {
+        var delayMessage = document.getElementById("delay-message");
+        delayMessage.classList.remove("hidden");
+      }, 10000);
+
+      var compatibility = document.getElementById("compatibility");
+      setTimeout(function () {
+        loader.classList.add("hidden");
+        compatibility.classList.remove("hidden");
+      }, 20000);
+
+      var overlays = document.getElementById("overlays");
+      window.addEventListener("WebComponentsReady", function () {
+        overlays.classList.add("hidden");
+      });
     </script>
   </body>
 </html>

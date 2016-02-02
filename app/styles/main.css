@@ -15,41 +15,60 @@ body {
   position: relative;
   background: #e7e7e7;
 }
-.note {
-  display: block;
-  width: 80%;
-  max-width: 500px;
-  margin: 2em auto;
-  border-radius: 3px;
-  padding: 16px;
-  box-sizing: border-box;
-  background: white;
-  text-align: left;
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0s 0.3s;
 }
-.note a {
-  color: #689F38;
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  background: white;
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+  font-weight: 300;
+  padding: 2em 0;
+}
+.overlay p {
+  margin: 0.5em auto;
+  display: block;
+}
+.overlay a {
+  color: #009688;
   text-decoration: none;
 }
-.note p:first-child {
+.overlay * {
+  max-width: 450px;
+  width: 80%;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+#loader {
+  font-size: 22px;
+}
+#loader img {
+  animation: spin 2s infinite;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 0.5em;
+}
+#delay-message {
   margin-top: 0;
+  font-size: 16px;
 }
-.note p:last-child {
-  margin-bottom: 0;
-}
-
-#js-note {
-  display: none;
-}
-.no-js #js-note {
-  display: block;
-}
-
-#comp-note {
-  display: none;
-}
-body[unresolved] #comp-note {
-  display: block;
-}
-.no-js body[unresolved] #comp-note {
-  display: none;
+#compatibility {
+  font-size: 16px;
 }
