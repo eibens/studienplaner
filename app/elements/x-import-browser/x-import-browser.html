@@ -287,7 +287,6 @@
         try {
           var profile = deserializer.deserialize(data);
           this._setProfile(profile);
-          console.log(profile);
         } catch (error) {
           window.alert("Ein Fehler ist aufgetreten: " + error.description);
         }
