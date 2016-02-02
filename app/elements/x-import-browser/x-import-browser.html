@@ -113,6 +113,7 @@
 
       <div class="buttons">
         <paper-button
+          id="dismissButton"
           dialog-dismiss>
           Abbrechen
         </paper-button>
@@ -329,7 +330,11 @@
       },
 
       _showAlternatives: function () {
-        this.$.dialog.cancel();
+        // Calling this.$.dialog.cancel() does not work as expected. For some
+        // reason the dialog fires a confirmation event, instead of a cancel
+        // event. This only happens if the dialog was confirmed once before.
+        // Instead close the dialog by clicking the dismiss button.
+        this.$.dismissButton.click();
         this.$.alternatives.open();
       },
 
