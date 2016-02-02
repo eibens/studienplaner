@@ -255,10 +255,13 @@
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
         if (course == null) throw new Error("Cannot delete null course.");
-        this.selectCourse(null);
-        this.selectAttendance(null);
-        this._remove("profile.courses", course);
-        this.$.layout.closeRight();
+        var message = "Soll der ausgewählte Kurs wirklich gelöscht werden?";
+        if (window.confirm(message)) {
+          this.selectCourse(null);
+          this.selectAttendance(null);
+          this._remove("profile.courses", course);
+          this.$.layout.closeRight();
+        }
       },
 
       _handleAddAttendance: function () {
@@ -279,8 +282,11 @@
       _handleDeleteAttendance: function (event) {
         var attendance = event.detail.data;
         if (attendance == null) throw new Error("Cannot delete null attendance.");
-        this.selectCourse(attendance.course);
-        this._remove("course.attendances", attendance);
+        var message = "Soll die ausgewählte Teilnahme wirklich gelöscht werden?";
+        if (window.confirm(message)) {
+          this.selectCourse(attendance.course);
+          this._remove("course.attendances", attendance);
+        }
       },
 
       _handleAddCourseTag: function (event) {
