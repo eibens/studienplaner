@@ -14,7 +14,6 @@
 <link rel="import" href="x-organizer/x-organizer.html">
 <link rel="import" href="x-layout/x-layout.html">
 <link rel="import" href="x-save-indicator.html">
-<link rel="import" href="x-history/x-history.html">
 <link rel="import" href="x-import-browser/x-import-browser.html">
 
 <dom-module id="x-main">
@@ -46,11 +45,6 @@
   </style>
 
   <template>
-    <x-history
-      id="history"
-      courses="[[profile.courses]]">
-    </x-history>
-
     <data-manager
       id="data"
       profile="{{profile}}"
@@ -218,12 +212,6 @@
         }
       },
 
-      _handleLeftOpenChanged: function (event) {
-        if (event.detail.value) {
-          this.$.history.openOrganizer();
-        }
-      },
-
       _handleAddButtonTap: function () {
         this.fire("add-course");
       },
@@ -267,9 +255,6 @@
       },
       _handleSelectCourse: function (event) {
         this.selectCourse(event.detail.data);
-        if (!event.detail.history) {
-          this.$.history.selectCourse(event.detail.data);
-        }
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
@@ -294,9 +279,6 @@
       },
       _handleSelectAttendance: function (event) {
         this.selectAttendance(event.detail.data);
-        if (!event.detail.history) {
-          this.$.history.selectAttendance(event.detail.data);
-        }
       },
       _handleDeleteAttendance: function (event) {
         var attendance = event.detail.data;
