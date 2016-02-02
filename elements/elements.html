@@ -14544,7 +14544,10 @@ Serializer.prototype = {
       },
 
       _handleUpload: function (event) {
-        this._rawData = event.detail.data;
+        var message = "Willst du dein derzeitiges Profil wirklich unwiderruflich überschreiben?";
+        if (this.empty || window.confirm(message)) {
+          this._rawData = event.detail.data;
+        }
       },
 
       _computeEmpty: function () {
@@ -16638,21 +16641,21 @@ Serializer.prototype = {
         <div>
           <label>Kurse</label>
           <output>
-            <span>[[_computeCount(_passed.*)]]</span>
+            <span>[[_computeCount(_passedCourses.*)]]</span>
             <span class="total">[[_computeCount(courses.*)]]</span>
           </output>
         </div>
         <div>
           <label>ECTS</label>
           <output>
-            <span>[[_computeCredits(_passed.*)]]</span>
+            <span>[[_computeCredits(_passedCourses.*)]]</span>
             <span class="total">[[_computeCredits(courses.*)]]</span>
           </output>
         </div>
         <div>
           <label>Note</label>
           <output>
-            <span>[[_computeGrade(_passed.*)]]</span>
+            <span>[[_computeGrade(_passedCourses.*)]]</span>
             <iron-icon id="grade-help" icon="help">
             </iron-icon>
             <paper-tooltip for="grade-help">Nach ECTS gewichteter Notendurchschnitt aller bestandenen Kurse</paper-tooltip>
@@ -16678,9 +16681,14 @@ Serializer.prototype = {
           computed: "_computeMode(_modeIndex)"
         },
 
-        _passed: {
+        semester: {
+          type: Object,
+          value: null
+        },
+
+        _passedCourses: {
           type: Array,
-          computed: "_computePassedCourses(courses.*)"
+          computed: "_computePassedCourses(courses.*, semester)"
         },
 
         _modeIndex: {
@@ -16697,11 +16705,37 @@ Serializer.prototype = {
         ][modeIndex];
       },
 
-      _computePassedCourses: function (courseChange) {
-        return courseChange.base.filter(function (course) {
-          if (course.latestGrade == null) return false;
-          return course.latestGrade.isPassing;
+      _computePassedCourses: function (courseChange, semester) {
+        var self = this;
+        return courseChange.base.map(function (course) {
+          if (semester) {
+            return self._findAttendanceBySemester(course, semester);
+          } else {
+            return self._findLatestAttendance(course);
+          }
+        }).filter(function (attendance) {
+          return attendance && attendance.grade && attendance.grade.isPassing;
+        }).map(function (attendance) {
+          return attendance.course;
         });
+      },
+
+      _findAttendanceBySemester: function (course, semester) {
+        if (course.attendances.length === 0) return null;
+        for (var i = 0; i < course.attendances.length; i++) {
+          var attendance = course.attendances[i];
+          if (attendance.semester.equals(semester)) {
+            return attendance;
+          }
+        }
+        return null;
+      },
+
+      _findLatestAttendance: function (course) {
+        if (course.attendances.length === 0) return null;
+        return course.attendances.sort(function (b, a) {
+          return Semester.compare(a.semester, b.semester);
+        })[0];
       },
 
       _computeCount: function (change) {
@@ -18424,7 +18458,7 @@ CourseCriteria.prototype = {
       <div class="placeholder" hidden$="[[!_empty]]">
         Keine Kurse gefunden
       </div>
-      <x-stats hidden$="[[_empty]]" courses="[[result]]" mode="{{_sortMode}}">
+      <x-stats hidden$="[[_empty]]" courses="[[result]]" semester="[[semester]]" mode="{{_sortMode}}">
       </x-stats>
       <x-course-list hidden$="[[_empty]]" courses="[[courses]]" result="{{result}}" filter="[[filter]]" filter-cleared="{{_filterCleared}}" sort-mode="[[_sortMode]]" semester="{{semester}}">
       </x-course-list>
@@ -19141,7 +19175,7 @@ CourseCriteria.prototype = {
       box-sizing: border-box;
       text-align: center;
     }
-    :host ::content nav {
+    :host ::content .nav {
       @apply(--layout-vertical);
     }
     section {
@@ -22495,16 +22529,22 @@ context. You should place this element as a child of `<body>` whenever possible.
 
   <template>
     <paper-menu>
+      <paper-icon-item on-tap="_handleBrowse">
+        <paper-ripple></paper-ripple>
+        <iron-icon icon="search" item-icon=""></iron-icon>
+        Studienplan suchen
+      </paper-icon-item>
+
       <paper-icon-item on-tap="_handleImport" disabled$="[[importDisabled]]">
         <paper-ripple></paper-ripple>
         <iron-icon icon="folder" item-icon=""></iron-icon>
-        Datei öffnen
+        Datei importieren
       </paper-icon-item>
 
       <paper-icon-item on-tap="_handleExport" disabled$="[[exportDisabled]]">
         <paper-ripple></paper-ripple>
         <iron-icon icon="file-download" item-icon=""></iron-icon>
-        Daten herunterladen
+        Daten exportieren
       </paper-icon-item>
 
       <paper-icon-item on-tap="_handleClear" disabled$="[[clearDisabled]]">
@@ -22534,6 +22574,9 @@ context. You should place this element as a child of `<body>` whenever possible.
         }
       },
 
+      _handleBrowse: function () {
+        this.fire("browse-programs");
+      },
       _handleImport: function () {
         if (this.importDisabled) return;
         this.fire("import-profile");
@@ -25496,7 +25539,7 @@ context. You should place this element as a child of `<body>` whenever possible.
   </style>
 
   <template>
-    <paper-drawer-panel id="left" drawer-width="240px" force-narrow="" disable-edge-swipe="[[rightOpen]]" selected="{{_leftSelected}}">
+    <paper-drawer-panel id="left" drawer-width="252px" force-narrow="" disable-edge-swipe="[[rightOpen]]" selected="{{_leftSelected}}">
       <section drawer="">
         <content select=".left"></content>
       </section>
@@ -25572,7 +25615,7 @@ context. You should place this element as a child of `<body>` whenever possible.
   <style>
     :root {
       --speed: 0.3s;
-      --left-width: 240px;
+      --left-width: 252px;
       --right-width: 340px;
       --content-min-width: 400px;
       --content-max-width: 900px;
@@ -25686,7 +25729,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       transform: translateX(0);
     }
     /* var(--left-width) */
-    @media (max-width: 240px) {
+    @media (max-width: 252px) {
       #left {
         width: 100% !important;
       }
@@ -25842,112 +25885,3136 @@ context. You should place this element as a child of `<body>` whenever possible.
     });
   </script>
 </dom-module>
-<dom-module id="x-history" assetpath="x-history/">
-  <script>
-    Polymer({
-      is: "x-history",
 
-      properties: {
-        courses: {
-          type: Array
+
+<script>
+
+  Polymer({
+
+    is: 'cascaded-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    properties: {
+
+      /** @type {!Polymer.IronMeta} */
+      _animationMeta: {
+        type: Object,
+        value: function() {
+          return new Polymer.IronMeta({type: 'animation'});
+        }
+      }
+
+    },
+
+    /**
+     * @param {{
+     *   animation: string,
+     *   nodes: !Array<!Element>,
+     *   nodeDelay: (number|undefined),
+     *   timing: (Object|undefined)
+     *  }} config
+     */
+    configure: function(config) {
+      var animationConstructor = /** @type {Function} */ (
+          this._animationMeta.byKey(config.animation));
+      if (!animationConstructor) {
+        console.warn(this.is + ':', 'constructor for', config.animation, 'not found!');
+        return;
+      }
+
+      this._animations = [];
+      var nodes = config.nodes;
+      var effects = [];
+      var nodeDelay = config.nodeDelay || 50;
+
+      config.timing = config.timing || {};
+      config.timing.delay = config.timing.delay || 0;
+
+      var oldDelay = config.timing.delay;
+      for (var node, index = 0; node = nodes[index]; index++) {
+        config.timing.delay += nodeDelay;
+        config.node = node;
+
+        var animation = new animationConstructor();
+        var effect = animation.configure(config);
+
+        this._animations.push(animation);
+        effects.push(effect);
+      }
+      config.timing.delay = oldDelay;
+
+      this._effect = new GroupEffect(effects);
+      return this._effect;
+    },
+
+    complete: function() {
+      for (var animation, index = 0; animation = this._animations[index]; index++) {
+        animation.complete(animation.config);
+      }
+    }
+
+  });
+
+</script>
+<script>
+
+  /**
+   * Use `Polymer.NeonSharedElementAnimationBehavior` to implement shared element animations.
+   * @polymerBehavior Polymer.NeonSharedElementAnimationBehavior
+   */
+  Polymer.NeonSharedElementAnimationBehaviorImpl = {
+
+    properties: {
+
+      /**
+       * Cached copy of shared elements.
+       */
+      sharedElements: {
+        type: Object
+      }
+
+    },
+
+    /**
+     * Finds shared elements based on `config`.
+     */
+    findSharedElements: function(config) {
+      var fromPage = config.fromPage;
+      var toPage = config.toPage;
+      if (!fromPage || !toPage) {
+        console.warn(this.is + ':', !fromPage ? 'fromPage' : 'toPage', 'is undefined!');
+        return null;
+      };
+
+      if (!fromPage.sharedElements || !toPage.sharedElements) {
+        console.warn(this.is + ':', 'sharedElements are undefined for', !fromPage.sharedElements ? fromPage : toPage);
+        return null;
+      };
+
+      var from = fromPage.sharedElements[config.id]
+      var to = toPage.sharedElements[config.id];
+
+      if (!from || !to) {
+        console.warn(this.is + ':', 'sharedElement with id', config.id, 'not found in', !from ? fromPage : toPage);
+        return null;
+      }
+
+      this.sharedElements = {
+        from: from,
+        to: to
+      };
+      return this.sharedElements;
+    }
+
+  };
+
+  /** @polymerBehavior Polymer.NeonSharedElementAnimationBehavior */
+  Polymer.NeonSharedElementAnimationBehavior = [
+    Polymer.NeonAnimationBehavior,
+    Polymer.NeonSharedElementAnimationBehaviorImpl
+  ];
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'hero-animation',
+
+    behaviors: [
+      Polymer.NeonSharedElementAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var shared = this.findSharedElements(config);
+      if (!shared) {
+        return;
+      }
+
+      var fromRect = shared.from.getBoundingClientRect();
+      var toRect = shared.to.getBoundingClientRect();
+
+      var deltaLeft = fromRect.left - toRect.left;
+      var deltaTop = fromRect.top - toRect.top;
+      var deltaWidth = fromRect.width / toRect.width;
+      var deltaHeight = fromRect.height / toRect.height;
+
+      this.setPrefixedProperty(shared.to, 'transformOrigin', '0 0');
+      shared.to.style.zIndex = 10000;
+      shared.from.style.visibility = 'hidden';
+
+      this._effect = new KeyframeEffect(shared.to, [
+        {'transform': 'translate(' + deltaLeft + 'px,' + deltaTop + 'px) scale(' + deltaWidth + ',' + deltaHeight + ')'},
+        {'transform': 'none'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    },
+
+    complete: function(config) {
+      var shared = this.findSharedElements(config);
+      if (!shared) {
+        return null;
+      }
+      shared.to.style.zIndex = '';
+      shared.from.style.visibility = '';
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'ripple-animation',
+
+    behaviors: [
+      Polymer.NeonSharedElementAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var shared = this.findSharedElements(config);
+      if (!shared) {
+        return null;
+      }
+
+      var translateX, translateY;
+      var toRect = shared.to.getBoundingClientRect();
+      if (config.gesture) {
+        translateX = config.gesture.x - (toRect.left + (toRect.width / 2));
+        translateY = config.gesture.y - (toRect.top + (toRect.height / 2));
+      } else {
+        var fromRect = shared.from.getBoundingClientRect();
+        translateX = (fromRect.left + (fromRect.width / 2)) - (toRect.left + (toRect.width / 2));
+        translateY = (fromRect.top + (fromRect.height / 2)) - (toRect.top + (toRect.height / 2));
+      }
+      var translate = 'translate(' + translateX + 'px,' + translateY + 'px)';
+
+      var size = Math.max(toRect.width + Math.abs(translateX) * 2, toRect.height + Math.abs(translateY) * 2);
+      var diameter = Math.sqrt(2 * size * size);
+      var scaleX = diameter / toRect.width;
+      var scaleY = diameter / toRect.height;
+      var scale = 'scale(' + scaleX + ',' + scaleY + ')';
+
+      this.setPrefixedProperty(shared.to, 'transformOrigin', '50% 50%');
+      shared.to.style.borderRadius = '50%';
+
+      this._effect = new KeyframeEffect(shared.to, [
+        {'transform': translate + ' scale(0)'},
+        {'transform': translate + ' ' + scale}
+      ], this.timingFromConfig(config));
+      return this._effect;
+    },
+
+    complete: function() {
+      if (this.sharedElements) {
+        this.setPrefixedProperty(this.sharedElements.to, 'transformOrigin', '');
+        this.sharedElements.to.style.borderRadius = '';
+      }
+    }
+
+  });
+
+</script>
+
+
+<script>
+  Polymer({
+    is: 'reverse-ripple-animation',
+
+    behaviors: [
+      Polymer.NeonSharedElementAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var shared = this.findSharedElements(config);
+      if (!shared) {
+        return null;
+      }
+
+      var translateX, translateY;
+      var fromRect = shared.from.getBoundingClientRect();
+      if (config.gesture) {
+        translateX = config.gesture.x - (fromRect.left + (fromRect.width / 2));
+        translateY = config.gesture.y - (fromRect.top + (fromRect.height / 2));
+      } else {
+        var toRect = shared.to.getBoundingClientRect();
+        translateX = (toRect.left + (toRect.width / 2)) - (fromRect.left + (fromRect.width / 2));
+        translateY = (toRect.top + (toRect.height / 2)) - (fromRect.top + (fromRect.height / 2));
+      }
+      var translate = 'translate(' + translateX + 'px,' + translateY + 'px)';
+
+      var size = Math.max(fromRect.width + Math.abs(translateX) * 2, fromRect.height + Math.abs(translateY) * 2);
+      var diameter = Math.sqrt(2 * size * size);
+      var scaleX = diameter / fromRect.width;
+      var scaleY = diameter / fromRect.height;
+      var scale = 'scale(' + scaleX + ',' + scaleY + ')';
+
+      this.setPrefixedProperty(shared.from, 'transformOrigin', '50% 50%');
+      shared.from.style.borderRadius = '50%';
+
+      this._effect = new KeyframeEffect(shared.from, [
+        {'transform': translate + ' ' + scale},
+        {'transform': translate + ' scale(0)'}
+      ], this.timingFromConfig(config));
+      return this._effect;
+    },
+
+    complete: function() {
+      if (this.sharedElements) {
+        this.setPrefixedProperty(this.sharedElements.from, 'transformOrigin', '');
+        this.sharedElements.from.style.borderRadius = '';
+      }
+    }
+  });
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'scale-down-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      }
+
+      var scaleProperty = 'scale(0, 0)';
+      if (config.axis === 'x') {
+        scaleProperty = 'scale(0, 1)';
+      } else if (config.axis === 'y') {
+        scaleProperty = 'scale(1, 0)';
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'scale(1,1)'},
+        {'transform': scaleProperty}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'scale-up-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      }
+
+      var scaleProperty = 'scale(0)';
+      if (config.axis === 'x') {
+        scaleProperty = 'scale(0, 1)';
+      } else if (config.axis === 'y') {
+        scaleProperty = 'scale(1, 0)';
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': scaleProperty},
+        {'transform': 'scale(1, 1)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-from-left-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translateX(-100%)'},
+        {'transform': 'none'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-from-right-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translateX(100%)'},
+        {'transform': 'none'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-from-top-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '50% 0');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translateY(-100%)'},
+        {'transform': 'translateY(0%)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-from-bottom-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '50% 0');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translateY(100%)'},
+        {'transform': 'translateY(0)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-left-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'none'},
+        {'transform': 'translateX(-100%)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-right-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '0 50%');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'none'},
+        {'transform': 'translateX(100%)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-up-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '50% 0');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translate(0)'},
+        {'transform': 'translateY(-100%)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'slide-down-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    configure: function(config) {
+      var node = config.node;
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      } else {
+        this.setPrefixedProperty(node, 'transformOrigin', '50% 0');
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': 'translateY(0%)'},
+        {'transform': 'translateY(100%)'}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+
+
+<script>
+
+  Polymer({
+
+    is: 'transform-animation',
+
+    behaviors: [
+      Polymer.NeonAnimationBehavior
+    ],
+
+    /**
+     * @param {{
+     *   node: !Element,
+     *   transformOrigin: (string|undefined),
+     *   transformFrom: (string|undefined),
+     *   transformTo: (string|undefined),
+     *   timing: (Object|undefined)
+     * }} config
+     */
+    configure: function(config) {
+      var node = config.node;
+      var transformFrom = config.transformFrom || 'none';
+      var transformTo = config.transformTo || 'none';
+
+      if (config.transformOrigin) {
+        this.setPrefixedProperty(node, 'transformOrigin', config.transformOrigin);
+      }
+
+      this._effect = new KeyframeEffect(node, [
+        {'transform': transformFrom},
+        {'transform': transformTo}
+      ], this.timingFromConfig(config));
+
+      return this._effect;
+    }
+
+  });
+
+</script>
+<script>
+
+/**
+Use `Polymer.PaperDialogBehavior` and `paper-dialog-shared-styles.html` to implement a Material Design
+dialog.
+
+For example, if `<paper-dialog-impl>` implements this behavior:
+
+    <paper-dialog-impl>
+        <h2>Header</h2>
+        <div>Dialog body</div>
+        <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm>Accept</paper-button>
+        </div>
+    </paper-dialog-impl>
+
+`paper-dialog-shared-styles.html` provide styles for a header, content area, and an action area for buttons.
+Use the `<h2>` tag for the header and the `buttons` class for the action area. You can use the
+`paper-dialog-scrollable` element (in its own repository) if you need a scrolling content area.
+
+Use the `dialog-dismiss` and `dialog-confirm` attributes on interactive controls to close the
+dialog. If the user dismisses the dialog with `dialog-confirm`, the `closingReason` will update
+to include `confirmed: true`.
+
+### Styling
+
+The following custom properties and mixins are available for styling.
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-dialog-background-color` | Dialog background color                     | `--primary-background-color`
+`--paper-dialog-color`            | Dialog foreground color                     | `--primary-text-color`
+`--paper-dialog`                  | Mixin applied to the dialog                 | `{}`
+`--paper-dialog-title`            | Mixin applied to the title (`<h2>`) element | `{}`
+`--paper-dialog-button-color`     | Button area foreground color                | `--default-primary-color`
+
+### Accessibility
+
+This element has `role="dialog"` by default. Depending on the context, it may be more appropriate
+to override this attribute with `role="alertdialog"`.
+
+If `modal` is set, the element will set `aria-modal` and prevent the focus from exiting the element.
+It will also ensure that focus remains in the dialog.
+
+The `aria-labelledby` attribute will be set to the header element, if one exists.
+
+@hero hero.svg
+@demo demo/index.html
+@polymerBehavior Polymer.PaperDialogBehavior
+*/
+
+  Polymer.PaperDialogBehaviorImpl = {
+
+    hostAttributes: {
+      'role': 'dialog',
+      'tabindex': '-1'
+    },
+
+    properties: {
+
+      /**
+       * If `modal` is true, this implies `no-cancel-on-outside-click` and `with-backdrop`.
+       */
+      modal: {
+        observer: '_modalChanged',
+        type: Boolean,
+        value: false
+      },
+
+      /** @type {?Node} */
+      _lastFocusedElement: {
+        type: Object
+      },
+
+      _boundOnFocus: {
+        type: Function,
+        value: function() {
+          return this._onFocus.bind(this);
         }
       },
 
-      ready: function () {
+      _boundOnBackdropClick: {
+        type: Function,
+        value: function() {
+          return this._onBackdropClick.bind(this);
+        }
+      }
+
+    },
+
+    listeners: {
+      'tap': '_onDialogClick',
+      'iron-overlay-opened': '_onIronOverlayOpened',
+      'iron-overlay-closed': '_onIronOverlayClosed'
+    },
+
+    attached: function() {
+      // this._observer is used by iron-overlay-behavior
+      this._ariaObserver = Polymer.dom(this).observeNodes(this._updateAriaLabelledBy);
+      this._updateAriaLabelledBy();
+    },
+
+    detached: function() {
+      Polymer.dom(this).unobserveNodes(this._ariaObserver);
+    },
+
+    _modalChanged: function() {
+      if (this.modal) {
+        this.setAttribute('aria-modal', 'true');
+      } else {
+        this.setAttribute('aria-modal', 'false');
+      }
+      // modal implies noCancelOnOutsideClick and withBackdrop if true, don't overwrite
+      // those properties otherwise.
+      if (this.modal) {
+        this.noCancelOnOutsideClick = true;
+        this.withBackdrop = true;
+      }
+    },
+
+    _updateAriaLabelledBy: function() {
+      var header = Polymer.dom(this).querySelector('h2');
+      if (!header) {
+        this.removeAttribute('aria-labelledby');
+        return;
+      }
+      var headerId = header.getAttribute('id');
+      if (headerId && this.getAttribute('aria-labelledby') === headerId) {
+        return;
+      }
+      // set aria-describedBy to the header element
+      var labelledById;
+      if (headerId) {
+        labelledById = headerId;
+      } else {
+        labelledById = 'paper-dialog-header-' + new Date().getUTCMilliseconds();
+        header.setAttribute('id', labelledById);
+      }
+      this.setAttribute('aria-labelledby', labelledById);
+    },
+
+    _updateClosingReasonConfirmed: function(confirmed) {
+      this.closingReason = this.closingReason || {};
+      this.closingReason.confirmed = confirmed;
+    },
+
+    _onDialogClick: function(event) {
+      var target = Polymer.dom(event).rootTarget;
+      while (target && target !== this) {
+        if (target.hasAttribute) {
+          if (target.hasAttribute('dialog-dismiss')) {
+            this._updateClosingReasonConfirmed(false);
+            this.close();
+            event.stopPropagation();
+            break;
+          } else if (target.hasAttribute('dialog-confirm')) {
+            this._updateClosingReasonConfirmed(true);
+            this.close();
+            event.stopPropagation();
+            break;
+          }
+        }
+        target = Polymer.dom(target).parentNode;
+      }
+    },
+
+    _onIronOverlayOpened: function() {
+      if (this.modal) {
+        document.body.addEventListener('focus', this._boundOnFocus, true);
+        document.body.addEventListener('click', this._boundOnBackdropClick, true);
+      }
+    },
+
+    _onIronOverlayClosed: function() {
+      this._lastFocusedElement = null;
+      document.body.removeEventListener('focus', this._boundOnFocus, true);
+      document.body.removeEventListener('click', this._boundOnBackdropClick, true);
+    },
+
+    _onFocus: function(event) {
+      if (this.modal && this._manager.currentOverlay() === this) {
+        if (Polymer.dom(event).path.indexOf(this) !== -1) {
+          this._lastFocusedElement = event.target;
+        } else if (this._lastFocusedElement) {
+          this._lastFocusedElement.focus();
+        } else {
+          this._focusNode.focus();
+        }
+      }
+    },
+
+    _onBackdropClick: function(event) {
+      if (this.modal && this._manager.currentOverlay() === this && Polymer.dom(event).path.indexOf(this) === -1) {
+        if (this._lastFocusedElement) {
+          this._lastFocusedElement.focus();
+        } else {
+          this._focusNode.focus();
+        }
+      }
+    }
+
+  };
+
+  /** @polymerBehavior */
+  Polymer.PaperDialogBehavior = [Polymer.IronOverlayBehavior, Polymer.PaperDialogBehaviorImpl];
+
+</script>
+<dom-module id="paper-dialog-shared-styles" assetpath="../bower_components/paper-dialog-behavior/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        margin: 24px 40px;
+        -webkit-overflow-scrolling: touch;
+
+        background: var(--paper-dialog-background-color, --primary-background-color);
+        color: var(--paper-dialog-color, --primary-text-color);
+
+        @apply(--paper-font-body1);
+        @apply(--shadow-elevation-16dp);
+        @apply(--paper-dialog);
+      }
+
+      :host > ::content > * {
+        margin-top: 20px;
+        padding: 0 24px;
+      }
+
+      :host > ::content > .no-padding {
+        padding: 0;
+      }
+
+      :host > ::content > *:first-child {
+        margin-top: 24px;
+      }
+
+      :host > ::content > *:last-child {
+        margin-bottom: 24px;
+      }
+
+      :host > ::content h2 {
+        position: relative;
+        margin: 0;
+        @apply(--paper-font-title);
+
+        @apply(--paper-dialog-title);
+      }
+
+      :host > ::content .buttons {
+        position: relative;
+        padding: 8px 8px 8px 24px;
+        margin: 0;
+
+        color: var(--paper-dialog-button-color, --primary-color);
+
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+    </style>
+  </template>
+</dom-module>
+
+
+<dom-module id="paper-dialog" assetpath="../bower_components/paper-dialog/">
+  <template>
+    <style include="paper-dialog-shared-styles"></style>
+    <content></content>
+  </template>
+</dom-module>
+
+<script>
+
+(function() {
+
+  Polymer({
+
+    is: 'paper-dialog',
+
+    behaviors: [
+      Polymer.PaperDialogBehavior,
+      Polymer.NeonAnimationRunnerBehavior
+    ],
+
+    listeners: {
+      'neon-animation-finish': '_onNeonAnimationFinish'
+    },
+
+    _renderOpened: function() {
+      if (this.withBackdrop) {
+        this.backdropElement.open();
+      }
+      this.playAnimation('entry');
+    },
+
+    _renderClosed: function() {
+      if (this.withBackdrop) {
+        this.backdropElement.close();
+      }
+      this.playAnimation('exit');
+    },
+
+    _onNeonAnimationFinish: function() {
+      if (this.opened) {
+        this._finishRenderOpened();
+      } else {
+        this._finishRenderClosed();
+      }
+    }
+
+  });
+
+})();
+
+</script>
+
+
+<dom-module id="paper-dialog-scrollable" assetpath="../bower_components/paper-dialog-scrollable/">
+
+  <style>
+
+    :host {
+      display: block;
+      position: relative;
+    }
+
+    :host(.is-scrolled:not(:first-child))::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--divider-color);
+    }
+
+    :host(.can-scroll:not(.scrolled-to-bottom):not(:last-child))::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--divider-color);
+    }
+
+    .scrollable {
+      padding: 0 24px;
+
+      @apply(--layout-scroll);
+      @apply(--paper-dialog-scrollable);
+    }
+
+    .fit {
+      @apply(--layout-fit);
+    }
+  </style>
+
+  <template>
+    <div id="scrollable" class="scrollable">
+      <content></content>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+(function() {
+
+  Polymer({
+
+    is: 'paper-dialog-scrollable',
+
+    properties: {
+
+      /**
+       * The dialog element that implements `Polymer.PaperDialogBehavior` containing this element.
+       * @type {?Node}
+       */
+      dialogElement: {
+        type: Object,
+        value: function() {
+          return this.parentNode;
+        }
+      }
+
+    },
+
+    listeners: {
+      'scrollable.scroll': '_onScroll',
+      'iron-resize': '_onIronResize'
+    },
+
+    /**
+     * Returns the scrolling element.
+     */
+    get scrollTarget() {
+      return this.$.scrollable;
+    },
+
+    attached: function() {
+      this.classList.add('no-padding');
+      // Set itself to the overlay sizing target
+      this.dialogElement.sizingTarget = this.scrollTarget;
+      // If the host is sized, fit the scrollable area to the container. Otherwise let it be
+      // its natural size.
+      requestAnimationFrame(function() {
+        if (this.offsetHeight > 0) {
+          this.$.scrollable.classList.add('fit');
+        }
+        this._scroll();
+      }.bind(this));
+    },
+
+    _scroll: function() {
+      this.toggleClass('is-scrolled', this.scrollTarget.scrollTop > 0);
+      this.toggleClass('can-scroll', this.scrollTarget.offsetHeight < this.scrollTarget.scrollHeight);
+      this.toggleClass('scrolled-to-bottom',
+        this.scrollTarget.scrollTop + this.scrollTarget.offsetHeight >= this.scrollTarget.scrollHeight);
+    },
+
+    _onScroll: function() {
+      this._scroll();
+    }
+
+  })
+
+})();
+
+</script>
+
+
+<dom-module id="paper-dropdown-menu" assetpath="../bower_components/paper-dropdown-menu/">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        text-align: left;
+        cursor: pointer;
+
+        /* NOTE(cdata): Both values are needed, since some phones require the
+         * value to be `transparent`.
+         */
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: transparent;
+
+        --paper-input-container-input: {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          box-sizing: border-box;
+          cursor: pointer;
+        };
+
+        @apply(--paper-dropdown-menu);
+      }
+
+      :host([disabled]) {
+        @apply(--paper-dropdown-menu-disabled);
+      }
+
+      :host([noink]) paper-ripple {
+        display: none;
+      }
+
+      :host([no-label-float]) paper-ripple {
+        top: 8px;
+      }
+
+      paper-ripple {
+        top: 12px;
+        left: 0px;
+        bottom: 8px;
+        right: 0px;
+
+        @apply(--paper-dropdown-menu-ripple);
+      }
+
+      paper-menu-button {
+        display: block;
+        padding: 0;
+
+        @apply(--paper-dropdown-menu-button);
+      }
+
+      paper-input {
+        @apply(--paper-dropdown-menu-input);
+      }
+
+      iron-icon {
+        color: var(--disabled-text-color);
+
+        @apply(--paper-dropdown-menu-icon);
+      }
+    </style>
+
+    
+    <div role="button"></div>
+    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[disabled]]" no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}">
+      <div class="dropdown-trigger">
+        <paper-ripple></paper-ripple>
+        
+        <paper-input type="text" invalid="[[invalid]]" readonly="" disabled="[[disabled]]" value="[[selectedItemLabel]]" placeholder="[[placeholder]]" error-message="[[errorMessage]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]" label="[[label]]">
+          <iron-icon icon="arrow-drop-down" suffix=""></iron-icon>
+        </paper-input>
+      </div>
+      <content id="content" select=".dropdown-content"></content>
+    </paper-menu-button>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'paper-dropdown-menu',
+
+        /**
+         * Fired when the dropdown opens.
+         *
+         * @event paper-dropdown-open
+         */
+
+        /**
+         * Fired when the dropdown closes.
+         *
+         * @event paper-dropdown-close
+         */
+
+        behaviors: [
+          Polymer.IronButtonState,
+          Polymer.IronControlState,
+          Polymer.IronFormElementBehavior,
+          Polymer.IronValidatableBehavior
+        ],
+
+        properties: {
+          /**
+           * The derived "label" of the currently selected item. This value
+           * is the `label` property on the selected item if set, or else the
+           * trimmed text content of the selected item.
+           */
+          selectedItemLabel: {
+            type: String,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The last selected item. An item is selected if the dropdown menu has
+           * a child with class `dropdown-content`, and that child triggers an
+           * `iron-select` event with the selected `item` in the `detail`.
+           *
+           * @type {?Object}
+           */
+          selectedItem: {
+            type: Object,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The value for this element that will be used when submitting in
+           * a form. It is read only, and will always have the same value
+           * as `selectedItemLabel`.
+           */
+          value: {
+            type: String,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The label for the dropdown.
+           */
+          label: {
+            type: String
+          },
+
+          /**
+           * The placeholder for the dropdown.
+           */
+          placeholder: {
+            type: String
+          },
+
+          /**
+           * The error message to display when invalid.
+           */
+          errorMessage: {
+              type: String
+          },
+
+          /**
+           * True if the dropdown is open. Otherwise, false.
+           */
+          opened: {
+            type: Boolean,
+            notify: true,
+            value: false,
+            observer: '_openedChanged'
+          },
+
+          /**
+           * Set to true to disable the floating label. Bind this to the
+           * `<paper-input-container>`'s `noLabelFloat` property.
+           */
+          noLabelFloat: {
+              type: Boolean,
+              value: false,
+              reflectToAttribute: true
+          },
+
+          /**
+           * Set to true to always float the label. Bind this to the
+           * `<paper-input-container>`'s `alwaysFloatLabel` property.
+           */
+          alwaysFloatLabel: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * Set to true to disable animations when opening and closing the
+           * dropdown.
+           */
+          noAnimations: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * The orientation against which to align the menu dropdown
+           * horizontally relative to the dropdown trigger.
+           */
+          horizontalAlign: {
+            type: String,
+            value: 'right'
+          },
+
+          /**
+           * The orientation against which to align the menu dropdown
+           * vertically relative to the dropdown trigger.
+           */
+          verticalAlign: {
+            type: String,
+            value: 'top'
+          }
+        },
+
+        listeners: {
+          'tap': '_onTap'
+        },
+
+        keyBindings: {
+          'up down': 'open',
+          'esc': 'close'
+        },
+
+        hostAttributes: {
+          role: 'combobox',
+          'aria-autocomplete': 'none',
+          'aria-haspopup': 'true'
+        },
+
+        observers: [
+          '_selectedItemChanged(selectedItem)'
+        ],
+
+        attached: function() {
+          // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
+          // child will cause an `iron-select` event to fire while the element is
+          // still in a `DocumentFragment`. This has the effect of causing
+          // handlers not to fire. So, we double check this value on attached:
+          var contentElement = this.contentElement;
+          if (contentElement && contentElement.selectedItem) {
+            this._setSelectedItem(contentElement.selectedItem);
+          }
+        },
+
+        /**
+         * The content element that is contained by the dropdown menu, if any.
+         */
+        get contentElement() {
+          return Polymer.dom(this.$.content).getDistributedNodes()[0];
+        },
+
+        /**
+         * Show the dropdown content.
+         */
+        open: function() {
+          this.$.menuButton.open();
+        },
+
+        /**
+         * Hide the dropdown content.
+         */
+        close: function() {
+          this.$.menuButton.close();
+        },
+
+        /**
+         * A handler that is called when `iron-select` is fired.
+         *
+         * @param {CustomEvent} event An `iron-select` event.
+         */
+        _onIronSelect: function(event) {
+          this._setSelectedItem(event.detail.item);
+        },
+
+        /**
+         * A handler that is called when `iron-deselect` is fired.
+         *
+         * @param {CustomEvent} event An `iron-deselect` event.
+         */
+        _onIronDeselect: function(event) {
+          this._setSelectedItem(null);
+        },
+
+        /**
+         * A handler that is called when the dropdown is tapped.
+         *
+         * @param {CustomEvent} event A tap event.
+         */
+        _onTap: function(event) {
+          if (Polymer.Gestures.findOriginalTarget(event) === this) {
+            this.open();
+          }
+        },
+
+        /**
+         * Compute the label for the dropdown given a selected item.
+         *
+         * @param {Element} selectedItem A selected Element item, with an
+         * optional `label` property.
+         */
+        _selectedItemChanged: function(selectedItem) {
+          var value = '';
+          if (!selectedItem) {
+            value = '';
+          } else {
+            value = selectedItem.label || selectedItem.textContent.trim();
+          }
+
+          this._setValue(value);
+          this._setSelectedItemLabel(value);
+        },
+
+        /**
+         * Compute the vertical offset of the menu based on the value of
+         * `noLabelFloat`.
+         *
+         * @param {boolean} noLabelFloat True if the label should not float
+         * above the input, otherwise false.
+         */
+        _computeMenuVerticalOffset: function(noLabelFloat) {
+          // NOTE(cdata): These numbers are somewhat magical because they are
+          // derived from the metrics of elements internal to `paper-input`'s
+          // template. The metrics will change depending on whether or not the
+          // input has a floating label.
+          return noLabelFloat ? -4 : 8;
+        },
+
+        /**
+         * Returns false if the element is required and does not have a selection,
+         * and true otherwise.
+         * @param {*=} _value Ignored.
+         * @return {boolean} true if `required` is false, or if `required` is true
+         * and the element has a valid selection.
+         */
+        _getValidity: function(_value) {
+          return this.disabled || !this.required || (this.required && !!this.value);
+        },
+
+        _openedChanged: function() {
+          var openState = this.opened ? 'true' : 'false';
+          var e = this.contentElement;
+          if (e) {
+            e.setAttribute('aria-expanded', openState);
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
+
+
+<dom-module id="paper-item" assetpath="../bower_components/paper-item/">
+  <template>
+    <style include="paper-item-shared-styles"></style>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--paper-font-subhead);
+
+        @apply(--paper-item);
+      }
+    </style>
+
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-item',
+
+      behaviors: [
+        Polymer.PaperItemBehavior
+      ]
+    });
+  </script>
+</dom-module>
+<dom-module id="x-import-selector" assetpath="x-import-selector/">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    paper-dropdown-menu {
+      @apply(--layout-flex);
+    }
+  </style>
+
+  <template>
+    <paper-dropdown-menu id="input" label="[[label]]">
+      <paper-menu id="menu" class="dropdown-content" on-selected-changed="_handleSelect">
+        <template is="dom-repeat" items="[[_items]]">
+          <paper-item>[[item.label]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-import-selector",
+
+      properties: {
+        label: {
+          type: String
+        },
+
+        /**
+         * Options as a map from keys to labels.
+         */
+        options: {
+          type: Object
+        },
+
+        /**
+         * Option key that is currently selected.
+         */
+        selected: {
+          type: String,
+          notify: true,
+          readOnly: true
+        },
+
+        /**
+         * Automatically select the value if there is only one option.
+         */
+        autoSelect: {
+          type: Boolean,
+          value: false
+        },
+
+        _items: {
+          type: Array,
+          value: []
+        }
+      },
+
+      observers: [
+        "_optionsChanged(options.*)"
+      ],
+
+      _optionsChanged: function (change) {
+        // Transform options map into an array of pairs for use in dom-repeat.
+        var options = change.base;
+        var items = [];
+        for (var key in options) {
+          if (options.hasOwnProperty(key)) {
+            items.push({
+              key: key,
+              label: options[key]
+            });
+          }
+        }
+
+        // Sort options alphabetically by their label.
+        this._items = items.sort(function (a, b) {
+          return a.label.localeCompare(b.label);
+        });
+
+        // Pre-select for the user, if there is only one option.
+        this.$.input.disabled = false;
+        if (this.autoSelect) {
+          if (items.length == 1) {
+            this.$.menu.select(0);
+            this.$.input.disabled = true;
+          }
+        }
+      },
+
+      _handleSelect: function (event) {
+        var index = event.detail.value;
+        var selected = this._items[index].key;
+        this._setSelected(selected);
+      }
+    });
+  </script>
+</dom-module>
+<script>function MakePromise (asap) {
+  function Promise(fn) {
+		if (typeof this !== 'object' || typeof fn !== 'function') throw new TypeError();
+		this._state = null;
+		this._value = null;
+		this._deferreds = []
+
+		doResolve(fn, resolve.bind(this), reject.bind(this));
+	}
+
+	function handle(deferred) {
+		var me = this;
+		if (this._state === null) {
+			this._deferreds.push(deferred);
+			return
+		}
+		asap(function() {
+			var cb = me._state ? deferred.onFulfilled : deferred.onRejected
+			if (typeof cb !== 'function') {
+				(me._state ? deferred.resolve : deferred.reject)(me._value);
+				return;
+			}
+			var ret;
+			try {
+				ret = cb(me._value);
+			}
+			catch (e) {
+				deferred.reject(e);
+				return;
+			}
+			deferred.resolve(ret);
+		})
+	}
+
+	function resolve(newValue) {
+		try { //Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+			if (newValue === this) throw new TypeError();
+			if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+				var then = newValue.then;
+				if (typeof then === 'function') {
+					doResolve(then.bind(newValue), resolve.bind(this), reject.bind(this));
+					return;
+				}
+			}
+			this._state = true;
+			this._value = newValue;
+			finale.call(this);
+		} catch (e) { reject.call(this, e); }
+	}
+
+	function reject(newValue) {
+		this._state = false;
+		this._value = newValue;
+		finale.call(this);
+	}
+
+	function finale() {
+		for (var i = 0, len = this._deferreds.length; i < len; i++) {
+			handle.call(this, this._deferreds[i]);
+		}
+		this._deferreds = null;
+	}
+
+	/**
+	 * Take a potentially misbehaving resolver function and make sure
+	 * onFulfilled and onRejected are only called once.
+	 *
+	 * Makes no guarantees about asynchrony.
+	 */
+	function doResolve(fn, onFulfilled, onRejected) {
+		var done = false;
+		try {
+			fn(function (value) {
+				if (done) return;
+				done = true;
+				onFulfilled(value);
+			}, function (reason) {
+				if (done) return;
+				done = true;
+				onRejected(reason);
+			})
+		} catch (ex) {
+			if (done) return;
+			done = true;
+			onRejected(ex);
+		}
+	}
+
+	Promise.prototype['catch'] = function (onRejected) {
+		return this.then(null, onRejected);
+	};
+
+	Promise.prototype.then = function(onFulfilled, onRejected) {
+		var me = this;
+		return new Promise(function(resolve, reject) {
+      handle.call(me, {
+        onFulfilled: onFulfilled,
+        onRejected: onRejected,
+        resolve: resolve,
+        reject: reject
+      });
+		})
+	};
+
+	Promise.resolve = function (value) {
+		if (value && typeof value === 'object' && value.constructor === Promise) {
+			return value;
+		}
+
+		return new Promise(function (resolve) {
+			resolve(value);
+		});
+	};
+
+	Promise.reject = function (value) {
+		return new Promise(function (resolve, reject) {
+			reject(value);
+		});
+	};
+
+	
+  return Promise;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = MakePromise;
+}
+
+</script>
+<script>
+if (!window.Promise) {
+  window.Promise = MakePromise(Polymer.Base.async);
+}
+</script>
+<script>
+  'use strict'
+
+  Polymer({
+    is: 'iron-request',
+
+    hostAttributes: {
+      hidden: true
+    },
+
+    properties: {
+
+      /**
+       * A reference to the XMLHttpRequest instance used to generate the
+       * network request.
+       *
+       * @type {XMLHttpRequest}
+       */
+      xhr: {
+        type: Object,
+        notify: true,
+        readOnly: true,
+        value: function() {
+          return new XMLHttpRequest();
+        }
+      },
+
+      /**
+       * A reference to the parsed response body, if the `xhr` has completely
+       * resolved.
+       *
+       * @type {*}
+       * @default null
+       */
+      response: {
+        type: Object,
+        notify: true,
+        readOnly: true,
+        value: function() {
+          return null;
+        }
+      },
+
+      /**
+       * A reference to the status code, if the `xhr` has completely resolved.
+       */
+      status: {
+        type: Number,
+        notify: true,
+        readOnly: true,
+        value: 0
+      },
+
+      /**
+       * A reference to the status text, if the `xhr` has completely resolved.
+       */
+      statusText: {
+        type: String,
+        notify: true,
+        readOnly: true,
+        value: ''
+      },
+
+      /**
+       * A promise that resolves when the `xhr` response comes back, or rejects
+       * if there is an error before the `xhr` completes.
+       *
+       * @type {Promise}
+       */
+      completes: {
+        type: Object,
+        readOnly: true,
+        notify: true,
+        value: function() {
+          return new Promise(function (resolve, reject) {
+            this.resolveCompletes = resolve;
+            this.rejectCompletes = reject;
+          }.bind(this));
+        }
+      },
+
+      /**
+       * An object that contains progress information emitted by the XHR if
+       * available.
+       *
+       * @default {}
+       */
+      progress: {
+        type: Object,
+        notify: true,
+        readOnly: true,
+        value: function() {
+          return {};
+        }
+      },
+
+      /**
+       * Aborted will be true if an abort of the request is attempted.
+       */
+      aborted: {
+        type: Boolean,
+        notify: true,
+        readOnly: true,
+        value: false,
+      },
+
+      /**
+       * Errored will be true if the browser fired an error event from the
+       * XHR object (mainly network errors).
+       */
+      errored: {
+        type: Boolean,
+        notify: true,
+        readOnly: true,
+        value: false
+      },
+
+      /**
+       * TimedOut will be true if the XHR threw a timeout event.
+       */
+      timedOut: {
+        type: Boolean,
+        notify: true,
+        readOnly: true,
+        value: false
+      }
+    },
+
+    /**
+     * Succeeded is true if the request succeeded. The request succeeded if it
+     * loaded without error, wasn't aborted, and the status code is ≥ 200, and
+     * < 300, or if the status code is 0.
+     *
+     * The status code 0 is accepted as a success because some schemes - e.g.
+     * file:// - don't provide status codes.
+     *
+     * @return {boolean}
+     */
+    get succeeded() {
+      if (this.errored || this.aborted || this.timedOut) {
+        return false;
+      }
+      var status = this.xhr.status || 0;
+
+      // Note: if we are using the file:// protocol, the status code will be 0
+      // for all outcomes (successful or otherwise).
+      return status === 0 ||
+        (status >= 200 && status < 300);
+    },
+
+    /**
+     * Sends an HTTP request to the server and returns the XHR object.
+     *
+     * @param {{
+     *   url: string,
+     *   method: (string|undefined),
+     *   async: (boolean|undefined),
+     *   body: (ArrayBuffer|ArrayBufferView|Blob|Document|FormData|null|string|undefined|Object),
+     *   headers: (Object|undefined),
+     *   handleAs: (string|undefined),
+     *   jsonPrefix: (string|undefined),
+     *   withCredentials: (boolean|undefined)}} options -
+     *     url The url to which the request is sent.
+     *     method The HTTP method to use, default is GET.
+     *     async By default, all requests are sent asynchronously. To send synchronous requests,
+     *         set to true.
+     *     body The content for the request body for POST method.
+     *     headers HTTP request headers.
+     *     handleAs The response type. Default is 'text'.
+     *     withCredentials Whether or not to send credentials on the request. Default is false.
+     *   timeout: (Number|undefined)
+     * @return {Promise}
+     */
+    send: function (options) {
+      var xhr = this.xhr;
+
+      if (xhr.readyState > 0) {
+        return null;
+      }
+
+      xhr.addEventListener('progress', function (progress) {
+        this._setProgress({
+          lengthComputable: progress.lengthComputable,
+          loaded: progress.loaded,
+          total: progress.total
+        });
+      }.bind(this))
+
+      xhr.addEventListener('error', function (error) {
+        this._setErrored(true);
+        this._updateStatus();
+        this.rejectCompletes(error);
+      }.bind(this));
+
+      xhr.addEventListener('timeout', function (error) {
+        this._setTimedOut(true);
+        this._updateStatus();
+        this.rejectCompletes(error);
+      }.bind(this));
+
+      xhr.addEventListener('abort', function () {
+        this._updateStatus();
+        this.rejectCompletes(new Error('Request aborted.'));
+      }.bind(this));
+
+
+      // Called after all of the above.
+      xhr.addEventListener('loadend', function () {
+        this._updateStatus();
+
+        if (!this.succeeded) {
+          this.rejectCompletes(new Error('The request failed with status code: ' + this.xhr.status));
+          return;
+        }
+
+        this._setResponse(this.parseResponse());
+        this.resolveCompletes(this);
+      }.bind(this));
+
+      this.url = options.url;
+      xhr.open(
+        options.method || 'GET',
+        options.url,
+        options.async !== false
+      );
+
+      var acceptType = {
+        'json': 'application/json',
+        'text': 'text/plain',
+        'html': 'text/html',
+        'xml': 'application/xml',
+        'arraybuffer': 'application/octet-stream'
+      }[options.handleAs];
+      var headers = options.headers || Object.create(null);
+      var newHeaders = Object.create(null);
+      for (var key in headers) {
+        newHeaders[key.toLowerCase()] = headers[key];
+      }
+      headers = newHeaders;
+
+      if (acceptType && !headers['accept']) {
+        headers['accept'] = acceptType;
+      }
+      Object.keys(headers).forEach(function (requestHeader) {
+        if (/[A-Z]/.test(requestHeader)) {
+          console.error('Headers must be lower case, got', requestHeader);
+        }
+        xhr.setRequestHeader(
+          requestHeader,
+          headers[requestHeader]
+        );
+      }, this);
+
+      if (options.async !== false) {
+        var handleAs = options.handleAs;
+
+        // If a JSON prefix is present, the responseType must be 'text' or the
+        // browser won’t be able to parse the response.
+        if (!!options.jsonPrefix || !handleAs) {
+          handleAs = 'text';
+        }
+
+        // In IE, `xhr.responseType` is an empty string when the response
+        // returns. Hence, caching it as `xhr._responseType`.
+        xhr.responseType = xhr._responseType = handleAs;
+
+        // Cache the JSON prefix, if it exists.
+        if (!!options.jsonPrefix) {
+          xhr._jsonPrefix = options.jsonPrefix;
+        }
+      }
+
+      xhr.withCredentials = !!options.withCredentials;
+      xhr.timeout = options.timeout;
+
+      var body = this._encodeBodyObject(options.body, headers['content-type']);
+
+      xhr.send(
+        /** @type {ArrayBuffer|ArrayBufferView|Blob|Document|FormData|
+                   null|string|undefined} */
+        (body));
+
+      return this.completes;
+    },
+
+    /**
+     * Attempts to parse the response body of the XHR. If parsing succeeds,
+     * the value returned will be deserialized based on the `responseType`
+     * set on the XHR.
+     *
+     * @return {*} The parsed response,
+     * or undefined if there was an empty response or parsing failed.
+     */
+    parseResponse: function () {
+      var xhr = this.xhr;
+      var responseType = xhr.responseType || xhr._responseType;
+      var preferResponseText = !this.xhr.responseType;
+      var prefixLen = (xhr._jsonPrefix && xhr._jsonPrefix.length) || 0;
+
+      try {
+        switch (responseType) {
+          case 'json':
+            // If the xhr object doesn't have a natural `xhr.responseType`,
+            // we can assume that the browser hasn't parsed the response for us,
+            // and so parsing is our responsibility. Likewise if response is
+            // undefined, as there's no way to encode undefined in JSON.
+            if (preferResponseText || xhr.response === undefined) {
+              // Try to emulate the JSON section of the response body section of
+              // the spec: https://xhr.spec.whatwg.org/#response-body
+              // That is to say, we try to parse as JSON, but if anything goes
+              // wrong return null.
+              try {
+                return JSON.parse(xhr.responseText);
+              } catch (_) {
+                return null;
+              }
+            }
+
+            return xhr.response;
+          case 'xml':
+            return xhr.responseXML;
+          case 'blob':
+          case 'document':
+          case 'arraybuffer':
+            return xhr.response;
+          case 'text':
+          default: {
+            // If `prefixLen` is set, it implies the response should be parsed
+            // as JSON once the prefix of length `prefixLen` is stripped from
+            // it. Emulate the behavior above where null is returned on failure
+            // to parse.
+            if (prefixLen) {
+              try {
+                return JSON.parse(xhr.responseText.substring(prefixLen));
+              } catch (_) {
+                return null;
+              }
+            }
+            return xhr.responseText;
+          }
+        }
+      } catch (e) {
+        this.rejectCompletes(new Error('Could not parse response. ' + e.message));
+      }
+    },
+
+    /**
+     * Aborts the request.
+     */
+    abort: function () {
+      this._setAborted(true);
+      this.xhr.abort();
+    },
+
+    /**
+     * @param {*} body The given body of the request to try and encode.
+     * @param {?string} contentType The given content type, to infer an encoding
+     *     from.
+     * @return {*} Either the encoded body as a string, if successful,
+     *     or the unaltered body object if no encoding could be inferred.
+     */
+    _encodeBodyObject: function(body, contentType) {
+      if (typeof body == 'string') {
+        return body;  // Already encoded.
+      }
+      var bodyObj = /** @type {Object} */ (body);
+      switch(contentType) {
+        case('application/json'):
+          return JSON.stringify(bodyObj);
+        case('application/x-www-form-urlencoded'):
+          return this._wwwFormUrlEncode(bodyObj);
+      }
+      return body;
+    },
+
+    /**
+     * @param {Object} object The object to encode as x-www-form-urlencoded.
+     * @return {string} .
+     */
+    _wwwFormUrlEncode: function(object) {
+      if (!object) {
+        return '';
+      }
+      var pieces = [];
+      Object.keys(object).forEach(function(key) {
+        // TODO(rictic): handle array values here, in a consistent way with
+        //   iron-ajax params.
+        pieces.push(
+            this._wwwFormUrlEncodePiece(key) + '=' +
+            this._wwwFormUrlEncodePiece(object[key]));
+      }, this);
+      return pieces.join('&');
+    },
+
+    /**
+     * @param {*} str A key or value to encode as x-www-form-urlencoded.
+     * @return {string} .
+     */
+    _wwwFormUrlEncodePiece: function(str) {
+      // Spec says to normalize newlines to \r\n and replace %20 spaces with +.
+      // jQuery does this as well, so this is likely to be widely compatible.
+      return encodeURIComponent(str.toString().replace(/\r?\n/g, '\r\n'))
+          .replace(/%20/g, '+');
+    },
+
+    /**
+     * Updates the status code and status text.
+     */
+    _updateStatus: function() {
+      this._setStatus(this.xhr.status);
+      this._setStatusText((this.xhr.statusText === undefined) ? '' : this.xhr.statusText);
+    }
+  });
+</script>
+
+
+<script>
+  'use strict';
+
+  Polymer({
+
+    is: 'iron-ajax',
+
+    /**
+     * Fired when a request is sent.
+     *
+     * @event request
+     */
+
+    /**
+     * Fired when a response is received.
+     *
+     * @event response
+     */
+
+    /**
+     * Fired when an error is received.
+     *
+     * @event error
+     */
+
+    hostAttributes: {
+      hidden: true
+    },
+
+    properties: {
+      /**
+       * The URL target of the request.
+       */
+      url: {
+        type: String
+      },
+
+      /**
+       * An object that contains query parameters to be appended to the
+       * specified `url` when generating a request. If you wish to set the body
+       * content when making a POST request, you should use the `body` property
+       * instead.
+       */
+      params: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+
+      /**
+       * The HTTP method to use such as 'GET', 'POST', 'PUT', or 'DELETE'.
+       * Default is 'GET'.
+       */
+      method: {
+        type: String,
+        value: 'GET'
+      },
+
+      /**
+       * HTTP request headers to send.
+       *
+       * Example:
+       *
+       *     <iron-ajax
+       *         auto
+       *         url="http://somesite.com"
+       *         headers='{"X-Requested-With": "XMLHttpRequest"}'
+       *         handle-as="json"></iron-ajax>
+       *
+       * Note: setting a `Content-Type` header here will override the value
+       * specified by the `contentType` property of this element.
+       */
+      headers: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+
+      /**
+       * Content type to use when sending data. If the `contentType` property
+       * is set and a `Content-Type` header is specified in the `headers`
+       * property, the `headers` property value will take precedence.
+       */
+      contentType: {
+        type: String,
+        value: null
+      },
+
+      /**
+       * Body content to send with the request, typically used with "POST"
+       * requests.
+       *
+       * If body is a string it will be sent unmodified.
+       *
+       * If Content-Type is set to a value listed below, then
+       * the body will be encoded accordingly.
+       *
+       *    * `content-type="application/json"`
+       *      * body is encoded like `{"foo":"bar baz","x":1}`
+       *    * `content-type="application/x-www-form-urlencoded"`
+       *      * body is encoded like `foo=bar+baz&x=1`
+       *
+       * Otherwise the body will be passed to the browser unmodified, and it
+       * will handle any encoding (e.g. for FormData, Blob, ArrayBuffer).
+       *
+       * @type (ArrayBuffer|ArrayBufferView|Blob|Document|FormData|null|string|undefined|Object)
+       */
+      body: {
+        type: Object,
+        value: null
+      },
+
+      /**
+       * Toggle whether XHR is synchronous or asynchronous. Don't change this
+       * to true unless You Know What You Are Doing™.
+       */
+      sync: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Specifies what data to store in the `response` property, and
+       * to deliver as `event.detail.response` in `response` events.
+       *
+       * One of:
+       *
+       *    `text`: uses `XHR.responseText`.
+       *
+       *    `xml`: uses `XHR.responseXML`.
+       *
+       *    `json`: uses `XHR.responseText` parsed as JSON.
+       *
+       *    `arraybuffer`: uses `XHR.response`.
+       *
+       *    `blob`: uses `XHR.response`.
+       *
+       *    `document`: uses `XHR.response`.
+       */
+      handleAs: {
+        type: String,
+        value: 'json'
+      },
+
+      /**
+       * Set the withCredentials flag on the request.
+       */
+      withCredentials: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set the timeout flag on the request.
+       */
+      timeout: {
+        type: Number,
+        value: 0
+      },
+
+      /**
+       * If true, automatically performs an Ajax request when either `url` or
+       * `params` changes.
+       */
+      auto: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * If true, error messages will automatically be logged to the console.
+       */
+      verbose: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * The most recent request made by this iron-ajax element.
+       */
+      lastRequest: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * True while lastRequest is in flight.
+       */
+      loading: {
+        type: Boolean,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * lastRequest's response.
+       *
+       * Note that lastResponse and lastError are set when lastRequest finishes,
+       * so if loading is true, then lastResponse and lastError will correspond
+       * to the result of the previous request.
+       *
+       * The type of the response is determined by the value of `handleAs` at
+       * the time that the request was generated.
+       *
+       * @type {Object}
+       */
+      lastResponse: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * lastRequest's error, if any.
+       *
+       * @type {Object}
+       */
+      lastError: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * An Array of all in-flight requests originating from this iron-ajax
+       * element.
+       */
+      activeRequests: {
+        type: Array,
+        notify: true,
+        readOnly: true,
+        value: function() {
+          return [];
+        }
+      },
+
+      /**
+       * Length of time in milliseconds to debounce multiple automatically generated requests.
+       */
+      debounceDuration: {
+        type: Number,
+        value: 0,
+        notify: true
+      },
+
+      /**
+       * Prefix to be stripped from a JSON response before parsing it.
+       *
+       * In order to prevent an attack using CSRF with Array responses
+       * (http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/)
+       * many backends will mitigate this by prefixing all JSON response bodies
+       * with a string that would be nonsensical to a JavaScript parser.
+       *
+       */
+      jsonPrefix: {
+        type: String,
+        value: ''
+      },
+
+      _boundHandleResponse: {
+        type: Function,
+        value: function() {
+          return this._handleResponse.bind(this);
+        }
+      }
+    },
+
+    observers: [
+      '_requestOptionsChanged(url, method, params.*, headers, contentType, ' +
+          'body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
+    ],
+
+    /**
+     * The query string that should be appended to the `url`, serialized from
+     * the current value of `params`.
+     *
+     * @return {string}
+     */
+    get queryString () {
+      var queryParts = [];
+      var param;
+      var value;
+
+      for (param in this.params) {
+        value = this.params[param];
+        param = window.encodeURIComponent(param);
+
+        if (Array.isArray(value)) {
+          for (var i = 0; i < value.length; i++) {
+            queryParts.push(param + '=' + window.encodeURIComponent(value[i]));
+          }
+        } else if (value !== null) {
+          queryParts.push(param + '=' + window.encodeURIComponent(value));
+        } else {
+          queryParts.push(param);
+        }
+      }
+
+      return queryParts.join('&');
+    },
+
+    /**
+     * The `url` with query string (if `params` are specified), suitable for
+     * providing to an `iron-request` instance.
+     *
+     * @return {string}
+     */
+    get requestUrl() {
+      var queryString = this.queryString;
+
+      if (queryString) {
+        var bindingChar = this.url.indexOf('?') >= 0 ? '&' : '?';
+        return this.url + bindingChar + queryString;
+      }
+
+      return this.url;
+    },
+
+    /**
+     * An object that maps header names to header values, first applying the
+     * the value of `Content-Type` and then overlaying the headers specified
+     * in the `headers` property.
+     *
+     * @return {Object}
+     */
+    get requestHeaders() {
+      var headers = {};
+      var contentType = this.contentType;
+      if (contentType == null && (typeof this.body === 'string')) {
+        contentType = 'application/x-www-form-urlencoded';
+      }
+      if (contentType) {
+        headers['content-type'] = contentType;
+      }
+      var header;
+
+      if (this.headers instanceof Object) {
+        for (header in this.headers) {
+          headers[header] = this.headers[header].toString();
+        }
+      }
+
+      return headers;
+    },
+
+    /**
+     * Request options suitable for generating an `iron-request` instance based
+     * on the current state of the `iron-ajax` instance's properties.
+     *
+     * @return {{
+     *   url: string,
+     *   method: (string|undefined),
+     *   async: (boolean|undefined),
+     *   body: (ArrayBuffer|ArrayBufferView|Blob|Document|FormData|null|string|undefined|Object),
+     *   headers: (Object|undefined),
+     *   handleAs: (string|undefined),
+     *   jsonPrefix: (string|undefined),
+     *   withCredentials: (boolean|undefined)}}
+     */
+    toRequestOptions: function() {
+      return {
+        url: this.requestUrl || '',
+        method: this.method,
+        headers: this.requestHeaders,
+        body: this.body,
+        async: !this.sync,
+        handleAs: this.handleAs,
+        jsonPrefix: this.jsonPrefix,
+        withCredentials: this.withCredentials,
+        timeout: this.timeout
+      };
+    },
+
+    /**
+     * Performs an AJAX request to the specified URL.
+     *
+     * @return {!IronRequestElement}
+     */
+    generateRequest: function() {
+      var request = /** @type {!IronRequestElement} */ (document.createElement('iron-request'));
+      var requestOptions = this.toRequestOptions();
+
+      this.activeRequests.push(request);
+
+      request.completes.then(
+        this._boundHandleResponse
+      ).catch(
+        this._handleError.bind(this, request)
+      ).then(
+        this._discardRequest.bind(this, request)
+      );
+
+      request.send(requestOptions);
+
+      this._setLastRequest(request);
+      this._setLoading(true);
+
+      this.fire('request', {
+        request: request,
+        options: requestOptions
+      }, {bubbles: false});
+
+      return request;
+    },
+
+    _handleResponse: function(request) {
+      if (request === this.lastRequest) {
+        this._setLastResponse(request.response);
+        this._setLastError(null);
+        this._setLoading(false);
+      }
+      this.fire('response', request, {bubbles: false});
+    },
+
+    _handleError: function(request, error) {
+      if (this.verbose) {
+        console.error(error);
+      }
+
+      if (request === this.lastRequest) {
+        this._setLastError({
+          request: request,
+          error: error
+        });
+        this._setLastResponse(null);
+        this._setLoading(false);
+      }
+      this.fire('error', {
+        request: request,
+        error: error
+      }, {bubbles: false});
+    },
+
+    _discardRequest: function(request) {
+      var requestIndex = this.activeRequests.indexOf(request);
+
+      if (requestIndex > -1) {
+        this.activeRequests.splice(requestIndex, 1);
+      }
+    },
+
+    _requestOptionsChanged: function() {
+      this.debounce('generate-request', function() {
+        if (this.url == null) {
+          return;
+        }
+
+        if (this.auto) {
+          this.generateRequest();
+        }
+      }, this.debounceDuration);
+    },
+
+  });
+</script>
+
+
+<dom-module id="x-remote-file" assetpath="x-remote-file/">
+  <template>
+    <iron-ajax id="file" url="[[url]]" on-response="_handleFileResponse" on-error="_handleFileError" handle-as="json">
+    </iron-ajax>
+    <iron-ajax id="ping" url="[[pingUrl]]" on-response="_handlePingResponse" on-error="_handlePingError">
+    </iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-remote-file",
+
+      properties: {
+
+        url: {
+          type: String,
+          observer: "reload"
+        },
+
+        pingUrl: {
+          type: String
+        },
+
+        status: {
+          type: String,
+          value: "unavailable",
+          readOnly: true,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        data: {
+          type: Object,
+          readOnly: true,
+          notify: true
+        },
+
+        _connected: {
+          type: Boolean,
+          observer: "_connectedChanged"
+        }
+      },
+
+      reload: function () {
+        if (!this.url) {
+          this._setStatus("unavailable");
+          this._setData(null);
+          return;
+        }
+        this._setStatus("loading");
         var self = this;
-        window.addEventListener("popstate", function (event) {
-          self._processState(event.state);
+        this.debounce("request-file", function () {
+          self.$.file.generateRequest();
+        }, 500);
+        // Using an artificial minimum response time makes the GUI feel more
+        // natural. Otherwise loading indicators may appear so fast the user
+        // has no idea that something happened.
+      },
+
+      _handleFileResponse: function (event) {
+        this._setStatus(null);
+        this._setData(event.detail.response);
+      },
+
+      _handleFileError: function () {
+        this._setData(null);
+        if (this.pingUrl) {
+          // Check whether user is connected at all.
+          var self = this;
+          this.debounce("request-ping", function () {
+            self.$.ping.generateRequest();
+          }, 500);
+        } else {
+          this._setStatus("unavailable");
+        }
+      },
+
+      _handlePingResponse: function () {
+        this._setStatus("unavailable");
+      },
+
+      _handlePingError: function () {
+        this._setStatus("inaccessible");
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="x-remote-content" assetpath="x-remote-content/">
+  <style>
+    .message {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      background: var(--divider-color);
+      color: var(--secondary-text-color);
+      padding: 0 8px;
+      height: 56px;
+      margin: 2px 0;
+      border-radius: 3px;
+    }
+    .message span {
+      @apply(--layout-flex);
+      margin: 0 8px;
+    }
+
+    .loader {
+      @apply(--layout);
+      @apply(--layout-center-center);
+      height: 60px;
+    }
+    .loader paper-spinner {
+      --paper-spinner-layer-1-color: var(--default-primary-color);
+      --paper-spinner-layer-2-color: var(--default-primary-color);
+      --paper-spinner-layer-3-color: var(--default-primary-color);
+      --paper-spinner-layer-4-color: var(--default-primary-color);
+      margin: 0 8px;
+    }
+  </style>
+
+  <template>
+    <div id="content">
+      <content></content>
+    </div>
+
+    <section id="loading" class="loader">
+      <paper-spinner active="">
+      </paper-spinner>
+    </section>
+
+    <section id="unavailable" class="message" hidden="">
+      <span>[[_computeUnavailableMessage(unavailableMessage)]]</span>
+    </section>
+
+    <section id="inaccessible" class="message" hidden="">
+      <span>[[_computeInaccessibleMessage(inaccessibleMessage)]]</span>
+      <paper-icon-button icon="refresh" on-tap="_reload">
+      </paper-icon-button>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-remote-content",
+
+      properties: {
+        status: {
+          type: String,
+          observer: "_statusChanged"
+        },
+
+        unavailableMessage: {
+          type: String,
+          value: null
+        },
+
+        inaccessibleMessage: {
+          type: String,
+          value: null
+        }
+      },
+
+      _reload: function () {
+        this.fire("reload");
+      },
+
+      _statusChanged: function (status) {
+        this.$.loading.hidden = status != "loading";
+        this.$.unavailable.hidden = status != "unavailable";
+        this.$.inaccessible.hidden = status != "inaccessible";
+        this.$.content.hidden = !!status;
+      },
+
+      _computeUnavailableMessage: function (message) {
+        if (message) return message;
+        return "Daten nicht gefunden.";
+      },
+
+      _computeInaccessibleMessage: function (message) {
+        if (message) return message;
+        return "Keine Verbindung möglich.";
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="x-remote-import-selector" assetpath="x-remote-import-selector/">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  </style>
+
+  <template>
+    <x-remote-file id="file" url="[[url]]" ping-url="[[pingUrl]]" data="{{_data}}" status="{{_status}}">
+    </x-remote-file>
+
+    <x-remote-content status="[[_status]]" unavailable-message="Noch nicht verfügbar." on-reload="reload">
+      <x-import-selector label="[[_computeLabel(_data.type)]]" options="[[_computeOptions(_data.options.*)]]" selected="{{selected}}">
+      </x-import-selector>
+    </x-remote-content>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-remote-import-selector",
+
+      properties: {
+        url: String,
+
+        pingUrl: String,
+
+        selected: {
+          type: String,
+          notify: true
+        },
+
+        _data: Object,
+
+        _status: String
+      },
+
+      reload: function () {
+        this.$.file.reload();
+      },
+
+      _computeLabel: function (type) {
+        return type ? type : "Auswahl";
+      },
+
+      _computeOptions: function (change) {
+        var options = change.base;
+        if (!options || options == {}) {
+          this._status = "unavailable";
+        }
+        return options;
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="x-import-browser" assetpath="x-import-browser/">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    x-remote-import-selector {
+      margin: 4px 0;
+    }
+
+    .text {
+      margin: 0;
+    }
+
+    a {
+      color: var(--default-primary-color);
+      text-decoration: none;
+    }
+
+    .disclaimer {
+      color: var(--accent-color);
+      cursor: pointer;
+    }
+    #disclaimer {
+      max-width: 400px;
+    }
+
+    #alternatives {
+      max-width: 600px;
+    }
+
+    .notice {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      color: var(--default-primary-color);
+      cursor: pointer;
+      padding: 8px;
+      border: 1px solid var(--light-primary-color);
+      margin-top: 20px;
+    }
+    .notice span {
+      @apply(--layout-flex);
+      padding: 0 4px;
+    }
+  </style>
+
+  <template>
+    <x-remote-file url="[[_profileUrl]]" ping-url="[[pingUrl]]" data="{{_profileData}}" status="{{_profileStatus}}">
+    </x-remote-file>
+
+    <paper-dialog id="dialog" modal="" opened="{{opened}}" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <h2>Studienplan importieren</h2>
+
+      <paper-dialog-scrollable>
+        <p class="text">
+          Einige Studienpläne sind bereits online verfügbar. Wähle dein Studium
+          aus um es zu importieren.<br>
+          <span on-tap="_openDisclaimer" class="disclaimer"><strong>Achtung:</strong> Alle Informationen ohne Gewähr!</span>
+        </p>
+
+        <template is="dom-repeat" items="[[_items]]">
+          <x-remote-import-selector url="[[item]]" ping-url="[[pingUrl]]" selected="" on-selected-changed="_handleSelect">
+          </x-remote-import-selector>
+        </template>
+
+        <div hidden$="[[!_profileError]]">
+          <x-remote-content status="[[_profileStatus]]" unavailable-message="Studium noch nicht verfügbar.">
+          </x-remote-content>
+        </div>
+
+        <div hidden$="[[_profileLoaded]]">
+          <section class="notice" on-tap="_showAlternatives">
+            <span>Dein Studium ist nicht verfügbar?</span>
+            <iron-icon icon="arrow-forward">
+            </iron-icon>
+          </section>
+        </div>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss="">
+          Abbrechen
+        </paper-button>
+        <paper-button dialog-confirm="" hidden$="[[!_profileLoaded]]">
+          Importieren
+        </paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="disclaimer" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <h2>Keine Garantie</h2>
+      <main>
+        Die hier angebotenen Studienpläne wurden von deinen Mitstudenten
+        freiwillig zusammengestellt. Verlasse dich deswegen nicht auf die
+        Informationen, denn sie könnten inkorrekt, unvollständig, oder
+        veraltet sein. Falls du einen Fehler findest,
+        <a href="http://studienplaner.at#feedback" target="_blank">lass es uns bitte wissen</a>.
+      </main>
+      <div class="buttons">
+        <paper-button dialog-confirm="">
+          Ok
+        </paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="alternatives" modal="" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <h2>Dein Studium ist nicht verfügbar?</h2>
+      <paper-dialog-scrollable>
+        <p>
+          <strong>Kein Problem!</strong> Du kannst Studienplaner natürlich trotzdem verwenden. Mit dem
+          runden Button in der unteren rechten Ecke kannst du selbst Kurse hinzufügen.</p>
+        <p>
+          Wir würden natürlich gerne erfahren, welche Studiengänge besonders gefragt sind.
+          Falls du einen Augenblick Zeit hast,
+          <a href="http://studienplaner.at#feedback" target="_blank">schicke uns bitte eine Email</a>
+          mit dem Namen deiner Universität und dem gewünschten Studiengang.
+          Je mehr Nutzer einen bestimmten Studiengang benötigen, desto schneller
+          werden wir ihn in die Liste aufnehmen.
+        </p>
+        
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm="">
+          SCHLIESSEN
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: "x-import-browser",
+
+      properties: {
+        url: {
+          type: String,
+          observer: "_urlChanged"
+        },
+
+        pingUrl: {
+          type: String
+        },
+
+        opened: {
+          type: Boolean,
+          notify: true,
+          observer: "_openedChanged"
+        },
+
+        profile: {
+          type: Object,
+          readOnly: true
+        },
+
+        _path: {
+          type: Array,
+          value: []
+        },
+
+        _items: {
+          type: Array,
+          value: []
+        },
+
+        _profileUrl: {
+          type: String,
+          value: null
+        },
+
+        _profileStatus: {
+          type: String,
+          value: "unavailable"
+        },
+
+        _profileData: {
+          type: String,
+          observer: "_profileDataChanged"
+        },
+
+        _profileLoaded: {
+          type: Boolean,
+          computed: "_computeProfileLoaded(_profileStatus)"
+        },
+
+        _profileError: {
+          type: Boolean,
+          computed: "_computeProfileError(_profileUrl, _profileLoaded)"
+        }
+      },
+
+      listeners: {
+        "dom-change": "_refit"
+      },
+
+      observers: [
+        "_refit(_items.*, _profileUrl, _profileStatus)"
+      ],
+
+      open: function () {
+        this.opened = true;
+      },
+
+      clear: function () {
+        this._profileUrl = null;
+
+        // NOTE: Reset items asynchronously so that dom-repeat is actually
+        // cleared completely.
+        this._items = [];
+        var self = this;
+        this.async(function () {
+          self._urlChanged(this.url);
         });
       },
 
-      selectCourse: function (course) {
-        var url = "#";
-        var state = {};
-        if (course) {
-          state = {
-            course: course.id
-          };
-          url = this._buildUrl([
-            "kurs", course.id.toString()
-          ]);
-        }
-        this._pushState(state, url);
+      _urlChanged: function (url) {
+        this._path = [url];
+        this._items = [this._buildIndexUrl()];
       },
 
-      selectAttendance: function (attendance) {
-        var url = "#";
-        var state = {};
-        if (attendance) {
-          state = {
-            course: attendance.course.id,
-            attendance: attendance.id
-          };
-          url = this._buildUrl([
-            "kurs", attendance.course.id.toString(),
-            "teilnahme", attendance.id.toString()
-          ]);
-        }
-        this._pushState(state, url);
-      },
-
-      openOrganizer: function () {
-        this._pushState("organizer", "#menu");
-      },
-
-      _pushState: function (state, url) {
-        if (window.history.state == "organizer") {
-          window.history.replaceState(state, "", url);
+      _openedChanged: function (opened) {
+        if (opened) {
+          this.clear();
         } else {
-          window.history.pushState(state, "", url);
-        }
-      },
-
-      _processState: function (state) {
-        this.fire("close-organizer");
-        if (!state) state = {};
-        var course = this._getCourseById(this.courses, state.course);
-        if (!course) {
-          this.fire("close-inspector");
-        } else {
-          var attendance = this._getAttendanceById(course.attendances, state.attendance);
-          if (attendance) {
-            this.fire("select-attendance", {
-              data: attendance,
-              history: true
-            });
-          } else {
-            this.fire("select-course", {
-              data: course,
-              history: true
+          if (this.$.dialog.closingReason.confirmed) {
+            this.fire("confirm", {
+              bubbles: false
             });
           }
         }
       },
 
-      _getCourseById: function (courses, id) {
-        if (!courses) return null;
-        if (!id) return null;
-        for (var i = 0; i < courses.length; i++) {
-          if (courses[i].id == id) {
-            return courses[i];
-          }
+      _profileDataChanged: function (data) {
+        var deserializer = new Deserializer();
+        try {
+          var profile = deserializer.deserialize(data);
+          this._setProfile(profile);
+          console.log(profile);
+        } catch (error) {
+          window.alert("Ein Fehler ist aufgetreten: " + error.description);
         }
-        return null;
       },
 
-      _getAttendanceById: function (attendances, id) {
-        if (!attendances) return null;
-        if (!id) return null;
-        for (var i = 0; i < attendances.length; i++) {
-          if (attendances[i].id == id) {
-            return attendances[i];
-          }
-        }
-        return null;
+      _refit: function () {
+        var self = this;
+        this.debounce("refit", function () {
+          self.$.dialog.fit();
+        }, 100);
       },
 
-      _buildUrl: function (parts) {
-        return "#" + parts.join("-");
+      _handleSelect: function (event) {
+        var index = event.model.index;
+        var selected = event.detail.value;
+        if (!selected) return;
+
+        var deleteStart = index + 1;
+        if (!selected || deleteStart < this._items.length) {
+          var deleteCount = this._items.length - deleteStart;
+          this.splice("_items", deleteStart, deleteCount);
+          this.splice("_path", deleteStart, deleteCount);
+        }
+
+        var lastChar = selected.slice(-1);
+        var isDirectory = lastChar == "/";
+        this._profileUrl = null;
+        if (isDirectory) {
+          var directory = selected.slice(0, -1);
+          this.push("_path", directory);
+          this.push("_items", this._buildIndexUrl());
+        } else {
+          this._profileUrl = this._buildProfileUrl(selected);
+        }
+        this._refit();
+      },
+
+      _openDisclaimer: function () {
+        this.$.disclaimer.opened = true;
+      },
+
+      _showAlternatives: function () {
+        this.$.dialog.cancel();
+        this.$.alternatives.open();
+      },
+
+      _buildIndexUrl: function () {
+        return this._path.join("/") + "/index.json";
+      },
+
+      _buildProfileUrl: function (name) {
+        return this._path.join("/") + "/" + name + ".json";
+      },
+
+      _computeProfileLoaded: function (status) {
+        this._refit();
+        return !status;
+      },
+
+      _computeProfileError: function (url, loaded) {
+        this._refit();
+        return !!url && !loaded;
       }
     });
   </script>
@@ -25981,15 +29048,15 @@ context. You should place this element as a child of `<body>` whenever possible.
   </style>
 
   <template>
-    <x-history id="history" courses="[[profile.courses]]">
-    </x-history>
-
     <data-manager id="data" profile="{{profile}}" dirty="{{_storageDirty}}" empty="{{_profileEmpty}}">
     </data-manager>
     <array-selector id="course" items="{{profile.courses}}" selected="{{course}}">
     </array-selector>
     <array-selector id="attendance" items="{{course.attendances}}" selected="{{attendance}}">
     </array-selector>
+
+    <x-import-browser id="programBrowser" url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/programs" ping-url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/ping" on-confirm="_handleImportProgram">
+    </x-import-browser>
 
     <x-layout id="layout" on-action="_handleAddButtonTap" placeholder="[[_coursesEmpty]]" on-left-open-changed="_handleLeftOpenChanged">
 
@@ -26054,6 +29121,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       },
 
       listeners: {
+        "browse-programs": "_handleBrowsePrograms",
         "import-profile": "_handleImportProfile",
         "export-profile": "_handleExportProfile",
         "delete-profile": "_handleDeleteProfile",
@@ -26107,12 +29175,6 @@ context. You should place this element as a child of `<body>` whenever possible.
         }
       },
 
-      _handleLeftOpenChanged: function (event) {
-        if (event.detail.value) {
-          this.$.history.openOrganizer();
-        }
-      },
-
       _handleAddButtonTap: function () {
         this.fire("add-course");
       },
@@ -26125,6 +29187,15 @@ context. You should place this element as a child of `<body>` whenever possible.
         this.$.layout.closeRight();
       },
 
+      _handleBrowsePrograms: function () {
+        this.$.programBrowser.open();
+      },
+      _handleImportProgram: function () {
+        var message = "Willst du dein derzeitiges Profil wirklich unwiderruflich überschreiben?";
+        if (this._profileEmpty || window.confirm(message)) {
+          this.profile = this.$.programBrowser.profile;
+        }
+      },
       _handleExportProfile: function () {
         this.$.data.export();
       },
@@ -26133,10 +29204,11 @@ context. You should place this element as a child of `<body>` whenever possible.
         this.$.data.import();
       },
       _handleDeleteProfile: function () {
-        var result = window.confirm("Willst du deine Daten wirklich löschen?");
-        if (!result) return;
-        this._resetFilter();
-        this.$.data.clear();
+        var message = "Willst du dein derzeitiges Profil wirklich unwiderruflich löschen?";
+        if (window.confirm(message)) {
+          this._resetFilter();
+          this.$.data.clear();
+        }
       },
 
       _handleAddCourse: function () {
@@ -26146,17 +29218,17 @@ context. You should place this element as a child of `<body>` whenever possible.
       },
       _handleSelectCourse: function (event) {
         this.selectCourse(event.detail.data);
-        if (!event.detail.history) {
-          this.$.history.selectCourse(event.detail.data);
-        }
       },
       _handleDeleteCourse: function (event) {
         var course = event.detail.data;
         if (course == null) throw new Error("Cannot delete null course.");
-        this.selectCourse(null);
-        this.selectAttendance(null);
-        this._remove("profile.courses", course);
-        this.$.layout.closeRight();
+        var message = "Soll der ausgewählte Kurs wirklich gelöscht werden?";
+        if (window.confirm(message)) {
+          this.selectCourse(null);
+          this.selectAttendance(null);
+          this._remove("profile.courses", course);
+          this.$.layout.closeRight();
+        }
       },
 
       _handleAddAttendance: function () {
@@ -26170,15 +29242,15 @@ context. You should place this element as a child of `<body>` whenever possible.
       },
       _handleSelectAttendance: function (event) {
         this.selectAttendance(event.detail.data);
-        if (!event.detail.history) {
-          this.$.history.selectAttendance(event.detail.data);
-        }
       },
       _handleDeleteAttendance: function (event) {
         var attendance = event.detail.data;
         if (attendance == null) throw new Error("Cannot delete null attendance.");
-        this.selectCourse(attendance.course);
-        this._remove("course.attendances", attendance);
+        var message = "Soll die ausgewählte Teilnahme wirklich gelöscht werden?";
+        if (window.confirm(message)) {
+          this.selectCourse(attendance.course);
+          this._remove("course.attendances", attendance);
+        }
       },
 
       _handleAddCourseTag: function (event) {
