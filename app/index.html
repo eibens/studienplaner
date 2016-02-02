@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" itemscope itemtype="http://schema.org/WebApplication">
+<html lang="de" class="no-js" itemscope itemtype="http://schema.org/WebApplication">
   <head>
     <meta charset="UTF-8">
     <title>Studienplaner</title>
@@ -50,7 +50,23 @@
     <link rel="import" href="elements/elements.html">
   </head>
   <body unresolved>
-    <noscript>Bitte aktiviere JavaScript in deinem Browser.</noscript>
+    <div class="note" id="js-note">
+      <p>JavaScript ist deaktiviert!</p>
+      <p>Studienplaner nutzt mehreren moderne Technologien um ein optimales Erlebnis zu bieten.
+        Bitte <a href="http://www.activatejavascript.org/" target="_blank">aktiviere JavaScript</a>
+        um Studienplaner nutzen zu können. Danach <a href="/">lade die Seite neu.</a>
+      </p>
+    </div>
+    <div class="note" id="comp-note">
+      <p>Dein Browser wird leider nicht unterstützt!</p>
+      <p>Studienplaner nutzt mehreren moderne Technologien um ein optimales Erlebnis zu bieten.
+        Bitte <a href="https://www.browser-update.org/de/update.html" target="_blank">update deinen Browser</a>
+        um Studienplaner nutzen zu können.
+      </p>
+    </div>
     <x-main></x-main>
+    <script>
+      document.querySelector("html").classList.remove("no-js");
+    </script>
   </body>
 </html>
