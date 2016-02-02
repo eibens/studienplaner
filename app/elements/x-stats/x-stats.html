@@ -78,21 +78,21 @@
         <div>
           <label>Kurse</label>
           <output>
-            <span>[[_computeCount(_passed.*)]]</span>
+            <span>[[_computeCount(_passedCourses.*)]]</span>
             <span class="total">[[_computeCount(courses.*)]]</span>
           </output>
         </div>
         <div>
           <label>ECTS</label>
           <output>
-            <span>[[_computeCredits(_passed.*)]]</span>
+            <span>[[_computeCredits(_passedCourses.*)]]</span>
             <span class="total">[[_computeCredits(courses.*)]]</span>
           </output>
         </div>
         <div>
           <label>Note</label>
           <output>
-            <span>[[_computeGrade(_passed.*)]]</span>
+            <span>[[_computeGrade(_passedCourses.*)]]</span>
             <iron-icon
               id="grade-help"
               icon="help">
@@ -120,9 +120,14 @@
           computed: "_computeMode(_modeIndex)"
         },
 
-        _passed: {
+        semester: {
+          type: Object,
+          value: null
+        },
+
+        _passedCourses: {
           type: Array,
-          computed: "_computePassedCourses(courses.*)"
+          computed: "_computePassedCourses(courses.*, semester)"
         },
 
         _modeIndex: {
@@ -139,11 +144,37 @@
         ][modeIndex];
       },
 
-      _computePassedCourses: function (courseChange) {
-        return courseChange.base.filter(function (course) {
-          if (course.latestGrade == null) return false;
-          return course.latestGrade.isPassing;
+      _computePassedCourses: function (courseChange, semester) {
+        var self = this;
+        return courseChange.base.map(function (course) {
+          if (semester) {
+            return self._findAttendanceBySemester(course, semester);
+          } else {
+            return self._findLatestAttendance(course);
+          }
+        }).filter(function (attendance) {
+          return attendance && attendance.grade && attendance.grade.isPassing;
+        }).map(function (attendance) {
+          return attendance.course;
         });
+      },
+
+      _findAttendanceBySemester: function (course, semester) {
+        if (course.attendances.length === 0) return null;
+        for (var i = 0; i < course.attendances.length; i++) {
+          var attendance = course.attendances[i];
+          if (attendance.semester.equals(semester)) {
+            return attendance;
+          }
+        }
+        return null;
+      },
+
+      _findLatestAttendance: function (course) {
+        if (course.attendances.length === 0) return null;
+        return course.attendances.sort(function (b, a) {
+          return Semester.compare(a.semester, b.semester);
+        })[0];
       },
 
       _computeCount: function (change) {
