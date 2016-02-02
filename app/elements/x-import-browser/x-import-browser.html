@@ -39,6 +39,10 @@
       max-width: 400px;
     }
 
+    #alternatives {
+      max-width: 600px;
+    }
+
     .notice {
       @apply(--layout-horizontal);
       @apply(--layout-center-center);
@@ -74,7 +78,7 @@
         <p class="text">
           Einige Studienpläne sind bereits online verfügbar. Wähle dein Studium
           aus um es zu importieren.<br/>
-          <span on-tap="_openDisclaimer" class="disclaimer">ACHTUNG: Alle Informationen ohne Gewähr!</span>
+          <span on-tap="_openDisclaimer" class="disclaimer"><strong>Achtung:</strong> Alle Informationen ohne Gewähr!</span>
         </p>
 
         <template
@@ -98,7 +102,7 @@
         <div hidden$="[[_profileLoaded]]">
           <section
             class="notice"
-            on-tap="">
+            on-tap="_showAlternatives">
             <span>Dein Studium ist nicht verfügbar?</span>
             <iron-icon
               icon="arrow-forward">
@@ -130,12 +134,47 @@
         freiwillig zusammengestellt. Verlasse dich deswegen nicht auf die
         Informationen, denn sie könnten inkorrekt, unvollständig, oder
         veraltet sein. Falls du einen Fehler findest,
-        <a href="http://info.studienplaner.at/feedback" target="_blank">lass es uns bitte wissen</a>.
+        <a href="http://studienplaner.at#feedback" target="_blank">lass es uns bitte wissen</a>.
       </main>
       <div class="buttons">
         <paper-button
           dialog-confirm>
           Ok
+        </paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog
+      id="alternatives"
+      modal
+      entry-animation="fade-in-animation"
+      exit-animation="fade-out-animation">
+      <h2>Dein Studium ist nicht verfügbar?</h2>
+      <paper-dialog-scrollable>
+        <p>
+          <strong>Kein Problem!</strong> Du kannst Studienplaner natürlich trotzdem verwenden. Mit dem
+          runden Button in der unteren rechten Ecke kannst du selbst Kurse hinzufügen.</p>
+        <p>
+          Wir würden natürlich gerne erfahren, welche Studiengänge besonders gefragt sind.
+          Falls du einen Augenblick Zeit hast,
+          <a href="http://studienplaner.at#feedback" target="_blank">schicke uns bitte eine Email</a>
+          mit dem Namen deiner Universität und dem gewünschten Studiengang.
+          Je mehr Nutzer einen bestimmten Studiengang benötigen, desto schneller
+          werden wir ihn in die Liste aufnehmen.
+        </p>
+        <!--<p>
+          <strong>Für Nutzer mit Informatik-Kenntnissen:</strong><br/>
+          Wir freuen uns über deine Unterstützung bei der Erweiterung unseres Angebots!
+          Alle verfügbaren Studiengänge werden in einem öffentlichen
+          <a href="https://github.com/lukas-eibensteiner/studienplaner-data" target="_blank">GitHub Repository</a>
+          verwaltet. Dort findest du eine Anleitung, wie du neue Studiengänge erfassen
+          und hinzufügen kannst.
+        </p>-->
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button
+          dialog-confirm>
+          SCHLIESSEN
         </paper-button>
       </div>
     </paper-dialog>
@@ -288,6 +327,11 @@
 
       _openDisclaimer: function () {
         this.$.disclaimer.opened = true;
+      },
+
+      _showAlternatives: function () {
+        this.$.dialog.cancel();
+        this.$.alternatives.open();
       },
 
       _buildIndexUrl: function () {
