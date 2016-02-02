@@ -64,7 +64,10 @@
       },
 
       _handleUpload: function (event) {
-        this._rawData = event.detail.data;
+        var message = "Willst du das aktuelle Profil wirklich unwiderruflich überschreiben?";
+        if (this.empty || window.confirm(message)) {
+          this._rawData = event.detail.data;
+        }
       },
 
       _computeEmpty: function () {
