@@ -28796,7 +28796,7 @@ if (!window.Promise) {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button dialog-dismiss="">
+        <paper-button id="dismissButton" dialog-dismiss="">
           Abbrechen
         </paper-button>
         <paper-button dialog-confirm="" hidden$="[[!_profileLoaded]]">
@@ -28952,7 +28952,6 @@ if (!window.Promise) {
         try {
           var profile = deserializer.deserialize(data);
           this._setProfile(profile);
-          console.log(profile);
         } catch (error) {
           window.alert("Ein Fehler ist aufgetreten: " + error.description);
         }
@@ -28995,7 +28994,11 @@ if (!window.Promise) {
       },
 
       _showAlternatives: function () {
-        this.$.dialog.cancel();
+        // Calling this.$.dialog.cancel() does not work as expected. For some
+        // reason the dialog fires a confirmation event, instead of a cancel
+        // event. This only happens if the dialog was confirmed once before.
+        // Instead close the dialog by clicking the dismiss button.
+        this.$.dismissButton.click();
         this.$.alternatives.open();
       },
 
@@ -29058,7 +29061,7 @@ if (!window.Promise) {
     <x-import-browser id="programBrowser" url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/programs" ping-url="https://raw.githubusercontent.com/lukas-eibensteiner/studienplaner-data/master/ping" on-confirm="_handleImportProgram">
     </x-import-browser>
 
-    <x-layout id="layout" on-action="_handleAddButtonTap" placeholder="[[_coursesEmpty]]" on-left-open-changed="_handleLeftOpenChanged">
+    <x-layout id="layout" on-action="_handleAddButtonTap" placeholder="[[_coursesEmpty]]">
 
       <x-toolbar class="toolbar" name="{{profile.name}}" saving="[[_storageDirty]]" cleared="[[_profileEmpty]]">
       </x-toolbar>
