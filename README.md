@@ -2,10 +2,10 @@
 
 # Studienplaner
 
-> Web app for managing university courses and grades.
+Web app for managing university courses and grades.
 
-*Note: Currently this app is only available in German and uses the Austrian
-grading system (1 to 5, 1 is best, 5 is failing).*
+_Note: Currently this app is only available in German and uses the Austrian
+grading system (1 to 5, 1 is best, 5 is failing)._
 
 ## Demo
 
@@ -20,7 +20,8 @@ See Studienplaner in action on the [official website](http://studienplaner.at).
 - Tagging system to model complex dependencies.
 - Calculation of gained credits and average grade.
 - Semester view with credit bar-chart.
-- Import university programs from a [public database](https://github.com/lukas-eibensteiner/studienplaner-data).
+- Import university programs from a
+  [public database](https://github.com/lukas-eibensteiner/studienplaner-data).
 - Automatic saving to and loading from local-storage.
 - JSON import and export.
 
@@ -36,8 +37,8 @@ See Studienplaner in action on the [official website](http://studienplaner.at).
 
 # Related Repositories
 
-- [lukas-eibensteiner/studienplaner-data](https://github.com/lukas-eibensteiner/studienplaner-data) 
-(serves as public database for the app)
+- [lukas-eibensteiner/studienplaner-data](https://github.com/lukas-eibensteiner/studienplaner-data)
+  (serves as public database for the app)
 
 - [lukas-eibensteiner/studienplaner-web](https://github.com/lukas-eibensteiner/studienplaner-web)
-(official website)
+  (official website)

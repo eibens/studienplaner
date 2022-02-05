@@ -1,0 +1,13 @@
+{
+  "name": "Studienplaner",
+  "icons": [
+    {
+      "src": "favicon-152.png",
+      "sizes": "152x152",
+      "type": "image\/png",
+      "density": "4.0"
+    }
+  ],
+  "start_url": "http:\/\/mein.studienplaner.at",
+  "display": "standalone"
+}
